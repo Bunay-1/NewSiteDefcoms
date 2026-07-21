@@ -1,5 +1,7 @@
 import { Cpu, Cloud, Database, Shield, Brain, Globe, Code, Server, Lock } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import LogoCarousel from "@/components/LogoCarousel";
 
 export default function TechnologiesPage() {
   const categories = [
@@ -133,15 +135,23 @@ export default function TechnologiesPage() {
     }
   ];
 
+  // Flat list of technologies for the infinite logo carousel
+  const carouselTechs = categories.flatMap(cat => cat.technologies);
+
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-24 px-4 pb-20">
+    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-24 pb-20">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-5xl font-bold text-white text-center mb-6">
           Технологии
         </h1>
-        <p className="text-xl text-gray-300 text-center mb-16 max-w-3xl mx-auto">
+        <p className="text-xl text-gray-300 text-center mb-10 max-w-3xl mx-auto">
           Използваме най-модерните технологии и инструменти за изграждане на сигурни и мащабируеми решения
         </p>
+
+        {/* Infinite Logo Carousel */}
+        <div className="mb-16">
+          <LogoCarousel technologies={carouselTechs} />
+        </div>
 
         <div className="space-y-12">
           {categories.map((category, categoryIndex) => {
@@ -182,9 +192,11 @@ export default function TechnologiesPage() {
           <p className="text-white/80 mb-6">
             Свържете се с нас за безплатна консултация
           </p>
-          <button className="bg-white text-[#0098b2] px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
-            Свържете се с нас
-          </button>
+          <Link href="/contact">
+            <button className="bg-white text-[#0098b2] px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
+              Свържете се с нас
+            </button>
+          </Link>
         </div>
       </div>
     </main>

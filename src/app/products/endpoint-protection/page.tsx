@@ -1,5 +1,7 @@
-import { Lock, CheckCircle, ArrowRight, Image as ImageIcon } from "lucide-react";
+import { Lock, CheckCircle, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+import FaqAccordion from "@/components/FaqAccordion";
 
 export default function EndpointProtectionPage() {
   const faqs = [
@@ -26,16 +28,13 @@ export default function EndpointProtectionPage() {
   ];
 
   const galleryImages = [
-    { title: "Dashboard", description: "Централен dashboard за всички крайни точки" },
-    { title: "Threat Detection", description: "Откриване на заплахи в реално време" },
-    { title: "Policy Management", description: "Управление на политики за сигурност" },
-    { title: "Device Control", description: "Контрол на устройства и портове" },
-    { title: "Remote Remediation", description: "Дистанционно отстраняване на заплахи" },
-    { title: "Compliance Reports", description: "Отчети за съответствие" }
+    { title: "Persevs Security System", description: "Интерфейс на платформата Persevs за цялостна сигурност", src: "/Persevs/perservs.webp" },
+    { title: "User Signup Page", description: "Интуитивен и защитен вход в системата", src: "/Persevs/02_Signup_Page_persevs.webp" },
+    { title: "Security Reports Dashboard", description: "Подробни анализи на състоянието и защитата в реално време", src: "/Persevs/04_Reports_Page_Persevs.webp" }
   ];
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-24 px-4">
+    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-24 px-4 pb-20">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <Link href="/products" className="text-[#0098b2] hover:underline">
@@ -68,13 +67,18 @@ export default function EndpointProtectionPage() {
           ))}
         </div>
 
-        <div className="mb-16">
+        <div className="mb-20">
           <h2 className="text-3xl font-bold text-white mb-8">Галерия</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {galleryImages.map((image, index) => (
-              <div key={index} className="bg-slate-800 rounded-xl overflow-hidden border border-slate-700">
-                <div className="aspect-video bg-gradient-to-br from-slate-700 to-slate-600 flex items-center justify-center">
-                  <ImageIcon className="w-16 h-16 text-slate-500" />
+              <div key={index} className="bg-slate-800 rounded-xl overflow-hidden border border-slate-700 hover:border-[#0098b2]/50 transition duration-300 transform hover:scale-[1.02]">
+                <div className="aspect-video relative bg-slate-900">
+                  <Image
+                    src={image.src}
+                    alt={image.title}
+                    fill
+                    className="object-cover"
+                  />
                 </div>
                 <div className="p-4">
                   <h3 className="text-white font-semibold mb-1">{image.title}</h3>
@@ -85,16 +89,9 @@ export default function EndpointProtectionPage() {
           </div>
         </div>
 
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold text-white mb-8">Често задавани въпроси</h2>
-          <div className="space-y-4">
-            {faqs.map((faq, index) => (
-              <div key={index} className="bg-slate-800 p-6 rounded-xl border border-slate-700">
-                <h3 className="text-lg font-bold text-[#0098b2] mb-3">{faq.question}</h3>
-                <p className="text-gray-300">{faq.answer}</p>
-              </div>
-            ))}
-          </div>
+        <div className="mb-20">
+          <h2 className="text-3xl font-bold text-white text-center mb-10">Често задавани въпроси</h2>
+          <FaqAccordion items={faqs} colorTheme="blue" />
         </div>
 
         <div className="bg-gradient-to-r from-[#0098b2] to-[#005f7f] p-8 rounded-xl text-center">
@@ -104,10 +101,12 @@ export default function EndpointProtectionPage() {
           <p className="text-white/80 mb-6">
             Свържете се с нас за демо или безплатна консултация
           </p>
-          <button className="bg-white text-[#0098b2] px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition flex items-center gap-2 mx-auto">
-            Свържете се с нас
-            <ArrowRight className="w-5 h-5" />
-          </button>
+          <Link href="/contact">
+            <button className="bg-white text-[#0098b2] hover:bg-gray-100 px-8 py-3 rounded-lg font-semibold transition flex items-center gap-2 mx-auto">
+              Свържете се с нас
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          </Link>
         </div>
       </div>
     </main>
