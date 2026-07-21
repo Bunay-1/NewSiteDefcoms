@@ -1,4 +1,5 @@
 import ComplianceBadge from "@/components/ComplianceBadge";
+import RiskCalculator from "@/components/RiskCalculator";
 
 export default function CompliancePage() {
   const complianceData = [
@@ -50,16 +51,16 @@ export default function CompliancePage() {
   ];
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-20 px-4">
+    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-24 px-4 pb-20">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-5xl font-bold text-white text-center mb-6">
           Съответствие с EU директиви
         </h1>
-        <p className="text-xl text-gray-300 text-center mb-12 max-w-3xl mx-auto">
+        <p className="text-xl text-gray-300 text-center mb-16 max-w-3xl mx-auto">
           Нашите платформи покриват всички ключови регулации и стандарти за киберсигурност в Европейския съюз
         </p>
         
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
           {complianceData.map((item) => (
             <ComplianceBadge
               key={item.name}
@@ -70,22 +71,33 @@ export default function CompliancePage() {
           ))}
         </div>
 
+        {/* Interactive Risk Calculator Section */}
+        <div className="my-24">
+          <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-4">
+            Проверете нивото си на риск
+          </h2>
+          <p className="text-gray-400 text-center mb-12 max-w-2xl mx-auto">
+            Направете бърз 2-минутен тест, за да оцените готовността на вашата организация за съответствие с директивите NIS2 и GDPR.
+          </p>
+          <RiskCalculator />
+        </div>
+
         <div className="mt-16 bg-slate-800 p-8 rounded-xl border border-slate-700">
           <h2 className="text-2xl font-bold text-white mb-4">
             Защо съответствието е важно?
           </h2>
           <div className="space-y-4 text-gray-300">
             <p>
-              <strong className="text-[#0098b2]">Правна защита:</strong> Избягване на глоби и санкции до 4% от глобалния оборот.
+              <strong className="text-[#0098b2]">Правна защита:</strong> Избягване на глоби и санкции до 4% от глобалния оборот съгласно европейските регулации.
             </p>
             <p>
-              <strong className="text-[#0098b2]">Доверие на клиентите:</strong> Демонстрация на ангажираност към защита на данните.
+              <strong className="text-[#0098b2]">Доверие на клиентите:</strong> Демонстрация на ангажираност към защита на поверителните и лични данни.
             </p>
             <p>
-              <strong className="text-[#0098b2]">Конкурентно предимство:</strong> Сертифициране по международни стандарти.
+              <strong className="text-[#0098b2]">Конкурентно предимство:</strong> Сертифициране и непрекъснато съответствие по международни стандарти.
             </p>
             <p>
-              <strong className="text-[#0098b2]">Оперативна ефективност:</strong> Стандартизирани процеси и процедури.
+              <strong className="text-[#0098b2]">Оперативна устойчивост:</strong> Стандартизирани, автоматизирани процеси за реакция и смекчаване на уязвимости.
             </p>
           </div>
         </div>

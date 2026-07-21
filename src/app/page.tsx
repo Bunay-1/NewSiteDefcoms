@@ -19,9 +19,9 @@ export default function Home() {
             Защита на вашите цифрови активи с най-модерните технологии, изкуствен интелект и пълно съответствие с ЕС директиви
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/contact" className="inline-block">
+            <Link href="/demo" className="inline-block">
               <button className="w-full bg-[#0098b2] hover:bg-[#005f7f] text-white px-8 py-4 rounded-lg text-lg font-semibold transition flex items-center justify-center gap-2">
-                Започнете сега
+                Стартирайте Демо
                 <ArrowRight className="w-5 h-5" />
               </button>
             </Link>
