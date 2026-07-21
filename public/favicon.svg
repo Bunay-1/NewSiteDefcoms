@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 512 512">
+  <!-- Generator: Adobe Illustrator 30.3.0, SVG Export Plug-In . SVG Version: 2.1.3 Build 182)  -->
+  <defs>
+    <style>
+      .st0 {
+        fill: #f22020;
+      }
+
+      .st0, .st1, .st2 {
+        fill-rule: evenodd;
+      }
+
+      .st3 {
+        fill: none;
+      }
+
+      .st4 {
+        fill: #fff;
+        font-family: ArialMT, Arial;
+        font-size: 40px;
+        isolation: isolate;
+        opacity: .9;
+      }
+
+      .st1 {
+        fill: #0098b2;
+      }
+
+      .st2 {
+        fill: #005f7f;
+      }
+    </style>
+  </defs>
+  <rect class="st3" y="0" width="512" height="512"/>
+  <text class="st4" transform="translate(218.2 350)"><tspan x="0" y="0">LAB</tspan></text>
+  <g>
+    <path class="st2" d="M478.98,128v256l-111.49,64-111.49,64v-127.15l56.12-32.21,56.12-32.21v-128.85l110.75-63.57h0v-.02ZM33.02,128l110.75,63.57h0l56.12-32.21,56.12-32.21V0l-111.49,64-111.49,64Z"/>
+    <polygon class="st1" points="256 512 144.51 448 33.02 384 33.02 256 33.02 128 143.77 191.57 143.77 256 143.77 320.43 199.88 352.64 256 384.85 256 512"/>
+    <polygon class="st0" points="256 127.15 256 256 478.98 128 366.75 63.57 256 127.15"/>
+  </g>
+</svg>
