@@ -14,7 +14,7 @@ export default function ThreatIntelligencePage() {
       answer: "Използваме комбинация от източници: open-source intelligence (OSINT), commercial threat feeds, government CERT advisories, dark web monitoring, honeypot мрежи и данни от нашата SOC платформа."
     },
     {
-      question: "Как се интегрира със съществуващие системи?",
+      question: "Как се интегрира със съществуващите системи?",
       answer: "Платформата поддържа интеграции с SIEM системи (Splunk, IBM QRadar), firewall-и (Palo Alto, Cisco), EDR решения и SOC платформи чрез STIX/TAXII протоколи и REST API."
     },
     {

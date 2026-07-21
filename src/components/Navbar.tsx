@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown, Award, TrendingUp, Sparkles, Mail, ShieldAlert } from "lucide-react";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [toolsOpen, setToolsOpen] = useState(false);
 
   const navItems = [
     { name: "Начало", href: "/" },
@@ -15,7 +16,13 @@ export default function Navbar() {
     { name: "Екип", href: "/team" },
     { name: "Съответствие", href: "/compliance" },
     { name: "Демо", href: "/demo" },
-    { name: "Контакти", href: "/contact" },
+  ];
+
+  const toolItems = [
+    { name: "ROI Калкулатор", href: "/tools/roi", icon: TrendingUp, desc: "Възвръщаемост на инвестицията" },
+    { name: "Конфигуратор", href: "/tools/bundle", icon: Sparkles, desc: "Сглобете своята кибер защита" },
+    { name: "Фишинг Обучение", href: "/tools/phishing-trainer", icon: Mail, desc: "Проверете Вашата бдителност" },
+    { name: "Център за Заплахи", href: "/threat-advisories", icon: ShieldAlert, desc: "Нови CVE бюлетини и уязвимости" },
   ];
 
   return (
@@ -33,18 +40,59 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-6">
             {navItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-gray-300 hover:text-white transition font-medium"
+                className="text-gray-300 hover:text-white transition font-medium text-sm"
               >
                 {item.name}
               </Link>
             ))}
+
+            {/* Interactive Tools Dropdown */}
+            <div className="relative">
+              <button
+                onMouseEnter={() => setToolsOpen(true)}
+                onClick={() => setToolsOpen(!toolsOpen)}
+                className="flex items-center gap-1 text-gray-300 hover:text-white transition font-medium text-sm focus:outline-none"
+              >
+                Инструменти
+                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${toolsOpen ? "rotate-180" : ""}`} />
+              </button>
+
+              {/* Dropdown Menu */}
+              {toolsOpen && (
+                <div
+                  onMouseLeave={() => setToolsOpen(false)}
+                  className="absolute right-0 mt-2 w-80 bg-slate-850 border border-slate-700 rounded-xl shadow-2xl p-4 grid gap-3 z-50 animate-fadeIn"
+                >
+                  {toolItems.map((tool) => {
+                    const Icon = tool.icon;
+                    return (
+                      <Link
+                        key={tool.name}
+                        href={tool.href}
+                        onClick={() => setToolsOpen(false)}
+                        className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-slate-800 transition group"
+                      >
+                        <div className="p-2 rounded-lg bg-slate-800 text-[#0098b2] group-hover:bg-[#0098b2] group-hover:text-white transition-colors">
+                          <Icon className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <div className="text-sm font-bold text-white group-hover:text-[#0098b2] transition-colors">{tool.name}</div>
+                          <div className="text-[11px] text-gray-400 mt-0.5">{tool.desc}</div>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
             <Link href="/contact">
-              <button className="bg-[#f22020] hover:bg-red-700 text-white px-4 py-2 rounded-lg transition font-medium">
+              <button className="bg-[#f22020] hover:bg-red-700 text-white px-4 py-2 rounded-lg transition font-medium text-sm">
                 Свържете се
               </button>
             </Link>
@@ -62,20 +110,40 @@ export default function Navbar() {
 
       {/* Mobile Navigation */}
       {isOpen && (
-        <div className="md:hidden bg-slate-900 border-t border-slate-700">
+        <div className="md:hidden bg-slate-900 border-t border-slate-700 max-h-[85vh] overflow-y-auto">
           <div className="px-4 pt-2 pb-4 space-y-1">
             {navItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800 rounded-lg transition font-medium"
+                className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800 rounded-lg transition font-medium text-sm"
                 onClick={() => setIsOpen(false)}
               >
                 {item.name}
               </Link>
             ))}
-            <Link href="/contact">
-              <button className="w-full mt-2 bg-[#f22020] hover:bg-red-700 text-white px-4 py-2 rounded-lg transition font-medium">
+
+            {/* Mobile Tools section */}
+            <div className="py-2 border-t border-slate-800 my-2">
+              <div className="px-3 text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Интерактивни Инструменти</div>
+              {toolItems.map((tool) => {
+                const Icon = tool.icon;
+                return (
+                  <Link
+                    key={tool.name}
+                    href={tool.href}
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center gap-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800 rounded-lg transition font-medium text-sm"
+                  >
+                    <Icon className="w-4 h-4 text-[#0098b2]" />
+                    <span>{tool.name}</span>
+                  </Link>
+                );
+              })}
+            </div>
+
+            <Link href="/contact" onClick={() => setIsOpen(false)}>
+              <button className="w-full mt-2 bg-[#f22020] hover:bg-red-700 text-white px-4 py-2 rounded-lg transition font-medium text-sm">
                 Свържете се
               </button>
             </Link>
