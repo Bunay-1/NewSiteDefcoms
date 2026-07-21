@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X, Shield } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,6 +14,7 @@ export default function Navbar() {
     { name: "Технологии", href: "/technologies" },
     { name: "Екип", href: "/team" },
     { name: "Съответствие", href: "/compliance" },
+    { name: "Демо", href: "/demo" },
     { name: "Контакти", href: "/contact" },
   ];
 
@@ -42,9 +43,11 @@ export default function Navbar() {
                 {item.name}
               </Link>
             ))}
-            <button className="bg-[#f22020] hover:bg-red-700 text-white px-4 py-2 rounded-lg transition font-medium">
-              Свържете се
-            </button>
+            <Link href="/contact">
+              <button className="bg-[#f22020] hover:bg-red-700 text-white px-4 py-2 rounded-lg transition font-medium">
+                Свържете се
+              </button>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
@@ -71,9 +74,11 @@ export default function Navbar() {
                 {item.name}
               </Link>
             ))}
-            <button className="w-full mt-2 bg-[#f22020] hover:bg-red-700 text-white px-4 py-2 rounded-lg transition font-medium">
-              Свържете се
-            </button>
+            <Link href="/contact">
+              <button className="w-full mt-2 bg-[#f22020] hover:bg-red-700 text-white px-4 py-2 rounded-lg transition font-medium">
+                Свържете се
+              </button>
+            </Link>
           </div>
         </div>
       )}
