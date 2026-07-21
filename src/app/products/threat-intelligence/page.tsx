@@ -1,5 +1,7 @@
-import { Radar, CheckCircle, ArrowRight, Image as ImageIcon } from "lucide-react";
+import { Radar, CheckCircle, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+import FaqAccordion from "@/components/FaqAccordion";
 
 export default function ThreatIntelligencePage() {
   const faqs = [
@@ -12,7 +14,7 @@ export default function ThreatIntelligencePage() {
       answer: "Използваме комбинация от източници: open-source intelligence (OSINT), commercial threat feeds, government CERT advisories, dark web monitoring, honeypot мрежи и данни от нашата SOC платформа."
     },
     {
-      question: "Как се интегрира със съществуващи системи?",
+      question: "Как се интегрира със съществуващие системи?",
       answer: "Платформата поддържа интеграции с SIEM системи (Splunk, IBM QRadar), firewall-и (Palo Alto, Cisco), EDR решения и SOC платформи чрез STIX/TAXII протоколи и REST API."
     },
     {
@@ -26,16 +28,13 @@ export default function ThreatIntelligencePage() {
   ];
 
   const galleryImages = [
-    { title: "Threat Dashboard", description: "Централен dashboard за заплахи" },
-    { title: "IOC Analysis", description: "Анализ на индикатори" },
-    { title: "MITRE ATT&CK", description: "Mapping към MITRE ATT&CK" },
-    { title: "Geolocation", description: "Геолокация на заплахи" },
-    { title: "Dark Web", description: "Dark web мониторинг" },
-    { title: "Predictive Analysis", description: "Прогнозен анализ" }
+    { title: "Threat Detection & Analysis", description: "Интелигентно откриване на сложни вектори на атака в реално време", src: "/SocNoc/Threats.webp" },
+    { title: "Global Threat Map", description: "Глобална карта и разположение на заплахите по света", src: "/SocNoc/interface_global_threat_dashboard.webp" },
+    { title: "Threat Hunting Console", description: "Управление и проактивно преследване на заплахи", src: "/LANProject/03_threat-hunting.webp" }
   ];
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-24 px-4">
+    <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-24 px-4 pb-20">
       <div className="max-w-7xl mx-auto">
         {/* Breadcrumb */}
         <div className="mb-8">
@@ -72,13 +71,18 @@ export default function ThreatIntelligencePage() {
         </div>
 
         {/* Gallery */}
-        <div className="mb-16">
+        <div className="mb-20">
           <h2 className="text-3xl font-bold text-white mb-8">Галерия</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {galleryImages.map((image, index) => (
-              <div key={index} className="bg-slate-800 rounded-xl overflow-hidden border border-slate-700">
-                <div className="aspect-video bg-gradient-to-br from-slate-700 to-slate-600 flex items-center justify-center">
-                  <ImageIcon className="w-16 h-16 text-slate-500" />
+              <div key={index} className="bg-slate-800 rounded-xl overflow-hidden border border-slate-700 hover:border-[#0098b2]/50 transition duration-300 transform hover:scale-[1.02]">
+                <div className="aspect-video relative">
+                  <Image
+                    src={image.src}
+                    alt={image.title}
+                    fill
+                    className="object-cover"
+                  />
                 </div>
                 <div className="p-4">
                   <h3 className="text-white font-semibold mb-1">{image.title}</h3>
@@ -90,16 +94,9 @@ export default function ThreatIntelligencePage() {
         </div>
 
         {/* FAQ */}
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold text-white mb-8">Често задавани въпроси</h2>
-          <div className="space-y-4">
-            {faqs.map((faq, index) => (
-              <div key={index} className="bg-slate-800 p-6 rounded-xl border border-slate-700">
-                <h3 className="text-lg font-bold text-[#0098b2] mb-3">{faq.question}</h3>
-                <p className="text-gray-300">{faq.answer}</p>
-              </div>
-            ))}
-          </div>
+        <div className="mb-20">
+          <h2 className="text-3xl font-bold text-white text-center mb-10">Често задавани въпроси</h2>
+          <FaqAccordion items={faqs} colorTheme="blue" />
         </div>
 
         {/* CTA */}
@@ -110,10 +107,12 @@ export default function ThreatIntelligencePage() {
           <p className="text-white/80 mb-6">
             Свържете се с нас за демо или безплатна консултация
           </p>
-          <button className="bg-white text-[#0098b2] px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition flex items-center gap-2 mx-auto">
-            Свържете се с нас
-            <ArrowRight className="w-5 h-5" />
-          </button>
+          <Link href="/contact">
+            <button className="bg-white text-[#0098b2] hover:bg-gray-100 px-8 py-3 rounded-lg font-semibold transition flex items-center gap-2 mx-auto">
+              Свържете се с нас
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          </Link>
         </div>
       </div>
     </main>

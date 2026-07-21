@@ -43,6 +43,27 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Rich Structured Data (Schema.org / JSON-LD) for SEO and AI Agent crawling
+  const organizationJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "DefComs",
+    "url": "https://defcoms.eu",
+    "logo": "https://defcoms.eu/images/Logos/DefComs-logo.png",
+    "description": "Модерен доставчик на решения за киберсигурност, SOC платформа, SIEM решения, съответствие с NIS2, GDPR, DORA и CRA.",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+359-886-088-668",
+      "contactType": "sales",
+      "email": "info@defcoms.eu",
+      "areaServed": "EU",
+      "availableLanguage": ["Bulgarian", "English"]
+    },
+    "sameAs": [
+      "https://github.com/Def-Coms"
+    ]
+  };
+
   return (
     <html lang="bg">
       <head>
@@ -51,6 +72,10 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/site.webmanifest" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
       </head>
       <body className={inter.className}>
         <Navbar />

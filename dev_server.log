@@ -1,0 +1,22 @@
+
+> defcoms-website@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.5
+  - Local:        http://localhost:3000
+
+ ✓ Starting...
+ ✓ Ready in 1732ms
+ ○ Compiling / ...
+ ✓ Compiled / in 9s (1612 modules)
+ HEAD / 200 in 9883ms
+ ✓ Compiled in 1241ms (802 modules)
+ GET / 200 in 109ms
+ ○ Compiling /technologies ...
+ ✓ Compiled /technologies in 1817ms (1653 modules)
+ GET /technologies 200 in 2176ms
+ ✓ Compiled /products/soc-platform in 482ms (1669 modules)
+ GET /products/soc-platform 200 in 650ms
+ ✓ Compiled /contact in 485ms (1685 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ GET /contact 200 in 602ms
