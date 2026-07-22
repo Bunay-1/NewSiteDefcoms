@@ -11,7 +11,7 @@ interface SecurityModule {
   category: string;
   coveragePoints: number; // contribution to coverage percentage
   difficultyMultiplier: number; // how critical it is
-  basePrice: number; // BGN per month
+  basePrice: number; // EUR per month
   icon: any;
 }
 
@@ -181,7 +181,7 @@ export default function BundleConfigurator() {
 
                   <div className="flex justify-between items-center w-full pt-3 border-t border-slate-700/50 text-xs">
                     <span className="text-green-400 font-semibold">+{mod.coveragePoints}% Защита</span>
-                    <span className="text-white font-bold">{mod.basePrice} лв./мес.</span>
+                    <span className="text-white font-bold">{mod.basePrice} €/мес.</span>
                   </div>
                 </button>
               );
@@ -221,18 +221,18 @@ export default function BundleConfigurator() {
               <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Калкулация на месечен абонамент</h4>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Избрани модули ({activeModules.length} бр.):</span>
-                <span className="font-semibold text-white">{rawPrice} лв./мес.</span>
+                <span className="font-semibold text-white">{rawPrice} €/мес.</span>
               </div>
               {discountRate > 0 && (
                 <div className="flex justify-between text-sm text-green-400">
                   <span>Обемна отстъпка ({(discountRate * 100)}%):</span>
-                  <span>-{Math.round(rawPrice * discountRate)} лв./мес.</span>
+                  <span>-{Math.round(rawPrice * discountRate)} €/мес.</span>
                 </div>
               )}
               <div className="border-t border-slate-700 pt-3 flex justify-between items-end">
                 <span className="text-sm font-bold text-white">Индикативна цена:</span>
                 <div className="text-right">
-                  <span className="text-2xl font-black text-green-400">{totalPrice} лв.</span>
+                  <span className="text-2xl font-black text-green-400">{totalPrice} €</span>
                   <span className="text-[10px] text-gray-400 block">/ месец</span>
                 </div>
               </div>

@@ -8,7 +8,7 @@ import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } fro
 export default function RoiCalculator() {
   // Inputs
   const [employees, setEmployees] = useState(50);
-  const [revenue, setRevenue] = useState(2500000); // 2.5 Million BGN
+  const [revenue, setRevenue] = useState(2500000); // 2.5 Million EUR
   const [sector, setSector] = useState("services"); // services, finance, critical, retail, manufacturing
   const [downtimeHours, setDowntimeHours] = useState(24);
   const [hasBasicSecurity, setHasBasicSecurity] = useState(true);
@@ -25,7 +25,7 @@ export default function RoiCalculator() {
   const currentSector = sectorData[sector] || sectorData.services;
 
   // 1. Downtime cost calculation
-  // Average cost per employee hour of downtime = 35 BGN
+  // Average cost per employee hour of downtime = 35 EUR
   // Business hourly revenue lost = revenue / (365 * 8) => only active hours
   const businessHourlyRevenue = revenue / 2920;
   const laborLoss = employees * 35 * downtimeHours;
@@ -65,7 +65,7 @@ export default function RoiCalculator() {
   // DefComs implementation pricing (approximate yearly subscription)
   // Dynamic based on size and sector risk
   const baseSubscription = 12000; // Minimal SIEM + Threat Detection
-  const perUserCost = employees * 360; // 30 BGN per user per month => 360/year
+  const perUserCost = employees * 360; // 30 EUR per user per month => 360/year
   const defcomsCost = Math.round(baseSubscription + perUserCost);
 
   // Mitigated Risk: DefComs reduces risk probability by 95%
@@ -75,21 +75,21 @@ export default function RoiCalculator() {
   const roiPercentage = Math.round((netSavings / defcomsCost) * 100);
 
   // Format currency helpers
-  const formatBGN = (val: number) => {
-    return new Intl.NumberFormat("bg-BG", { style: "currency", currency: "BGN", maximumFractionDigits: 0 }).format(val);
+  const formatEUR = (val: number) => {
+    return new Intl.NumberFormat("bg-BG", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(val);
   };
 
   // Recharts Data
   const chartData = [
     {
       name: "Без DefComs (Годишен Риск)",
-      "Риск от загуба (BGN)": annualizedLossExposure,
-      "Разходи за защита (BGN)": 0,
+      "Риск от загуба (€)": annualizedLossExposure,
+      "Разходи за защита (€)": 0,
     },
     {
       name: "С DefComs (Сигурност)",
-      "Риск от загуба (BGN)": Math.round(annualizedLossExposure * 0.05),
-      "Разходи за защита (BGN)": defcomsCost,
+      "Риск от загуба (€)": Math.round(annualizedLossExposure * 0.05),
+      "Разходи за защита (€)": defcomsCost,
     }
   ];
 
@@ -129,8 +129,8 @@ export default function RoiCalculator() {
           {/* Revenue Slider */}
           <div>
             <div className="flex justify-between mb-2">
-              <label className="text-sm font-semibold text-gray-300">Годишен оборот (лв.):</label>
-              <span className="text-[#0098b2] font-bold text-sm">{formatBGN(revenue)}</span>
+              <label className="text-sm font-semibold text-gray-300">Годишен оборот (€):</label>
+              <span className="text-[#0098b2] font-bold text-sm">{formatEUR(revenue)}</span>
             </div>
             <input
               type="range"
@@ -142,10 +142,10 @@ export default function RoiCalculator() {
               className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#0098b2]"
             />
             <div className="flex justify-between text-[11px] text-gray-500 mt-1">
-              <span>100 хил. лв.</span>
-              <span>10 млн. лв.</span>
-              <span>20 млн. лв.</span>
-              <span>30 млн. лв.</span>
+              <span>100 хил. €</span>
+              <span>10 млн. €</span>
+              <span>20 млн. €</span>
+              <span>30 млн. €</span>
             </div>
           </div>
 
@@ -222,12 +222,12 @@ export default function RoiCalculator() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <div className="bg-red-950/20 border border-red-900/30 p-4 rounded-xl">
                 <div className="text-xs font-bold text-red-400 uppercase tracking-wider mb-1">Разходи при единичен пробив (SLE)</div>
-                <div className="text-2xl font-black text-white">{formatBGN(totalBreachCost)}</div>
+                <div className="text-2xl font-black text-white">{formatEUR(totalBreachCost)}</div>
                 <div className="text-[11px] text-gray-400 mt-1">Очаквана цена за възстановяване, глоби и репутация.</div>
               </div>
               <div className="bg-yellow-950/20 border border-yellow-900/30 p-4 rounded-xl">
                 <div className="text-xs font-bold text-yellow-400 uppercase tracking-wider mb-1">Очакван годишен риск (ALE)</div>
-                <div className="text-2xl font-black text-white">{formatBGN(annualizedLossExposure)}</div>
+                <div className="text-2xl font-black text-white">{formatEUR(annualizedLossExposure)}</div>
                 <div className="text-[11px] text-gray-400 mt-1">Усреднена годишна загуба на база математическа вероятност.</div>
               </div>
             </div>
@@ -237,15 +237,15 @@ export default function RoiCalculator() {
               <h4 className="text-sm font-bold text-white uppercase tracking-wider">Разбивка на единичния пробив (SLE)</h4>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">1. Загуби от престой и прекъснат процес:</span>
-                <span className="font-semibold text-gray-200">{formatBGN(downtimeCost)}</span>
+                <span className="font-semibold text-gray-200">{formatEUR(downtimeCost)}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">2. Глоби по регламенти (GDPR / NIS2):</span>
-                <span className="font-semibold text-gray-200">{formatBGN(fineExposure)}</span>
+                <span className="font-semibold text-gray-200">{formatEUR(fineExposure)}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">3. Репутационни щети и отлив на клиенти:</span>
-                <span className="font-semibold text-gray-200">{formatBGN(reputationCost)}</span>
+                <span className="font-semibold text-gray-200">{formatEUR(reputationCost)}</span>
               </div>
             </div>
 
@@ -261,11 +261,11 @@ export default function RoiCalculator() {
                   <Tooltip
                     contentStyle={{ backgroundColor: "#1e293b", borderColor: "#475569", borderRadius: "8px" }}
                     itemStyle={{ color: "#fff" }}
-                    formatter={(val: any) => formatBGN(val)}
+                    formatter={(val: any) => formatEUR(val)}
                   />
                   <Legend wrapperStyle={{ fontSize: "11px", paddingTop: "5px" }} />
-                  <Bar dataKey="Риск от загуба (BGN)" fill="#f22020" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="Разходи за защита (BGN)" fill="#0098b2" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="Риск от загуба (€)" fill="#f22020" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="Разходи за защита (€)" fill="#0098b2" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -279,7 +279,7 @@ export default function RoiCalculator() {
                 </div>
                 <p className="text-gray-300 text-sm max-w-md leading-relaxed">
                   Защитата на DefComs намалява годишния ви риск с <span className="text-green-400 font-bold">95%</span>.
-                  Инвестирайки в нашата сигурност, вие спестявате нетно <span className="text-white font-bold">{formatBGN(netSavings)}</span> годишно.
+                  Инвестирайки в нашата сигурност, вие спестявате нетно <span className="text-white font-bold">{formatEUR(netSavings)}</span> годишно.
                 </p>
               </div>
               <div className="text-center md:text-right flex-shrink-0 bg-slate-800/80 px-6 py-4 rounded-xl border border-teal-500/20 w-full md:w-auto">
