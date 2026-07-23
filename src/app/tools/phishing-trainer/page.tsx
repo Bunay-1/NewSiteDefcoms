@@ -1,5 +1,12 @@
 import PhishingTrainer from "@/components/PhishingTrainer";
 import { Mail, HelpCircle } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Фишинг Тренажор - Интерактивна Игра за Разпознаване на Измами | DefComs",
+  description: "Изпробвайте своята бдителност с нашия безплатен интерактивен фишинг тренажор. Научете се да разпознавате опасни имейли, проектирани за кражба на данни.",
+  keywords: "фишинг тренажор, разпознаване на фишинг, фишинг игра, обучение за сигурност, фишинг симулация",
+};
 
 export default function PhishingPage() {
   return (

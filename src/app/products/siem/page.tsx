@@ -2,6 +2,13 @@ import { Eye, CheckCircle, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import FaqAccordion from "@/components/FaqAccordion";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "SIEM Solution - Управление на Логове и Корелация на Събития | DefComs",
+  description: "Система за управление на информация и събития за сигурността (SIEM) с интелигентна корелация на логове и събития в реално време за разпознаване на аномалии.",
+  keywords: "SIEM решения, управление на логове, корелация на събития за сигурност, засичане на аномалии",
+};
 
 export default function SIEMPage() {
   const faqs = [
@@ -36,8 +43,77 @@ export default function SIEMPage() {
     { title: "Global Dashboard", description: "Глобален dashboard", src: "/SocNoc/interface_global_threat_dashboard.webp" }
   ];
 
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "SIEM Solution",
+    "image": "https://defcoms.eu/SocNoc/SIEM.webp",
+    "description": "Система за управление на информация и събития за сигурността с ML-базирана корелация и анализ на събития.",
+    "brand": {
+      "@type": "Brand",
+      "name": "DefComs"
+    },
+    "offers": {
+      "@type": "AggregateOffer",
+      "priceCurrency": "EUR",
+      "lowPrice": "399",
+      "highPrice": "3999",
+      "offerCount": "3"
+    }
+  };
+
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map(faq => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer
+      }
+    }))
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Начало",
+        "item": "https://defcoms.eu"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Продукти",
+        "item": "https://defcoms.eu/products"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "SIEM Solution",
+        "item": "https://defcoms.eu/products/siem"
+      }
+    ]
+  };
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-24 px-4 pb-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <Link href="/products" className="text-[#0098b2] hover:underline">

@@ -1,5 +1,12 @@
 import { Linkedin, Mail, Shield, Cpu, Globe, Lock } from "lucide-react";
 import Image from "next/image";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Нашият Екип и Сертифицирани Експерти по Сигурност | DefComs",
+  description: "Запознайте се с екипа от сертифицирани професионалисти по киберсигурност на DefComs. Притежатели на международни сертификати като CISSP, CEH, OSCP и GDPR.",
+  keywords: "екип киберсигурност, експерти сигурност, сертифицирани професионалисти, CISSP експерти, OSCP пентестери",
+};
 
 export default function TeamPage() {
   const team = [

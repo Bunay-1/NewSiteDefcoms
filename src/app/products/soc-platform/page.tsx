@@ -2,6 +2,13 @@ import { Shield, CheckCircle, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import FaqAccordion from "@/components/FaqAccordion";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "SOC Платформа - 24/7 Мониторинг на Киберзаплахи | DefComs",
+  description: "Централизирана SOC платформа за проактивно засичане, мониторинг и управление на инциденти в реално време с AI-базиран анализ и 24/7 защита на вашата инфраструктура.",
+  keywords: "SOC Платформа, център за сигурност, 24/7 кибер мониторинг, автоматизиран отговор на инциденти",
+};
 
 export default function SOCPlatformPage() {
   const faqs = [
@@ -39,8 +46,77 @@ export default function SOCPlatformPage() {
     { title: "Indicators", description: "Индикатори за компрометация", src: "/SocNoc/indicator.webp" }
   ];
 
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "SOC Platform",
+    "image": "https://defcoms.eu/SocNoc/Dashboard.webp",
+    "description": "Централизирана платформа за мониторинг и управление на инциденти в реално време с AI-базирано откриване на заплахи.",
+    "brand": {
+      "@type": "Brand",
+      "name": "DefComs"
+    },
+    "offers": {
+      "@type": "AggregateOffer",
+      "priceCurrency": "EUR",
+      "lowPrice": "499",
+      "highPrice": "4999",
+      "offerCount": "3"
+    }
+  };
+
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map(faq => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer
+      }
+    }))
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Начало",
+        "item": "https://defcoms.eu"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Продукти",
+        "item": "https://defcoms.eu/products"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "SOC Platform",
+        "item": "https://defcoms.eu/products/soc-platform"
+      }
+    ]
+  };
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-24 px-4 pb-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <div className="max-w-7xl mx-auto">
         {/* Breadcrumb */}
         <div className="mb-8">

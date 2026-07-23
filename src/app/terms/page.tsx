@@ -1,3 +1,11 @@
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Условия за Ползване и Договор за SLA | DefComs",
+  description: "Условия за ползване на уебсайта и платформите на DefComs. Детайли относно SLA гаранциите, плащанията, правилата за сигурност и съответствието с европейските регламенти.",
+  keywords: "условия за ползване, SLA гаранции, правила за сигурност, договор киберсигурност, юридически условия",
+};
+
 export default function TermsOfService() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-24 px-4 pb-20">

@@ -1,5 +1,12 @@
 import BundleConfigurator from "@/components/BundleConfigurator";
 import { Sparkles, ShieldCheck } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Интерактивен Конфигуратор на Киберзащита | DefComs",
+  description: "Сглобете идеалния пакет от услуги за киберсигурност за вашия бизнес, изчислете цената и проверете нивото на защита с нашия интерактивен конфигуратор.",
+  keywords: "конфигуратор киберзащита, абонамент киберсигурност, пакет услуги сигурност, ценообразуване киберсигурност",
+};
 
 export default function BundlePage() {
   return (

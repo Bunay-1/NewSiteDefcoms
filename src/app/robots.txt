@@ -1,11 +1,81 @@
-# Allow all crawlers
+# Global Crawlers (Google, Bing, Yahoo, Yandex, DuckDuckGo etc.)
 User-agent: *
 Allow: /
-
-# Sitemap
-Sitemap: https://defcoms.eu/sitemap.xml
-
-# Disallow sensitive areas
 Disallow: /api/
 Disallow: /admin/
 Disallow: /private/
+Disallow: /*_next/static/
+Disallow: /*_next/data/
+
+# AI Crawlers & LLM Scrapers (GPTBot, ClaudeBot, Google-Extended, etc.)
+# We allow AI agents to crawl the site to index DefComs' expertise, solutions, and threat intelligence.
+# This ensures DefComs is perfectly represented in AI search engines and RAG pipelines (e.g. ChatGPT Search, Perplexity).
+
+User-agent: GPTBot
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /private/
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /private/
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /private/
+
+User-agent: Claude-Web
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /private/
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /private/
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /private/
+
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /private/
+
+User-agent: anthropic-ai
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /private/
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /private/
+
+User-agent: cohere-ai
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /private/
+
+User-agent: facebookexternalhit
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /private/
+
+# Sitemap Link
+Sitemap: https://defcoms.eu/sitemap.xml
