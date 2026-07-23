@@ -1,5 +1,12 @@
 import RoiCalculator from "@/components/RoiCalculator";
 import { ShieldCheck, TrendingUp, Info } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "ROI Калкулатор на Киберсигурност | Финансова Оценка на Риска | DefComs",
+  description: "Изчислете финансовите загуби при евентуална кибератака срещу вашата организация и вижте възвръщаемостта на инвестицията (ROI) с денонощна защита от DefComs.",
+  keywords: "ROI калкулатор сигурност, финансова оценка на риска, ALE SLE изчисления, спестявания киберсигурност",
+};
 
 export default function RoiPage() {
   return (

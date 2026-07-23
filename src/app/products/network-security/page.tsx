@@ -1,6 +1,13 @@
 import { Network, CheckCircle, ArrowRight, Image as ImageIcon } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Network Security - Сигурност на Мрежовата Инфраструктура | DefComs",
+  description: "Цялостна защита на корпоративни мрежи с IDS/IPS системи, управление на защитни стени (firewall), сегментиране на мрежата и SOAR интеграция за автоматична реакция.",
+  keywords: "Network Security, IDS/IPS, мрежова сигурност, мрежова сегментация, защита от мрежови атаки",
+};
 
 export default function NetworkSecurityPage() {
   const faqs = [

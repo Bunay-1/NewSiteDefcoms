@@ -1,6 +1,13 @@
 import ThreatHub from "@/components/ThreatHub";
 import { ShieldAlert, Terminal } from "lucide-react";
 import Link from "next/link";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Център за Уязвимости и Киберзаплахи - CVE Анализ | DefComs",
+  description: "Бъдете информирани за най-новите критични софтуерни уязвимости (CVE) и заплахи за сигурността. Анализи и препоръки от екипа на DefComs Security Intelligence.",
+  keywords: "център за заплахи, уязвимости CVE, анализ на уязвимости, сигурност препоръки, най-новите CVE",
+};
 
 export default function ThreatPage() {
   return (

@@ -1,3 +1,11 @@
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Политика за Поверителност и GDPR Съответствие | DefComs",
+  description: "Политика за поверителност на DefComs в пълно съответствие с Общия регламент за защита на личните данни (GDPR). Информация за събирането, съхранението и защитата на вашите данни.",
+  keywords: "политика за поверителност, лични данни GDPR, защита на поверителността, защита на данни, права GDPR",
+};
+
 export default function PrivacyPolicy() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-24 px-4 pb-20">

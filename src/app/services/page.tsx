@@ -1,4 +1,11 @@
 import { Shield, Search, FileText, Users, Cpu, Lock, Globe, AlertTriangle } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Услуги за Киберсигурност - Пентестинг, Одити и Консултации | DefComs",
+  description: "Разнообразие от високопрофесионални кибер услуги: проникващи тестове (пентестинг), съответствие с NIS2/GDPR/ISO 27001, 24/7 SOC и реагиране при инциденти.",
+  keywords: "кибер услуги, пентестинг, проникващи тестове, одит сигурност, съответствие NIS2, консултации GDPR, инцидент мениджмънт",
+};
 
 export default function ServicesPage() {
   const services = [
@@ -100,8 +107,59 @@ export default function ServicesPage() {
     }
   ];
 
+  const servicesJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "serviceType": "Cybersecurity Services",
+    "provider": {
+      "@type": "Organization",
+      "name": "DefComs",
+      "url": "https://defcoms.eu"
+    },
+    "areaServed": "EU",
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Cybersecurity Services Portfolio",
+      "itemListElement": services.map((service, index) => ({
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": service.title,
+          "description": service.description
+        }
+      }))
+    }
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Начало",
+        "item": "https://defcoms.eu"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Услуги",
+        "item": "https://defcoms.eu/services"
+      }
+    ]
+  };
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-24 px-4">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(servicesJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <div className="max-w-7xl mx-auto">
         <h1 className="text-5xl font-bold text-white text-center mb-6">
           Нашите услуги

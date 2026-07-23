@@ -1,5 +1,12 @@
 import ComplianceBadge from "@/components/ComplianceBadge";
 import RiskCalculator from "@/components/RiskCalculator";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Съответствие с EU Директиви - GDPR, NIS2, DORA, CRA, EU AI Act | DefComs",
+  description: "Осигурете пълно съответствие с най-строгите европейски директиви и регламенти: NIS2, GDPR, DORA, CRA, ISO 27001, SOC 2 и EU AI Act с нашите решения.",
+  keywords: "съответствие EU, NIS2 директива, GDPR защита, DORA регламент, Cyber Resilience Act, EU AI Act, ISO 27001",
+};
 
 export default function CompliancePage() {
   const complianceData = [

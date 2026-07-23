@@ -1,5 +1,12 @@
 import { Shield, Lock, Globe, AlertTriangle, Eye, Cpu, Database, Network } from "lucide-react";
 import Link from "next/link";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Продукти за Киберсигурност | SOC, SIEM, Endpoint & Network Security | DefComs",
+  description: "Разгледайте гамата от специализирани продукти на DefComs за защита на бизнеса: SOC Платформа, SIEM решения, Защита на крайни точки (Endpoint Protection), Мрежова сигурност и Скенер на уязвимости.",
+  keywords: "продукти киберсигурност, SOC Платформа, SIEM решения, Endpoint Protection, Мрежова сигурност, скенер уязвимости, Threat Intelligence",
+};
 
 export default function ProductsPage() {
   const products = [

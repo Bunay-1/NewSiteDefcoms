@@ -2,6 +2,13 @@ import { Radar, CheckCircle, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import FaqAccordion from "@/components/FaqAccordion";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Threat Intelligence - Разузнаване за Киберзаплахи | DefComs",
+  description: "Разузнаване и анализ на глобални киберзаплахи в реално време. Идентифициране на индикатори за компрометация (IOCs) и техники на атакуващите (MITRE ATT&CK).",
+  keywords: "Threat Intelligence, разузнаване заплахи, IOCs, MITRE ATT&CK, киберразузнаване",
+};
 
 export default function ThreatIntelligencePage() {
   const faqs = [

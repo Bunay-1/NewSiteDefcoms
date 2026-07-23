@@ -2,6 +2,13 @@ import { Lock, CheckCircle, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import FaqAccordion from "@/components/FaqAccordion";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Endpoint Protection - Защита на Крайни Точки и Работни Станции | DefComs",
+  description: "Комплексно решение за защита на крайни точки (EDR) срещу Ransomware, малуер и сложни фишинг атаки за работни станции, сървъри и мобилни устройства.",
+  keywords: "Endpoint Protection, EDR защита, анти-вирус, защита срещу ransomware, сигурност на крайни точки",
+};
 
 export default function EndpointProtectionPage() {
   const faqs = [

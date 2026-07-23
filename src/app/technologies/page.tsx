@@ -2,6 +2,13 @@ import { Cpu, Cloud, Database, Shield, Brain, Globe, Code, Server, Lock } from "
 import Image from "next/image";
 import Link from "next/link";
 import LogoCarousel from "@/components/LogoCarousel";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Използвани Технологии за Киберсигурност | DefComs",
+  description: "Запознайте се с нашия технологичен стек от последно поколение: облачни платформи AWS/Azure, AI и ML библиотеки, DevOps технологии, бази данни и системи за сигурност.",
+  keywords: "технологичен стек, AWS, Azure, Next.js, Python, Kubernetes, Docker, изкуствен интелект в сигурността",
+};
 
 export default function TechnologiesPage() {
   const categories = [
