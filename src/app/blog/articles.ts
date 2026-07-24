@@ -79,5 +79,35 @@ export const articles: Article[] = [
     date: "01 Юни 2024",
     readTime: "7 мин.",
     image: "/Persevs/04_Reports_Page_Persevs.webp"
+  },
+  {
+    slug: "guide-ransomware-incident-response",
+    title: "Практическо ръководство за реакция при инциденти с рансъмуер",
+    excerpt: "Стъпка по стъпка: как да реагирате при засичане на криптиращ вирус, как да изолирате инфекцията и да възстановите системите си без да плащате откуп.",
+    category: "Ръководства",
+    author: "Михаил Петров",
+    date: "18 Юни 2024",
+    readTime: "9 мин.",
+    image: "/SocNoc/incident.webp"
+  },
+  {
+    slug: "guide-corporate-wifi-security",
+    title: "Ръководство за сигурност на корпоративната безжична мрежа",
+    excerpt: "Най-добрите практики за конфигуриране на корпоративен Wi-Fi: от WPA3 Enterprise, през мрежова сегментация за гости, до 802.1X удостоверяване.",
+    category: "Ръководства",
+    author: "Николай Николов",
+    date: "14 Юни 2024",
+    readTime: "7 мин.",
+    image: "/LANProject/network_security.webp"
+  },
+  {
+    slug: "guide-mfa-password-policy",
+    title: "Наръчник по киберхигиена: Правилно внедряване на MFA и сигурни пароли",
+    excerpt: "Защо традиционната промяна на пароли на 90 дни е остаряла и как правилното внедряване на MFA и безпаролни (passwordless) методи спира 99% от атаките.",
+    category: "Ръководства",
+    author: "Елена Георгиева",
+    date: "08 Юни 2024",
+    readTime: "6 мин.",
+    image: "/Persevs/02_Signup_Page_persevs.webp"
   }
 ];

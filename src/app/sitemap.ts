@@ -24,6 +24,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "daily",
       priority: 0.9,
     },
+    // Articles
     {
       url: `${baseUrl}/blog/nis2-compliance-bulgaria`,
       lastModified: currentDate,
@@ -38,6 +39,49 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${baseUrl}/blog/benefits-of-24-7-soc`,
+      lastModified: currentDate,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/blog/dora-regulations-financial-sector`,
+      lastModified: currentDate,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/blog/gdpr-data-protection-in-soc`,
+      lastModified: currentDate,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/blog/vulnerability-scanning-proactive-defense`,
+      lastModified: currentDate,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/blog/edr-endpoint-protection-ransomware`,
+      lastModified: currentDate,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    // Guides
+    {
+      url: `${baseUrl}/blog/guide-ransomware-incident-response`,
+      lastModified: currentDate,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/blog/guide-corporate-wifi-security`,
+      lastModified: currentDate,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/blog/guide-mfa-password-policy`,
       lastModified: currentDate,
       changeFrequency: "weekly",
       priority: 0.8,
