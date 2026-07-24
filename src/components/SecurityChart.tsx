@@ -1,8 +1,8 @@
 "use client";
 
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend } from "recharts";
 
-const COLORS = ["#0098b2", "#f22020", "#005f7f", "#8884d8"];
+const COLORS = ["#0098b2", "#f22020", "#005f7f", "#8884d8", "#475569"];
 
 export function ThreatChart() {
   const data = [
@@ -15,14 +15,14 @@ export function ThreatChart() {
 
   return (
     <ResponsiveContainer width="100%" height={300}>
-      <PieChart>
+      <PieChart margin={{ left: 25, right: 25, top: 15, bottom: 15 }}>
         <Pie
           data={data}
           cx="50%"
-          cy="50%"
-          labelLine={false}
+          cy="40%"
+          labelLine={true}
           label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-          outerRadius={80}
+          outerRadius={45}
           fill="#8884d8"
           dataKey="value"
         >
@@ -30,7 +30,16 @@ export function ThreatChart() {
             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
           ))}
         </Pie>
-        <Tooltip />
+        <Tooltip
+          contentStyle={{ backgroundColor: "#1e293b", border: "1px solid #334155", borderRadius: "8px" }}
+          itemStyle={{ color: "#fff" }}
+        />
+        <Legend
+          verticalAlign="bottom"
+          height={36}
+          iconType="circle"
+          wrapperStyle={{ fontSize: "11px", color: "#94a3b8", paddingTop: "10px" }}
+        />
       </PieChart>
     </ResponsiveContainer>
   );
