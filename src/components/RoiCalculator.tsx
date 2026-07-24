@@ -208,12 +208,12 @@ export default function RoiCalculator() {
         {/* Right Column - COMPUTED RESULTS */}
         <div className="lg:col-span-7 space-y-6 flex flex-col justify-between">
           <div>
-            <div className="flex justify-between items-start mb-4">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
               <h3 className="text-2xl font-extrabold text-white tracking-tight flex items-center gap-2">
                 <Shield className="w-6 h-6 text-[#0098b2]" />
                 Оценка на Финансовите Заплахи
               </h3>
-              <div className="bg-red-500/10 text-red-400 border border-red-500/30 text-xs px-2.5 py-1 rounded-full font-bold">
+              <div className="bg-red-500/10 text-red-400 border border-red-500/30 text-xs px-2.5 py-1 rounded-full font-bold whitespace-nowrap">
                 Годишна вероятност от инцидент: {breachProbability}%
               </div>
             </div>

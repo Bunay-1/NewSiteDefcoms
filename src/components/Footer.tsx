@@ -51,6 +51,7 @@ export default function Footer() {
               <li><Link href="/products" className="hover:text-white transition">Продукти за защита</Link></li>
               <li><Link href="/services" className="hover:text-white transition">Услуги по киберсигурност</Link></li>
               <li><Link href="/technologies" className="hover:text-white transition">Използвани технологии</Link></li>
+              <li><Link href="/blog" className="hover:text-white transition text-[#0098b2] font-semibold">Блог и Статии</Link></li>
               <li><Link href="/demo" className="hover:text-white transition">SOC Демо Симулатор</Link></li>
             </ul>
           </div>

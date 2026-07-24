@@ -31,7 +31,7 @@ export default function DemoPage() {
   const [currentStatus, setCurrentStatus] = useState("В готовност");
   const [systemHealth, setSystemHealth] = useState(100);
   const [blockedThreatsCount, setBlockedThreatsCount] = useState(1480);
-  const terminalEndRef = useRef<HTMLDivElement>(null);
+  const terminalRef = useRef<HTMLDivElement>(null);
 
   const scenarios: Record<string, Scenario> = {
     ddos: {
@@ -78,8 +78,8 @@ export default function DemoPage() {
   };
 
   useEffect(() => {
-    if (terminalEndRef.current) {
-      terminalEndRef.current.scrollIntoView({ behavior: "smooth" });
+    if (terminalRef.current) {
+      terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
     }
   }, [logs]);
 
@@ -259,7 +259,10 @@ export default function DemoPage() {
               </div>
 
               {/* Console Logs Terminal */}
-              <div className="bg-slate-950 border border-slate-800 rounded-xl p-5 h-80 overflow-y-auto font-mono text-xs space-y-3 shadow-inner">
+              <div
+                ref={terminalRef}
+                className="bg-slate-950 border border-slate-800 rounded-xl p-5 h-80 overflow-y-auto font-mono text-xs space-y-3 shadow-inner"
+              >
                 {logs.length === 0 ? (
                   <div className="h-full flex flex-col justify-center items-center text-gray-500 space-y-2">
                     <Terminal className="w-8 h-8 opacity-40 text-gray-400" />
@@ -273,7 +276,6 @@ export default function DemoPage() {
                     </div>
                   ))
                 )}
-                <div ref={terminalEndRef} />
               </div>
             </div>
 
