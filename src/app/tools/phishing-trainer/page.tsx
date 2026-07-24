@@ -1,6 +1,7 @@
 import PhishingTrainer from "@/components/PhishingTrainer";
-import { Mail, HelpCircle } from "lucide-react";
+import { Mail, HelpCircle, ArrowRight } from "lucide-react";
 import { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Фишинг Тренажор - Интерактивна Игра за Разпознаване на Измами | DefComs",
@@ -47,6 +48,24 @@ export default function PhishingPage() {
             <p className="text-xs leading-relaxed">
               Не натискайте директни линкове за плащане или въвеждане на банкови и служебни пароли в съмнително изглеждащи имейли.
             </p>
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div className="mt-16 bg-gradient-to-r from-red-950/40 to-slate-900 p-10 rounded-2xl text-center border border-red-500/30 shadow-lg shadow-red-500/5 max-w-5xl mx-auto">
+          <h2 className="text-2xl font-bold text-white mb-4">
+            Желаете ли организиране на мащабна фишинг симулация за вашите служители?
+          </h2>
+          <p className="text-gray-400 mb-8 max-w-2xl mx-auto text-sm leading-relaxed">
+            В DefComs можем да създадем напълно автоматизирани, реалистични фишинг сценарии, персонализирани за вашия бизнес, за да обучим служителите ви и драстично да намалим риска от пробив.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/contact" className="mx-auto">
+              <button className="w-full sm:w-auto bg-[#f22020] hover:bg-red-700 text-white font-bold px-8 py-3.5 rounded-xl transition duration-150 flex items-center justify-center gap-2 mx-auto">
+                Заявете Фишинг Симулация
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </Link>
           </div>
         </div>
       </div>
