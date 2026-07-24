@@ -98,7 +98,7 @@ export const articles: Article[] = [
     author: "Николай Николов",
     date: "14 Юни 2024",
     readTime: "7 мин.",
-    image: "/LANProject/network_security.webp"
+    image: "/Sentinel/Infrastructure_network.webp"
   },
   {
     slug: "guide-mfa-password-policy",

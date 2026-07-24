@@ -1,6 +1,8 @@
 import ComplianceBadge from "@/components/ComplianceBadge";
 import RiskCalculator from "@/components/RiskCalculator";
 import { Metadata } from "next";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Съответствие с EU Директиви - GDPR, NIS2, DORA, CRA, EU AI Act | DefComs",
@@ -106,6 +108,29 @@ export default function CompliancePage() {
             <p>
               <strong className="text-[#0098b2]">Оперативна устойчивост:</strong> Стандартизирани, автоматизирани процеси за реакция и смекчаване на уязвимости.
             </p>
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div className="mt-16 bg-gradient-to-r from-[#0098b2] to-[#005f7f] p-10 rounded-2xl text-center border border-[#0098b2]/30 shadow-lg shadow-[#0098b2]/10">
+          <h2 className="text-3xl font-black text-white mb-4">
+            Имате ли нужда от съдействие за съответствие с NIS2 или GDPR?
+          </h2>
+          <p className="text-white/90 mb-8 max-w-2xl mx-auto text-base">
+            Нашите сертифицирани експерти по киберсигурност ще анализират вашите системи и ще изградят пълна стратегия за привеждане в съответствие с европейските регламенти.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/contact">
+              <button className="w-full sm:w-auto bg-[#f22020] hover:bg-red-700 text-white font-bold px-8 py-4 rounded-xl transition duration-150 flex items-center justify-center gap-2 mx-auto">
+                Заявете безплатна консултация
+                <ArrowRight className="w-5 h-5" />
+              </button>
+            </Link>
+            <Link href="/tools/bundle">
+              <button className="w-full sm:w-auto border-2 border-white hover:bg-white hover:text-[#0098b2] text-white font-bold px-8 py-4 rounded-xl transition duration-150 mx-auto">
+                Сглобете пакет услуги
+              </button>
+            </Link>
           </div>
         </div>
       </div>

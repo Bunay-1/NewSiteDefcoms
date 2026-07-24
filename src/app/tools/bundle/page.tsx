@@ -1,6 +1,7 @@
 import BundleConfigurator from "@/components/BundleConfigurator";
-import { Sparkles, ShieldCheck } from "lucide-react";
+import { Sparkles, ShieldCheck, ArrowRight } from "lucide-react";
 import { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Интерактивен Конфигуратор на Киберзащита | DefComs",
@@ -37,6 +38,22 @@ export default function BundlePage() {
           <p className="text-xs text-gray-500 leading-relaxed">
             Всички наши пакети идват с договор за гарантирано ниво на обслужване (SLA) до 99.9% наличност на SOC платформата и гарантирано време за реакция при критични инциденти под 15 минути.
           </p>
+        </div>
+
+        {/* CTA */}
+        <div className="mt-16 bg-gradient-to-r from-slate-900 to-slate-800 p-10 rounded-2xl text-center border border-[#0098b2]/30 shadow-lg shadow-[#0098b2]/5">
+          <h2 className="text-2xl font-bold text-white mb-4">
+            Харесвате конфигурацията си и искате официална оферта?
+          </h2>
+          <p className="text-gray-400 mb-8 max-w-xl mx-auto text-sm">
+            Изпратете ни конфигурирания си списък или се свържете директно, за да получите официална ценова оферта с включена отстъпка и план за внедряване.
+          </p>
+          <Link href="/contact">
+            <button className="bg-[#f22020] hover:bg-red-700 text-white font-bold px-8 py-3.5 rounded-xl transition duration-150 flex items-center justify-center gap-2 mx-auto">
+              Свържете се с нашия екип
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </Link>
         </div>
       </div>
     </main>
