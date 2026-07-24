@@ -1,4 +1,4 @@
-import { Cpu, Cloud, Database, Shield, Brain, Globe, Code, Server, Lock } from "lucide-react";
+import { Cpu, Cloud, Database, Shield, Brain, Globe, Code, Server, Lock, HardDrive, CpuIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import LogoCarousel from "@/components/LogoCarousel";
@@ -158,6 +158,85 @@ export default function TechnologiesPage() {
         {/* Infinite Logo Carousel */}
         <div className="mb-16">
           <LogoCarousel technologies={carouselTechs} />
+        </div>
+
+        {/* Hardware Specifications Section */}
+        <div className="bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900 border border-[#0098b2]/30 rounded-2xl p-8 mb-16 shadow-[0_4px_30px_rgba(0,152,178,0.05)]">
+          <div className="flex items-center gap-3.5 mb-6">
+            <div className="p-3 bg-[#0098b2]/10 rounded-xl border border-[#0098b2]/20 text-[#0098b2]">
+              <Server className="w-7 h-7" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-black text-white tracking-wide">
+                Препоръчителен хардуер, който ползваме
+              </h2>
+              <p className="text-sm text-gray-400">
+                Оптимизирани хардуерни спецификации за максимална производителност и устойчивост на нашите платформи
+              </p>
+            </div>
+          </div>
+
+          <div className="overflow-hidden rounded-xl border border-slate-700/60 bg-slate-900/40">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-slate-850 border-b border-slate-700/60">
+                  <th className="py-4 px-6 text-sm font-bold uppercase tracking-wider text-gray-400 w-1/3">
+                    Компонент
+                  </th>
+                  <th className="py-4 px-6 text-sm font-bold uppercase tracking-wider text-[#0098b2]">
+                    Препоръчително ниво
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-700/40">
+                <tr className="hover:bg-slate-800/30 transition duration-150">
+                  <td className="py-4 px-6 font-semibold text-white flex items-center gap-3">
+                    <Server className="w-4 h-4 text-cyan-500" />
+                    Операционна система (ОС)
+                  </td>
+                  <td className="py-4 px-6 text-gray-300 font-mono text-sm">
+                    Ubuntu Server 24.04 LTS
+                  </td>
+                </tr>
+                <tr className="hover:bg-slate-800/30 transition duration-150">
+                  <td className="py-4 px-6 font-semibold text-white flex items-center gap-3">
+                    <Cpu className="w-4 h-4 text-cyan-500" />
+                    Процесор (CPU)
+                  </td>
+                  <td className="py-4 px-6 text-gray-300">
+                    16–32 ядра
+                  </td>
+                </tr>
+                <tr className="hover:bg-slate-800/30 transition duration-150">
+                  <td className="py-4 px-6 font-semibold text-white flex items-center gap-3">
+                    <Database className="w-4 h-4 text-cyan-500" />
+                    Оперативна памет (RAM)
+                  </td>
+                  <td className="py-4 px-6 text-gray-300">
+                    64–128 GB ECC
+                  </td>
+                </tr>
+                <tr className="hover:bg-slate-800/30 transition duration-150">
+                  <td className="py-4 px-6 font-semibold text-white flex items-center gap-3">
+                    <HardDrive className="w-4 h-4 text-cyan-500" />
+                    Дисково пространство (Storage)
+                  </td>
+                  <td className="py-4 px-6 text-gray-300">
+                    2 × 960 GB NVMe (RAID 1) + 4 × 3.84 TB NVMe (RAID 10)
+                  </td>
+                </tr>
+                <tr className="hover:bg-slate-800/30 transition duration-150">
+                  <td className="py-4 px-6 font-semibold text-white flex items-center gap-3">
+                    <Globe className="w-4 h-4 text-cyan-500" />
+                    Мрежов интерфейс (Мрежа)
+                  </td>
+                  <td className="py-4 px-6 text-gray-300">
+                    2 × 10 GbE
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <div className="space-y-12">
