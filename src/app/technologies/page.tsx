@@ -168,7 +168,7 @@ export default function TechnologiesPage() {
             </div>
             <div>
               <h2 className="text-2xl font-black text-white tracking-wide">
-                Препоръчителен хардуер, който ползваме
+                Техническо обезпечение
               </h2>
               <p className="text-sm text-gray-400">
                 Оптимизирани хардуерни спецификации за максимална производителност и устойчивост на нашите платформи
@@ -184,7 +184,7 @@ export default function TechnologiesPage() {
                     Компонент
                   </th>
                   <th className="py-4 px-6 text-sm font-bold uppercase tracking-wider text-[#0098b2]">
-                    Препоръчително ниво
+                    Покритие
                   </th>
                 </tr>
               </thead>
