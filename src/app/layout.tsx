@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AiChatbot from "@/components/AiChatbot";
+import CookieConsent from "@/components/CookieConsent";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -83,6 +84,7 @@ export default function RootLayout({
         {children}
         <Footer />
         <AiChatbot />
+        <CookieConsent />
       </body>
     </html>
   );
