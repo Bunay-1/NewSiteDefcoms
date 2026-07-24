@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Shield, Check, Info, ArrowRight, Server, Eye, Search, AlertCircle, FileText, Send, Sparkles } from "lucide-react";
+import { Shield, Check, Info, ArrowRight, Server, Eye, Search, AlertCircle, FileText, Send, Sparkles, Calendar, Zap } from "lucide-react";
 import Link from "next/link";
 
 interface SecurityModule {
@@ -17,6 +17,7 @@ interface SecurityModule {
 
 export default function BundleConfigurator() {
   const [selectedModules, setSelectedModules] = useState<string[]>(["soc", "siem"]); // Default selected
+  const [serviceType, setServiceType] = useState<"subscription" | "one-time">("subscription");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", company: "" });
 
@@ -101,8 +102,17 @@ export default function BundleConfigurator() {
   const rawCoverage = activeModules.reduce((sum, m) => sum + m.coveragePoints, 0);
   const coverageScore = Math.min(100, rawCoverage);
 
+  // Helper to compute individual module price based on serviceType
+  const getModulePrice = (mod: SecurityModule) => {
+    if (serviceType === "one-time") {
+      // 300% increase: price = basePrice + 3 * basePrice = basePrice * 4
+      return mod.basePrice * 4;
+    }
+    return mod.basePrice;
+  };
+
   // Total price calculations (apply a discount factor if multiple modules are selected - strictly between 5% and 10% based on bundle size)
-  const rawPrice = activeModules.reduce((sum, m) => sum + m.basePrice, 0);
+  const rawPrice = activeModules.reduce((sum, m) => sum + getModulePrice(m), 0);
 
   let discountRate = 0;
   if (selectedModules.length === 2) {
@@ -142,6 +152,45 @@ export default function BundleConfigurator() {
 
   return (
     <div className="bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl p-6 lg:p-10 text-white max-w-7xl mx-auto">
+
+      {/* Service Type Selection Block */}
+      <div className="bg-slate-950/80 border border-slate-800 rounded-2xl p-6 mb-8 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="space-y-1 text-center md:text-left">
+          <h4 className="text-lg font-bold text-white flex items-center justify-center md:justify-start gap-2">
+            <Zap className="w-5 h-5 text-yellow-400" />
+            Вид на услугата (Условия на ползване)
+          </h4>
+          <p className="text-xs text-gray-400 max-w-xl">
+            Изберете между дългосрочен абонамент с по-ниски месечни цени или еднократно изпълнение (с 300% увеличение, но без ангажимент).
+          </p>
+        </div>
+
+        <div className="flex bg-slate-900 border border-slate-700 p-1.5 rounded-xl gap-1 w-full md:w-auto">
+          <button
+            onClick={() => setServiceType("subscription")}
+            className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-xs font-bold transition duration-200 ${
+              serviceType === "subscription"
+                ? "bg-[#0098b2] text-white shadow-md shadow-[#0098b2]/20"
+                : "text-gray-400 hover:text-white"
+            }`}
+          >
+            <Calendar className="w-4 h-4" />
+            Месечен абонамент
+          </button>
+          <button
+            onClick={() => setServiceType("one-time")}
+            className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-xs font-bold transition duration-200 ${
+              serviceType === "one-time"
+                ? "bg-yellow-500 text-slate-950 shadow-md shadow-yellow-500/20"
+                : "text-gray-400 hover:text-white"
+            }`}
+          >
+            <Zap className="w-4 h-4" />
+            Еднократна услуга
+          </button>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
 
         {/* Left column: Module Selection */}
@@ -160,28 +209,37 @@ export default function BundleConfigurator() {
             {modules.map((mod) => {
               const isSelected = selectedModules.includes(mod.id);
               const Icon = mod.icon;
+              const price = getModulePrice(mod);
               return (
                 <button
                   key={mod.id}
                   onClick={() => toggleModule(mod.id)}
                   className={`text-left p-5 rounded-2xl border transition duration-200 flex flex-col justify-between group focus:outline-none ${
                     isSelected
-                      ? "bg-slate-800/80 border-[#0098b2] shadow-lg shadow-[#0098b2]/5"
+                      ? serviceType === "one-time"
+                        ? "bg-slate-800/80 border-yellow-500 shadow-lg shadow-yellow-500/5"
+                        : "bg-slate-800/80 border-[#0098b2] shadow-lg shadow-[#0098b2]/5"
                       : "bg-slate-800/20 border-slate-700/60 hover:border-slate-600 hover:bg-slate-800/40"
                   }`}
                 >
                   <div>
                     <div className="flex justify-between items-start mb-3">
-                      <div className={`p-2.5 rounded-xl ${isSelected ? "bg-[#0098b2]/20 text-[#0098b2]" : "bg-slate-700/40 text-gray-400 group-hover:text-white"}`}>
+                      <div className={`p-2.5 rounded-xl ${
+                        isSelected
+                          ? serviceType === "one-time" ? "bg-yellow-500/20 text-yellow-400" : "bg-[#0098b2]/20 text-[#0098b2]"
+                          : "bg-slate-700/40 text-gray-400 group-hover:text-white"
+                      }`}>
                         <Icon className="w-5 h-5" />
                       </div>
                       <div className={`w-5 h-5 rounded-full border flex items-center justify-center transition-colors ${
-                        isSelected ? "bg-[#0098b2] border-[#0098b2]" : "border-slate-600 group-hover:border-slate-500"
+                        isSelected
+                          ? serviceType === "one-time" ? "bg-yellow-500 border-yellow-500" : "bg-[#0098b2] border-[#0098b2]"
+                          : "border-slate-600 group-hover:border-slate-500"
                       }`}>
-                        {isSelected && <Check className="w-3.5 h-3.5 text-white" />}
+                        {isSelected && <Check className={`w-3.5 h-3.5 ${serviceType === "one-time" ? "text-slate-950" : "text-white"}`} />}
                       </div>
                     </div>
-                    <span className="text-xs font-bold text-[#0098b2] uppercase tracking-wider block mb-1">
+                    <span className={`text-xs font-bold uppercase tracking-wider block mb-1 ${serviceType === "one-time" ? "text-yellow-400" : "text-[#0098b2]"}`}>
                       {mod.category}
                     </span>
                     <h4 className="text-base font-bold text-white group-hover:text-[#0098b2] transition-colors mb-2">
@@ -194,7 +252,12 @@ export default function BundleConfigurator() {
 
                   <div className="flex justify-between items-center w-full pt-3 border-t border-slate-700/50 text-xs">
                     <span className="text-green-400 font-semibold">+{mod.coveragePoints}% Защита</span>
-                    <span className="text-white font-bold">{mod.basePrice} €/мес.</span>
+                    <div className="text-right">
+                      <span className="text-white font-bold">{price} €</span>
+                      <span className="text-[10px] text-gray-400 block">
+                        {serviceType === "one-time" ? "еднократно" : "на месец"}
+                      </span>
+                    </div>
                   </div>
                 </button>
               );
@@ -231,22 +294,30 @@ export default function BundleConfigurator() {
 
             {/* Price Breakdown */}
             <div className="bg-slate-900/60 border border-slate-700/60 rounded-xl p-4 space-y-3 mb-6">
-              <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Калкулация на месечен абонамент</h4>
+              <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                {serviceType === "one-time" ? "Калкулация за еднократно изпълнение" : "Калкулация на месечен абонамент"}
+              </h4>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-400">Избрани модули ({activeModules.length} бр.):</span>
-                <span className="font-semibold text-white">{rawPrice} €/мес.</span>
+                <span className="font-semibold text-white">
+                  {rawPrice} €{serviceType === "one-time" ? "" : "/мес."}
+                </span>
               </div>
               {discountRate > 0 && (
                 <div className="flex justify-between text-sm text-green-400">
                   <span>Обемна отстъпка ({(discountRate * 100)}%):</span>
-                  <span>-{Math.round(rawPrice * discountRate)} €/мес.</span>
+                  <span>-{Math.round(rawPrice * discountRate)} €{serviceType === "one-time" ? "" : "/мес."}</span>
                 </div>
               )}
               <div className="border-t border-slate-700 pt-3 flex justify-between items-end">
                 <span className="text-sm font-bold text-white">Индикативна цена:</span>
                 <div className="text-right">
-                  <span className="text-2xl font-black text-green-400">{totalPrice} €</span>
-                  <span className="text-[10px] text-gray-400 block">/ месец</span>
+                  <span className={`text-2xl font-black ${serviceType === "one-time" ? "text-yellow-400" : "text-green-400"}`}>
+                    {totalPrice} €
+                  </span>
+                  <span className="text-[10px] text-gray-400 block">
+                    {serviceType === "one-time" ? "/ еднократно" : "/ месец"}
+                  </span>
                 </div>
               </div>
             </div>
@@ -301,7 +372,11 @@ export default function BundleConfigurator() {
                 </div>
                 <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-[#0098b2] to-teal-600 hover:from-cyan-500 hover:to-teal-500 text-white font-extrabold text-sm py-3 px-4 rounded-xl transition duration-150 flex items-center justify-center gap-2 shadow-lg shadow-teal-500/10"
+                  className={`w-full text-white font-extrabold text-sm py-3 px-4 rounded-xl transition duration-150 flex items-center justify-center gap-2 shadow-lg ${
+                    serviceType === "one-time"
+                      ? "bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 shadow-yellow-500/10 text-slate-950"
+                      : "bg-gradient-to-r from-[#0098b2] to-teal-600 hover:from-cyan-500 hover:to-teal-500 shadow-teal-500/10"
+                  }`}
                 >
                   Изпрати пакет за одобрение
                   <Send className="w-4 h-4" />
