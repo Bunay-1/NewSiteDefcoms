@@ -28,7 +28,7 @@ export default function BundleConfigurator() {
       category: "Мониторинг & Анализ",
       coveragePoints: 30,
       difficultyMultiplier: 1.5,
-      basePrice: 750,
+      basePrice: 1050,
       icon: Eye
     },
     {
@@ -38,7 +38,7 @@ export default function BundleConfigurator() {
       category: "Мониторинг & Анализ",
       coveragePoints: 20,
       difficultyMultiplier: 1.2,
-      basePrice: 450,
+      basePrice: 630,
       icon: Server
     },
     {
@@ -48,7 +48,7 @@ export default function BundleConfigurator() {
       category: "Endpoint Сигурност",
       coveragePoints: 15,
       difficultyMultiplier: 1.0,
-      basePrice: 200,
+      basePrice: 280,
       icon: Shield
     },
     {
@@ -58,7 +58,7 @@ export default function BundleConfigurator() {
       category: "Оценка на риска",
       coveragePoints: 10,
       difficultyMultiplier: 0.8,
-      basePrice: 150,
+      basePrice: 210,
       icon: Search
     },
     {
@@ -68,7 +68,7 @@ export default function BundleConfigurator() {
       category: "Оценка на риска",
       coveragePoints: 15,
       difficultyMultiplier: 1.3,
-      basePrice: 300,
+      basePrice: 420,
       icon: AlertCircle
     },
     {
@@ -78,7 +78,7 @@ export default function BundleConfigurator() {
       category: "Човешки фактор",
       coveragePoints: 10,
       difficultyMultiplier: 0.9,
-      basePrice: 120,
+      basePrice: 168,
       icon: FileText
     }
   ];
@@ -101,9 +101,22 @@ export default function BundleConfigurator() {
   const rawCoverage = activeModules.reduce((sum, m) => sum + m.coveragePoints, 0);
   const coverageScore = Math.min(100, rawCoverage);
 
-  // Total price calculations (apply a discount factor if multiple modules are selected)
+  // Total price calculations (apply a discount factor if multiple modules are selected - strictly between 5% and 10% based on bundle size)
   const rawPrice = activeModules.reduce((sum, m) => sum + m.basePrice, 0);
-  const discountRate = selectedModules.length >= 5 ? 0.20 : selectedModules.length >= 3 ? 0.10 : 0;
+
+  let discountRate = 0;
+  if (selectedModules.length === 2) {
+    discountRate = 0.05;
+  } else if (selectedModules.length === 3) {
+    discountRate = 0.07;
+  } else if (selectedModules.length === 4) {
+    discountRate = 0.08;
+  } else if (selectedModules.length === 5) {
+    discountRate = 0.09;
+  } else if (selectedModules.length >= 6) {
+    discountRate = 0.10;
+  }
+
   const totalPrice = Math.round(rawPrice * (1 - discountRate));
 
   // Security Assessment Label
