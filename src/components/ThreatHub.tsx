@@ -209,7 +209,7 @@ export default function ThreatHub() {
                   onClick={() => setSelectedAdvisory(adv)}
                   className={`w-full text-left p-5 rounded-2xl border transition duration-200 flex flex-col justify-between group focus:outline-none ${
                     isSelected
-                      ? "bg-slate-850 border-[#0098b2] shadow-lg shadow-[#0098b2]/5"
+                      ? "bg-slate-900 border-[#0098b2] shadow-lg shadow-[#0098b2]/5"
                       : "bg-slate-800/30 border-slate-750 hover:border-slate-700 hover:bg-slate-800/50"
                   }`}
                 >
@@ -242,7 +242,7 @@ export default function ThreatHub() {
               );
             })
           ) : (
-            <div className="text-center py-12 bg-slate-850 rounded-2xl border border-slate-750 text-gray-400">
+            <div className="text-center py-12 bg-slate-900 rounded-2xl border border-slate-750 text-gray-400">
               <AlertOctagon className="w-10 h-10 mx-auto text-yellow-500 mb-3 animate-pulse" />
               <p className="text-sm font-semibold mb-1">Няма открити бюлетини</p>
               <p className="text-xs text-gray-500">Опитайте друго търсене или променете филтрите за сериозност.</p>
@@ -251,7 +251,7 @@ export default function ThreatHub() {
         </div>
 
         {/* Right Side: Advisory Detail View */}
-        <div className="lg:col-span-7 bg-slate-850/40 border border-slate-800 rounded-2xl p-6 lg:p-8 flex flex-col justify-between">
+        <div className="lg:col-span-7 bg-slate-950 border border-slate-800 rounded-2xl p-6 lg:p-8 flex flex-col justify-between">
           {selectedAdvisory ? (
             <div className="space-y-6">
               {/* Header Details */}
@@ -324,7 +324,7 @@ export default function ThreatHub() {
           )}
 
           {/* Prompt CTA */}
-          <div className="border-t border-slate-850 mt-6 pt-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="border-t border-slate-800 mt-6 pt-5 flex flex-col sm:flex-row items-center justify-between gap-4">
             <span className="text-xs text-gray-400 text-center sm:text-left">
               Притеснявате ли се за сигурността на вашите критични сървъри?
             </span>

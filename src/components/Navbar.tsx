@@ -13,6 +13,7 @@ export default function Navbar() {
     { name: "Продукти", href: "/products" },
     { name: "Услуги", href: "/services" },
     { name: "Технологии", href: "/technologies" },
+    { name: "Блог", href: "/blog" },
     { name: "Екип", href: "/team" },
     { name: "Съответствие", href: "/compliance" },
     { name: "Демо", href: "/demo" },
@@ -66,7 +67,7 @@ export default function Navbar() {
               {toolsOpen && (
                 <div
                   onMouseLeave={() => setToolsOpen(false)}
-                  className="absolute right-0 mt-2 w-80 bg-slate-850 border border-slate-700 rounded-xl shadow-2xl p-4 grid gap-3 z-50 animate-fadeIn"
+                  className="absolute right-0 mt-2 w-80 bg-slate-950 border border-slate-700 rounded-xl shadow-2xl p-4 grid gap-3 z-50 animate-fadeIn"
                 >
                   {toolItems.map((tool) => {
                     const Icon = tool.icon;
@@ -75,7 +76,7 @@ export default function Navbar() {
                         key={tool.name}
                         href={tool.href}
                         onClick={() => setToolsOpen(false)}
-                        className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-slate-800 transition group"
+                        className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-slate-900 transition group"
                       >
                         <div className="p-2 rounded-lg bg-slate-800 text-[#0098b2] group-hover:bg-[#0098b2] group-hover:text-white transition-colors">
                           <Icon className="w-4 h-4" />
