@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -18,7 +13,7 @@ model User {
   email           String           @unique
   name            String?
   password        String
-  role            String           @default("client") // client, admin
+  role            String           @default("client")
   company         String?
   phone           String?
   mfaEnabled      Boolean          @default(false)
@@ -28,81 +23,81 @@ model User {
   notifyInvoices  Boolean          @default(true)
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
-  tickets         Ticket[]
-  messages        Message[]
-  services        UserService[]
-  recommendations Recommendation[]
+  apiKeys         ApiKey[]
+  auditLogs       AuditLog[]
   documents       Document[]
   invoices        Invoice[]
-  auditLogs       AuditLog[]
-  apiKeys         ApiKey[]
+  messages        Message[]
+  recommendations Recommendation[]
+  tickets         Ticket[]
+  services        UserService[]
 }
 
 model AuditLog {
   id        String   @id @default(cuid())
-  action    String   // напр. "Успешен вход", "Смяна на парола"
-  ipAddress String   // напр. "95.42.18.112"
-  userAgent String   // напр. "Chrome / Windows 11"
-  status    String   // success, failed
+  action    String
+  ipAddress String
+  userAgent String
+  status    String
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model ApiKey {
   id        String   @id @default(cuid())
-  name      String   // напр. "Интеграция с SIEM"
-  key       String   @unique // детайлно генериран криптиран токен
+  name      String
+  key       String   @unique
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Invoice {
   id            String   @id @default(cuid())
-  invoiceNumber String   // напр. "INV-2024-001"
+  invoiceNumber String
   amount        Float
-  status        String   @default("unpaid") // paid, unpaid, overdue
+  status        String   @default("unpaid")
   description   String
   dueDate       DateTime
   userId        String
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model UserService {
   id          String    @id @default(cuid())
-  name        String    // Име на услугата (напр. "24/7 SOC Мониторинг")
-  description String?   // Кратко описание на покритието
-  status      String    @default("active") // active, suspended, expired
+  name        String
+  description String?
+  status      String    @default("active")
   startDate   DateTime  @default(now())
   endDate     DateTime?
-  compliance  String?   // Свързан бадж за съответствие (напр. "NIS2", "GDPR", "DORA")
+  compliance  String?
   userId      String
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Recommendation {
   id          String   @id @default(cuid())
-  title       String   // напр. "Активирайте Двуфакторна Аутентификация (MFA)"
-  description String   // напр. "Защитете клиентските си акаунти..."
-  impact      Int      // Точки за сигурност (напр. 15)
-  status      String   @default("pending") // pending, completed
-  category    String   // напр. "Достъп", "Мрежа", "Съответствие", "Обучение"
+  title       String
+  description String
+  impact      Int
+  status      String   @default("pending")
+  category    String
   userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model ThreatAlert {
   id          String   @id @default(cuid())
   title       String
   description String
-  severity    String   // critical, high, medium, low
+  severity    String
   mitigation  String
   publishedAt DateTime @default(now())
   createdAt   DateTime @default(now())
@@ -111,36 +106,36 @@ model ThreatAlert {
 
 model Document {
   id          String   @id @default(cuid())
-  title       String   // напр. "Доклад от проникващ тест Q2 2024.pdf"
-  fileSize    String   // напр. "2.4 MB"
-  fileType    String   // напр. "PDF"
-  downloadUrl String   // Път за симулирано сваляне
+  title       String
+  fileSize    String
+  fileType    String
+  downloadUrl String
   userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Ticket {
   id          String    @id @default(cuid())
   title       String
   description String
-  status      String    @default("open") // open, in_progress, resolved, closed
-  priority    String    @default("medium") // low, medium, high, urgent
+  status      String    @default("open")
+  priority    String    @default("medium")
   userId      String
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  messages    Message[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  messages    Message[]
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Message {
   id        String   @id @default(cuid())
   content   String
   ticketId  String
-  ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   isAdmin   Boolean  @default(false)
   createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
 }
