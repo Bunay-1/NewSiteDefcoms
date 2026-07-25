@@ -17,7 +17,6 @@ export default function Navbar() {
     { name: "Екип", href: "/team" },
     { name: "Съответствие", href: "/compliance" },
     { name: "Демо", href: "/demo" },
-    { name: "Клиентски портал", href: "/portal/login" },
   ];
 
   const toolItems = [
@@ -93,6 +92,13 @@ export default function Navbar() {
               )}
             </div>
 
+            <Link
+              href="/portal/login"
+              className="text-gray-300 hover:text-white transition font-medium text-sm"
+            >
+              Клиентски портал
+            </Link>
+
             <Link href="/contact">
               <button className="bg-[#f22020] hover:bg-red-700 text-white px-4 py-2 rounded-lg transition font-medium text-sm">
                 Свържете се
@@ -143,6 +149,14 @@ export default function Navbar() {
                 );
               })}
             </div>
+
+            <Link
+              href="/portal/login"
+              className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-slate-800 rounded-lg transition font-medium text-sm"
+              onClick={() => setIsOpen(false)}
+            >
+              Клиентски портал
+            </Link>
 
             <Link href="/contact" onClick={() => setIsOpen(false)}>
               <button className="w-full mt-2 bg-[#f22020] hover:bg-red-700 text-white px-4 py-2 rounded-lg transition font-medium text-sm">
