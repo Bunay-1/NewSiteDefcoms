@@ -51,7 +51,8 @@ export default function Footer() {
               <li><Link href="/products" className="hover:text-white transition">Продукти за защита</Link></li>
               <li><Link href="/services" className="hover:text-white transition">Услуги по киберсигурност</Link></li>
               <li><Link href="/technologies" className="hover:text-white transition">Използвани технологии</Link></li>
-              <li><Link href="/blog" className="hover:text-white transition text-[#0098b2] font-semibold">Блог и Статии</Link></li>
+              <li><Link href="/standards" className="hover:text-white transition text-[#0098b2] font-semibold">Стандарти за сигурност</Link></li>
+              <li><Link href="/blog" className="hover:text-white transition">Блог и Статии</Link></li>
               <li><Link href="/demo" className="hover:text-white transition">SOC Демо Симулатор</Link></li>
             </ul>
           </div>
@@ -82,6 +83,7 @@ export default function Footer() {
             © 2024 DefComs. Всички права запазени.
           </div>
           <div className="flex gap-6 text-gray-400 text-sm">
+            <Link href="/standards" className="hover:text-white transition">Стандарти за сигурност</Link>
             <Link href="/privacy" className="hover:text-white transition">Политика за поверителност</Link>
             <Link href="/terms" className="hover:text-white transition">Условия за ползване</Link>
           </div>
