@@ -39,6 +39,16 @@ export default function ClientServicesPage() {
   const [services, setServices] = useState<UserService[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Модално състояние за поръчка на услуги
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalForm, setModalForm] = useState({
+    serviceName: "24/7 SOC Мониторинг & Лог Мениджмънт",
+    requestType: "add", // add, modify
+    details: ""
+  });
+  const [modalLoading, setModalLoading] = useState(false);
+  const [modalError, setModalError] = useState("");
+
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/portal/login");
@@ -125,16 +135,6 @@ export default function ClientServicesPage() {
   }
 
   const activeServicesCount = services.filter(s => s.status === "active").length;
-
-  // Модално състояние за поръчка на услуги
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalForm, setModalForm] = useState({
-    serviceName: "24/7 SOC Мониторинг & Лог Мениджмънт",
-    requestType: "add", // add, modify
-    details: ""
-  });
-  const [modalLoading, setModalLoading] = useState(false);
-  const [modalError, setModalError] = useState("");
 
   const handleServiceRequest = async (e: React.FormEvent) => {
     e.preventDefault();
