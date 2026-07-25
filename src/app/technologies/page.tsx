@@ -232,7 +232,7 @@ export default function TechnologiesPage() {
               <thead>
                 <tr className="bg-slate-850 border-b border-slate-700/60">
                   <th className="py-4 px-6 text-sm font-bold uppercase tracking-wider text-gray-400 w-1/3">
-                    Компонент
+                    Сървър
                   </th>
                   <th className="py-4 px-6 text-sm font-bold uppercase tracking-wider text-[#0098b2]">
                     Покритие
