@@ -67,6 +67,142 @@ async function main() {
   });
 
   console.log("Test services created:", [service1, service2, service3]);
+
+  // Изчистване на стари препоръки и документи
+  await prisma.recommendation.deleteMany({ where: { userId: user.id } });
+  await prisma.document.deleteMany({ where: { userId: user.id } });
+  await prisma.threatAlert.deleteMany({}); // Глобален списък
+
+  // Създаване на препоръки (за Cybersecurity Health Score)
+  const rec1 = await prisma.recommendation.create({
+    data: {
+      title: "Активирайте Многофакторна Аутентификация (MFA)",
+      description: "Изисквайте допълнително потвърждение през мобилно приложение при всеки опит за вход в административните конзоли и пощенските кутии.",
+      impact: 20,
+      status: "completed",
+      category: "Достъп",
+      userId: user.id,
+    }
+  });
+
+  const rec2 = await prisma.recommendation.create({
+    data: {
+      title: "Провеждане на симулирана фишинг кампания",
+      description: "Тествайте устойчивостта на служителите Ви чрез планирана симулация на фишинг атака от DefComs Phishing Trainer.",
+      impact: 15,
+      status: "pending",
+      category: "Обучение",
+      userId: user.id,
+    }
+  });
+
+  const rec3 = await prisma.recommendation.create({
+    data: {
+      title: "Затваряне на неизползвани отворени портове на защитната стена",
+      description: "Ограничете външния достъп до критични вътрешни сървъри през неоторизирани портове (напр. SSH 22, RDP 3389).",
+      impact: 25,
+      status: "pending",
+      category: "Мрежа",
+      userId: user.id,
+    }
+  });
+
+  const rec4 = await prisma.recommendation.create({
+    data: {
+      title: "Криптиране на архивите с данни (Backups)",
+      description: "Уверете се, че всички резервни копия се съхраняват в криптиран вид извън основната мрежа за защита срещу Ransomware.",
+      impact: 15,
+      status: "completed",
+      category: "Съответствие",
+      userId: user.id,
+    }
+  });
+
+  const rec5 = await prisma.recommendation.create({
+    data: {
+      title: "Имплементиране на политики за силни пароли",
+      description: "Въведете изискване за минимум 12 символа, съдържащи специални знаци и цифри, с периодична проверка за изтекли пароли.",
+      impact: 10,
+      status: "completed",
+      category: "Достъп",
+      userId: user.id,
+    }
+  });
+
+  const rec6 = await prisma.recommendation.create({
+    data: {
+      title: "Одит на софтуерните уязвимости и пачове (Patch Management)",
+      description: "Обновете операционните системи на всички сървъри до най-новите версии с цел предотвратяване на известни експлойти.",
+      impact: 15,
+      status: "pending",
+      category: "Съответствие",
+      userId: user.id,
+    }
+  });
+
+  // Създаване на одитни доклади (Документи)
+  const doc1 = await prisma.document.create({
+    data: {
+      title: "Доклад от одит за NIS2 съответствие - DefComs Q2 2024.pdf",
+      fileSize: "3.2 MB",
+      fileType: "PDF",
+      downloadUrl: "#",
+      userId: user.id,
+    }
+  });
+
+  const doc2 = await prisma.document.create({
+    data: {
+      title: "Доклад от външен Пентестинг (Penetration Test Report) - DefComs 2024.pdf",
+      fileSize: "4.8 MB",
+      fileType: "PDF",
+      downloadUrl: "#",
+      userId: user.id,
+    }
+  });
+
+  const doc3 = await prisma.document.create({
+    data: {
+      title: "Сертификат за съответствие с ISO 27001:2022.pdf",
+      fileSize: "1.1 MB",
+      fileType: "PDF",
+      downloadUrl: "#",
+      userId: user.id,
+    }
+  });
+
+  // Създаване на глобални заплахи (Threat Intelligence alerts)
+  const alert1 = await prisma.threatAlert.create({
+    data: {
+      title: "Критична 0-day уязвимост в Microsoft Outlook (CVE-2024-30078)",
+      description: "Открита е критична уязвимост в Microsoft Outlook, която позволява отдалечено изпълнение на произволен код (RCE) при отваряне на специално форматиран имейл. Засегнати са всички версии.",
+      severity: "critical",
+      mitigation: "Незабавно инсталирайте последния пакет за сигурност от Microsoft чрез Windows Update.",
+      publishedAt: new Date(),
+    }
+  });
+
+  const alert2 = await prisma.threatAlert.create({
+    data: {
+      title: "Активна таргетирана фишинг вълна срещу български финансови институции",
+      description: "Наблюдава се масирана спам и фишинг кампания с фалшиви писма от името на водещи български банки, изискващи 'актуализация на данните за онлайн банкиране'. Писмата водят към копирани сайтове.",
+      severity: "high",
+      mitigation: "Предупредете всички служители да не въвеждат данни и да докладват съмнителни писма на СЦО (SOC) отдела.",
+      publishedAt: new Date(Date.now() - 3600000 * 2), // преди 2 часа
+    }
+  });
+
+  const alert3 = await prisma.threatAlert.create({
+    data: {
+      title: "DDoS атаки към уеб ресурси в публичния сектор на ЕС",
+      description: "Групировки за кибер престъпления провеждат разпределени атаки за отказ на услуга (DDoS) към критична уеб инфраструктура на правителствени портали в страни от Източна Европа.",
+      severity: "medium",
+      mitigation: "Уверете се, че Cloudflare/WAF защитата е настроена на режим 'Under Attack' при завишен трафик.",
+      publishedAt: new Date(Date.now() - 3600000 * 24), // вчера
+    }
+  });
+
+  console.log("Recommendations, documents, and threat alerts successfully seeded!");
 }
 
 main()

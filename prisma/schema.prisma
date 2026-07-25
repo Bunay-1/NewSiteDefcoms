@@ -14,18 +14,20 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  password  String
-  role      String   @default("client") // client, admin
-  company   String?
-  phone     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  tickets   Ticket[]
-  messages  Message[]
-  services  UserService[]
+  id              String           @id @default(cuid())
+  email           String           @unique
+  name            String?
+  password        String
+  role            String           @default("client") // client, admin
+  company         String?
+  phone           String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  tickets         Ticket[]
+  messages        Message[]
+  services        UserService[]
+  recommendations Recommendation[]
+  documents       Document[]
 }
 
 model UserService {
@@ -40,6 +42,42 @@ model UserService {
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+}
+
+model Recommendation {
+  id          String   @id @default(cuid())
+  title       String   // напр. "Активирайте Двуфакторна Аутентификация (MFA)"
+  description String   // напр. "Защитете клиентските си акаунти..."
+  impact      Int      // Точки за сигурност (напр. 15)
+  status      String   @default("pending") // pending, completed
+  category    String   // напр. "Достъп", "Мрежа", "Съответствие", "Обучение"
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ThreatAlert {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  severity    String   // critical, high, medium, low
+  mitigation  String
+  publishedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Document {
+  id          String   @id @default(cuid())
+  title       String   // напр. "Доклад от проникващ тест Q2 2024.pdf"
+  fileSize    String   // напр. "2.4 MB"
+  fileType    String   // напр. "PDF"
+  downloadUrl String   // Път за симулирано сваляне
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Ticket {

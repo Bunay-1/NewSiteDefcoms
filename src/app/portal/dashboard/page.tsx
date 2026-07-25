@@ -13,7 +13,13 @@ import {
   LogOut,
   User,
   Building2,
-  Shield
+  Shield,
+  Activity,
+  ShieldAlert,
+  FileText,
+  Lock,
+  ChevronRight,
+  UserCog
 } from "lucide-react";
 import Link from "next/link";
 
@@ -32,6 +38,12 @@ export default function DashboardPage() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Нови състояния за разширените статистики на портала
+  const [servicesCount, setServicesCount] = useState(0);
+  const [recs, setRecs] = useState<any[]>([]);
+  const [threatsCount, setThreatsCount] = useState(0);
+  const [docsCount, setDocsCount] = useState(0);
+
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/portal/login");
@@ -41,6 +53,7 @@ export default function DashboardPage() {
   useEffect(() => {
     if (status === "authenticated") {
       fetchTickets();
+      fetchDashboardStats();
     }
   }, [status]);
 
@@ -57,6 +70,41 @@ export default function DashboardPage() {
       setLoading(false);
     }
   };
+
+  const fetchDashboardStats = async () => {
+    try {
+      const [resServices, resRecs, resThreats, resDocs] = await Promise.all([
+        fetch("/api/portal/services"),
+        fetch("/api/portal/recommendations"),
+        fetch("/api/portal/threats"),
+        fetch("/api/portal/documents")
+      ]);
+
+      if (resServices.ok) {
+        const servicesData = await resServices.json();
+        setServicesCount(servicesData.filter((s: any) => s.status === "active").length);
+      }
+      if (resRecs.ok) {
+        setRecs(await resRecs.json());
+      }
+      if (resThreats.ok) {
+        const threatsData = await resThreats.json();
+        // Броим активните критични и високи заплахи
+        setThreatsCount(threatsData.filter((t: any) => t.severity === "critical" || t.severity === "high").length);
+      }
+      if (resDocs.ok) {
+        const docsData = await resDocs.json();
+        setDocsCount(docsData.length);
+      }
+    } catch (error) {
+      console.error("Грешка при извличане на статистики:", error);
+    }
+  };
+
+  // Пресмятане на Cybersecurity Score в реално време
+  const completedImpact = recs.filter(r => r.status === "completed").reduce((acc, r) => acc + r.impact, 0);
+  const totalImpact = recs.reduce((acc, r) => acc + r.impact, 0);
+  const healthScore = totalImpact > 0 ? Math.round((completedImpact / totalImpact) * 100) : 100;
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -139,24 +187,133 @@ export default function DashboardPage() {
       <div className="bg-slate-800/50 border-b border-slate-700">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-white">Клиентски портал</h1>
-              <p className="text-gray-400 text-sm">
-                {(session?.user as any)?.email}
-              </p>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-[#0098b2]/10 rounded-xl flex items-center justify-center border border-[#0098b2]/20">
+                <Shield className="w-5 h-5 text-[#0098b2]" />
+              </div>
+              <div>
+                <h1 className="text-xl font-extrabold text-white tracking-tight flex items-center gap-2">
+                  Клиентски портал <span className="text-xs bg-[#0098b2]/20 text-[#0098b2] border border-[#0098b2]/30 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">DefComs</span>
+                </h1>
+                <p className="text-gray-400 text-xs font-semibold">
+                  Добре дошли, {(session?.user as any)?.name || (session?.user as any)?.email}
+                </p>
+              </div>
             </div>
-            <button
-              onClick={() => signOut({ callbackUrl: "/" })}
-              className="flex items-center gap-2 text-gray-400 hover:text-white transition"
-            >
-              <LogOut className="w-5 h-5" />
-              Изход
-            </button>
+            <div className="flex items-center gap-4">
+              <Link href="/portal/profile">
+                <button className="text-gray-400 hover:text-white transition text-sm font-semibold flex items-center gap-1.5 bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-xl">
+                  <UserCog className="w-4 h-4 text-[#0098b2]" />
+                  Настройки на профила
+                </button>
+              </Link>
+              <button
+                onClick={() => signOut({ callbackUrl: "/" })}
+                className="flex items-center gap-2 text-gray-400 hover:text-white transition text-sm font-semibold"
+              >
+                <LogOut className="w-4 h-4" />
+                Изход
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-8">
+
+        {/* Cybersecurity Executive Overview Dashboard Banners */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+
+          {/* Security Score Banner Card */}
+          <Link href="/portal/health" className="group block">
+            <div className="bg-gradient-to-br from-slate-800/60 to-slate-800/30 border border-slate-700 rounded-2xl p-6 hover:border-green-500/30 transition flex items-center justify-between">
+              <div>
+                <p className="text-gray-400 text-xs uppercase font-extrabold tracking-wider mb-1">Здравен статус (Score)</p>
+                <p className="text-3xl font-black text-white group-hover:text-green-400 transition">{healthScore}%</p>
+                <p className="text-xs text-green-400 font-bold mt-1.5 flex items-center gap-1">
+                  <Activity className="w-3.5 h-3.5" />
+                  Вижте препоръките →
+                </p>
+              </div>
+              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-black border ${
+                healthScore >= 80 ? "bg-green-500/10 text-green-400 border-green-500/20" : "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"
+              }`}>
+                {healthScore}
+              </div>
+            </div>
+          </Link>
+
+          {/* Active Threats Banner Card */}
+          <Link href="/portal/threats" className="group block">
+            <div className="bg-gradient-to-br from-slate-800/60 to-slate-800/30 border border-slate-700 rounded-2xl p-6 hover:border-red-500/30 transition flex items-center justify-between">
+              <div>
+                <p className="text-gray-400 text-xs uppercase font-extrabold tracking-wider mb-1">Заплахи в реално време</p>
+                <p className="text-3xl font-black text-white group-hover:text-red-400 transition">{threatsCount}</p>
+                <p className="text-xs text-red-400 font-bold mt-1.5 flex items-center gap-1">
+                  <ShieldAlert className="w-3.5 h-3.5 animate-pulse" />
+                  Активни критични заплахи →
+                </p>
+              </div>
+              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-black border ${
+                threatsCount > 0 ? "bg-red-500/10 text-red-400 border-red-500/20 animate-pulse" : "bg-slate-700/20 text-gray-400 border-slate-700"
+              }`}>
+                {threatsCount > 0 ? "!" : "✓"}
+              </div>
+            </div>
+          </Link>
+
+          {/* Safe Vault Banner Card */}
+          <Link href="/portal/documents" className="group block">
+            <div className="bg-gradient-to-br from-slate-800/60 to-slate-800/30 border border-slate-700 rounded-2xl p-6 hover:border-[#0098b2]/30 transition flex items-center justify-between">
+              <div>
+                <p className="text-gray-400 text-xs uppercase font-extrabold tracking-wider mb-1">Одитни Доклади & Файлове</p>
+                <p className="text-3xl font-black text-white group-hover:text-[#0098b2] transition">{docsCount}</p>
+                <p className="text-xs text-[#0098b2] font-bold mt-1.5 flex items-center gap-1">
+                  <FileText className="w-3.5 h-3.5" />
+                  Криптирано хранилище →
+                </p>
+              </div>
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-black border bg-[#0098b2]/10 text-[#0098b2] border-[#0098b2]/20">
+                {docsCount}
+              </div>
+            </div>
+          </Link>
+
+        </div>
+
+        {/* Navigation / Actions Hub */}
+        <div className="mb-8 bg-slate-800/30 border border-slate-700/60 rounded-2xl p-6">
+          <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Навигация в портала</h3>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+
+            <Link href="/portal/tickets/new" className="bg-[#0098b2] hover:bg-[#007a91] text-white p-4 rounded-xl font-bold transition flex flex-col justify-between h-28 shadow-lg shadow-[#0098b2]/10">
+              <Plus className="w-6 h-6" />
+              <span className="text-sm">Нов тикет</span>
+            </Link>
+
+            <Link href="/portal/services" className="bg-slate-800 hover:bg-slate-700 text-white p-4 border border-slate-700 hover:border-slate-600 rounded-xl font-bold transition flex flex-col justify-between h-28 shadow-md">
+              <Shield className="w-6 h-6 text-[#0098b2]" />
+              <span className="text-sm">Моите услуги</span>
+            </Link>
+
+            <Link href="/portal/health" className="bg-slate-800 hover:bg-slate-700 text-white p-4 border border-slate-700 hover:border-slate-600 rounded-xl font-bold transition flex flex-col justify-between h-28 shadow-md">
+              <Activity className="w-6 h-6 text-green-400" />
+              <span className="text-sm">Здравен статус</span>
+            </Link>
+
+            <Link href="/portal/threats" className="bg-slate-800 hover:bg-slate-700 text-white p-4 border border-slate-700 hover:border-slate-600 rounded-xl font-bold transition flex flex-col justify-between h-28 shadow-md">
+              <ShieldAlert className="w-6 h-6 text-red-400" />
+              <span className="text-sm">Threat Feed</span>
+            </Link>
+
+            <Link href="/portal/documents" className="bg-slate-800 hover:bg-slate-700 text-white p-4 border border-slate-700 hover:border-slate-600 rounded-xl font-bold transition flex flex-col justify-between h-28 shadow-md col-span-2 md:col-span-1">
+              <FileText className="w-6 h-6 text-[#0098b2]" />
+              <span className="text-sm">Документи</span>
+            </Link>
+
+          </div>
+        </div>
+
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-6">
@@ -194,23 +351,6 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Actions Section */}
-        <div className="flex flex-wrap items-center gap-4 mb-6">
-          <Link href="/portal/tickets/new">
-            <button className="bg-[#0098b2] hover:bg-[#007a91] text-white px-6 py-3 rounded-xl font-semibold transition flex items-center gap-2 shadow-lg shadow-[#0098b2]/10">
-              <Plus className="w-5 h-5" />
-              Нов тикет
-            </button>
-          </Link>
-
-          <Link href="/portal/services">
-            <button className="bg-slate-800 hover:bg-slate-750 text-white border border-slate-700 hover:border-slate-600 px-6 py-3 rounded-xl font-semibold transition flex items-center gap-2 shadow-lg">
-              <Shield className="w-5 h-5 text-[#0098b2]" />
-              Моите активни услуги
-            </button>
-          </Link>
         </div>
 
         {/* Tickets List */}
