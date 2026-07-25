@@ -4,8 +4,24 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Нашият Екип и Сертифицирани Експерти по Сигурност | DefComs",
-  description: "Запознайте се с екипа от сертифицирани професионалисти по киберсигурност на DefComs. Притежатели на международни сертификати като CISSP, CEH, OSCP и GDPR.",
-  keywords: "екип киберсигурност, експерти сигурност, сертифицирани професионалисти, CISSP експерти, OSCP пентестери",
+  description: "Запознайте се с екипа от сертифицирани професионалисти по киберсигурност на DefComs в България. Притежатели на международни сертификати като CISSP, CEH, OSCP и GDPR.",
+  keywords: "екип киберсигурност, експерти сигурност, сертифицирани професионалисти, CISSP експерти, OSCP пентестери, кибер експерти България",
+  alternates: {
+    canonical: "https://defcoms.eu/team",
+  },
+  openGraph: {
+    title: "Нашият Екип и Сертифицирани Експерти по Сигурност | DefComs",
+    description: "Запознайте се с екипа от сертифицирани професионалисти по киберсигурност на DefComs в България. Притежатели на международни сертификати като CISSP, CEH, OSCP и GDPR.",
+    url: "https://defcoms.eu/team",
+    siteName: "DefComs",
+    locale: "bg_BG",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Нашият Екип и Сертифицирани Експерти по Сигурност | DefComs",
+    description: "Запознайте се с екипа от сертифицирани професионалисти по киберсигурност на DefComs в България. Притежатели на международни сертификати като CISSP, CEH, OSCP и GDPR.",
+  },
 };
 
 export default function TeamPage() {
@@ -79,8 +95,55 @@ export default function TeamPage() {
     "Google Developer Program"
   ];
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Начало",
+        "item": "https://defcoms.eu"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Екип",
+        "item": "https://defcoms.eu/team"
+      }
+    ]
+  };
+
+  const aboutPageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "name": "Нашият Екип и Сертифицирани Експерти | DefComs",
+    "description": "Запознайте се с екипа от сертифицирани професионалисти по киберсигурност на DefComs.",
+    "url": "https://defcoms.eu/team",
+    "mainEntity": {
+      "@type": "ItemList",
+      "name": "Експерти по киберсигурност",
+      "itemListElement": team.map((member, index) => ({
+        "@type": "Person",
+        "position": index + 1,
+        "name": member.name,
+        "jobTitle": member.role,
+        "description": member.bio,
+        "image": `https://defcoms.eu${member.image}`
+      }))
+    }
+  };
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-24 px-4">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutPageJsonLd) }}
+      />
       <div className="max-w-7xl mx-auto">
         <h1 className="text-5xl font-bold text-white text-center mb-6">
           Нашият екип
@@ -97,7 +160,7 @@ export default function TeamPage() {
                 <div className="relative w-24 h-24 rounded-full overflow-hidden mx-auto mb-6">
                   <Image
                     src={member.image}
-                    alt={member.name}
+                    alt={`${member.name} - ${member.role} в DefComs`}
                     fill
                     className="object-cover"
                   />

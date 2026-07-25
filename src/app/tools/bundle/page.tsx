@@ -5,13 +5,77 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Интерактивен Конфигуратор на Киберзащита | DefComs",
-  description: "Сглобете идеалния пакет от услуги за киберсигурност за вашия бизнес, изчислете цената и проверете нивото на защита с нашия интерактивен конфигуратор.",
-  keywords: "конфигуратор киберзащита, абонамент киберсигурност, пакет услуги сигурност, ценообразуване киберсигурност",
+  description: "Сглобете идеалния пакет от услуги за киберсигурност за вашия бизнес в България, изчислете цената и проверете нивото на защита с нашия интерактивен конфигуратор.",
+  keywords: "конфигуратор киберзащита, абонамент киберсигурност, пакет услуги сигурност, ценообразуване киберсигурност, абонамент сигурност България",
+  alternates: {
+    canonical: "https://defcoms.eu/tools/bundle",
+  },
+  openGraph: {
+    title: "Интерактивен Конфигуратор на Киберзащита | DefComs",
+    description: "Сглобете идеалния пакет от услуги за киберсигурност за вашия бизнес в България, изчислете цената и проверете нивото на защита с нашия интерактивен конфигуратор.",
+    url: "https://defcoms.eu/tools/bundle",
+    siteName: "DefComs",
+    locale: "bg_BG",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Интерактивен Конфигуратор на Киберзащита | DefComs",
+    description: "Сглобете идеалния пакет от услуги за киберсигурност за вашия бизнес в България, изчислете цената и проверете нивото на защита с нашия интерактивен конфигуратор.",
+  },
 };
 
 export default function BundlePage() {
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Начало",
+        "item": "https://defcoms.eu"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Инструменти",
+        "item": "https://defcoms.eu/products"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Конфигуратор",
+        "item": "https://defcoms.eu/tools/bundle"
+      }
+    ]
+  };
+
+  const appJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Интерактивен Конфигуратор на Киберзащита | DefComs",
+    "description": "Сглобете идеалния пакет от услуги за киберсигурност за вашия бизнес, изчислете цената и проверете нивото на защита.",
+    "url": "https://defcoms.eu/tools/bundle",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires JavaScript and HTML5",
+    "creator": {
+      "@type": "Organization",
+      "name": "DefComs"
+    }
+  };
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 pt-28 px-4 pb-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(appJsonLd) }}
+      />
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-4">

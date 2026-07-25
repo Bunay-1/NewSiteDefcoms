@@ -19,5 +19,51 @@ export default function DemoLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Начало",
+        "item": "https://defcoms.eu"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Демо",
+        "item": "https://defcoms.eu/demo"
+      }
+    ]
+  };
+
+  const demoPageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "SOC Demo Simulator - DefComs",
+    "description": "Интерактивно SOC Демо и Симулатор на Кибератаки за засичане и блокиране на DDoS, Ransomware и Phishing заплахи в реално време.",
+    "url": "https://defcoms.eu/demo",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires JavaScript and HTML5",
+    "creator": {
+      "@type": "Organization",
+      "name": "DefComs"
+    }
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(demoPageJsonLd) }}
+      />
+      {children}
+    </>
+  );
 }

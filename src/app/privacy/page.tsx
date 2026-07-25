@@ -2,13 +2,64 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Политика за Поверителност и GDPR Съответствие | DefComs",
-  description: "Политика за поверителност на DefComs в пълно съответствие с Общия регламент за защита на личните данни (GDPR). Информация за събирането, съхранението и защитата на вашите данни.",
-  keywords: "политика за поверителност, лични данни GDPR, защита на поверителността, защита на данни, права GDPR",
+  description: "Политика за поверителност на DefComs в пълно съответствие с Общия регламент за защита на личните данни (GDPR) в България. Информация за събирането, съхранението и защитата на вашите данни.",
+  keywords: "политика за поверителност, лични данни GDPR, защита на поверителността, защита на данни, права GDPR, поверителност България",
+  alternates: {
+    canonical: "https://defcoms.eu/privacy",
+  },
+  openGraph: {
+    title: "Политика за Поверителност и GDPR Съответствие | DefComs",
+    description: "Политика за поверителност на DefComs в пълно съответствие с Общия регламент за защита на личните данни (GDPR) в България. Информация за събирането, съхранението и защитата на вашите данни.",
+    url: "https://defcoms.eu/privacy",
+    siteName: "DefComs",
+    locale: "bg_BG",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Политика за Поверителност и GDPR Съответствие | DefComs",
+    description: "Политика за поверителност на DefComs в пълно съответствие с Общия регламент за защита на личните данни (GDPR) в България. Информация за събирането, съхранението и защитата на вашите данни.",
+  },
 };
 
 export default function PrivacyPolicy() {
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Начало",
+        "item": "https://defcoms.eu"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Политика за поверителност",
+        "item": "https://defcoms.eu/privacy"
+      }
+    ]
+  };
+
+  const webPageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Политика за Поверителност и GDPR Съответствие | DefComs",
+    "description": "Политика за поверителност на DefComs в пълно съответствие с Общия регламент за защита на личните данни (GDPR) в България.",
+    "url": "https://defcoms.eu/privacy"
+  };
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-24 px-4 pb-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }}
+      />
       <div className="max-w-4xl mx-auto">
         <h1 className="text-5xl font-bold text-white mb-6">
           Политика за поверителност

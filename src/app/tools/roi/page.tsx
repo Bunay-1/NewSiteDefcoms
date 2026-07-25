@@ -4,13 +4,77 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "ROI Калкулатор на Киберсигурност | Финансова Оценка на Риска | DefComs",
-  description: "Изчислете финансовите загуби при евентуална кибератака срещу вашата организация и вижте възвръщаемостта на инвестицията (ROI) с денонощна защита от DefComs.",
-  keywords: "ROI калкулатор сигурност, финансова оценка на риска, ALE SLE изчисления, спестявания киберсигурност",
+  description: "Изчислете финансовите загуби при евентуална кибератака срещу вашата организация в България и вижте възвръщаемостта на инвестицията (ROI) с денонощна защита от DefComs.",
+  keywords: "ROI калкулатор сигурност, финансова оценка на риска, ALE SLE изчисления, спестявания киберсигурност, финансова оценка сигурност България",
+  alternates: {
+    canonical: "https://defcoms.eu/tools/roi",
+  },
+  openGraph: {
+    title: "ROI Калкулатор на Киберсигурност | Финансова Оценка на Риска | DefComs",
+    description: "Изчислете финансовите загуби при евентуална кибератака срещу вашата организация в България и вижте възвръщаемостта на инвестицията (ROI) с денонощна защита от DefComs.",
+    url: "https://defcoms.eu/tools/roi",
+    siteName: "DefComs",
+    locale: "bg_BG",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ROI Калкулатор на Киберсигурност | Финансова Оценка на Риска | DefComs",
+    description: "Изчислете финансовите загуби при евентуална кибератака срещу вашата организация в България и вижте възвръщаемостта на инвестицията (ROI) с денонощна защита от DefComs.",
+  },
 };
 
 export default function RoiPage() {
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Начало",
+        "item": "https://defcoms.eu"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Инструменти",
+        "item": "https://defcoms.eu/products"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "ROI калкулатор",
+        "item": "https://defcoms.eu/tools/roi"
+      }
+    ]
+  };
+
+  const appJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "ROI Калкулатор на Киберсигурност | DefComs",
+    "description": "Изчислете потенциалните финансови загуби при успешна атака и вижте възвръщаемостта на инвестициите.",
+    "url": "https://defcoms.eu/tools/roi",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires JavaScript and HTML5",
+    "creator": {
+      "@type": "Organization",
+      "name": "DefComs"
+    }
+  };
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 pt-28 px-4 pb-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(appJsonLd) }}
+      />
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#0098b2]/10 border border-[#0098b2]/30 text-[#0098b2] text-xs font-bold uppercase tracking-wider mb-4">

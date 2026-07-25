@@ -6,8 +6,24 @@ import { ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Съответствие с EU Директиви - GDPR, NIS2, DORA, CRA, EU AI Act | DefComs",
-  description: "Осигурете пълно съответствие с най-строгите европейски директиви и регламенти: NIS2, GDPR, DORA, CRA, ISO 27001, SOC 2 и EU AI Act с нашите решения.",
-  keywords: "съответствие EU, NIS2 директива, GDPR защита, DORA регламент, Cyber Resilience Act, EU AI Act, ISO 27001",
+  description: "Осигурете пълно съответствие с най-строгите европейски директиви и регламенти в България: NIS2, GDPR, DORA, CRA, ISO 27001, SOC 2 и EU AI Act с нашите решения.",
+  keywords: "съответствие EU, NIS2 директива, GDPR защита, DORA регламент, Cyber Resilience Act, EU AI Act, ISO 27001, съответствие България, NIS2 България, GDPR България",
+  alternates: {
+    canonical: "https://defcoms.eu/compliance",
+  },
+  openGraph: {
+    title: "Съответствие с EU Директиви - GDPR, NIS2, DORA, CRA, EU AI Act | DefComs",
+    description: "Осигурете пълно съответствие с най-строгите европейски директиви и регламенти в България: NIS2, GDPR, DORA, CRA, ISO 27001, SOC 2 и EU AI Act с нашите решения.",
+    url: "https://defcoms.eu/compliance",
+    siteName: "DefComs",
+    locale: "bg_BG",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Съответствие с EU Директиви - GDPR, NIS2, DORA, CRA, EU AI Act | DefComs",
+    description: "Осигурете пълно съответствие с най-строгите европейски директиви и регламенти в България: NIS2, GDPR, DORA, CRA, ISO 27001, SOC 2 и EU AI Act с нашите решения.",
+  },
 };
 
 export default function CompliancePage() {
@@ -59,8 +75,48 @@ export default function CompliancePage() {
     }
   ];
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Начало",
+        "item": "https://defcoms.eu"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Съответствие",
+        "item": "https://defcoms.eu/compliance"
+      }
+    ]
+  };
+
+  const compliancePageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Съответствие с EU Директиви | DefComs",
+    "description": "Информационен център за европейските директиви за киберсигурност: GDPR, NIS2, DORA, CRA, EU AI Act.",
+    "url": "https://defcoms.eu/compliance",
+    "about": complianceData.map(item => ({
+      "@type": "Thing",
+      "name": item.name,
+      "description": item.description
+    }))
+  };
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-24 px-4 pb-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(compliancePageJsonLd) }}
+      />
       <div className="max-w-7xl mx-auto">
         <h1 className="text-5xl font-bold text-white text-center mb-6">
           Съответствие с EU директиви

@@ -2,13 +2,64 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Условия за Ползване и Договор за SLA | DefComs",
-  description: "Условия за ползване на уебсайта и платформите на DefComs. Детайли относно SLA гаранциите, плащанията, правилата за сигурност и съответствието с европейските регламенти.",
-  keywords: "условия за ползване, SLA гаранции, правила за сигурност, договор киберсигурност, юридически условия",
+  description: "Условия за ползване на уебсайта и платформите на DefComs в България. Детайли относно SLA гаранциите, плащанията, правилата за сигурност и съответствието с европейските регламенти.",
+  keywords: "условия за ползване, SLA гаранции, правила за сигурност, договор киберсигурност, юридически условия, договор SLA България",
+  alternates: {
+    canonical: "https://defcoms.eu/terms",
+  },
+  openGraph: {
+    title: "Условия за Ползване и Договор за SLA | DefComs",
+    description: "Условия за ползване на уебсайта и платформите на DefComs в България. Детайли относно SLA гаранциите, плащанията, правилата за сигурност и съответствието с европейските регламенти.",
+    url: "https://defcoms.eu/terms",
+    siteName: "DefComs",
+    locale: "bg_BG",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Условия за Ползване и Договор за SLA | DefComs",
+    description: "Условия за ползване на уебсайта и платформите на DefComs в България. Детайли относно SLA гаранциите, плащанията, правилата за сигурност и съответствието с европейските регламенти.",
+  },
 };
 
 export default function TermsOfService() {
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Начало",
+        "item": "https://defcoms.eu"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Условия за ползване",
+        "item": "https://defcoms.eu/terms"
+      }
+    ]
+  };
+
+  const webPageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Условия за Ползване и Договор за SLA | DefComs",
+    "description": "Условия за ползване на уебсайта и платформите на DefComs в България.",
+    "url": "https://defcoms.eu/terms"
+  };
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-24 px-4 pb-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }}
+      />
       <div className="max-w-4xl mx-auto">
         <h1 className="text-5xl font-bold text-white mb-6">
           Условия за ползване

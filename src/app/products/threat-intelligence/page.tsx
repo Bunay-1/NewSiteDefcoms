@@ -6,8 +6,32 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Threat Intelligence - Разузнаване за Киберзаплахи | DefComs",
-  description: "Разузнаване и анализ на глобални киберзаплахи в реално време. Идентифициране на индикатори за компрометация (IOCs) и техники на атакуващите (MITRE ATT&CK).",
-  keywords: "Threat Intelligence, разузнаване заплахи, IOCs, MITRE ATT&CK, киберразузнаване",
+  description: "Разузнаване и анализ на глобални киберзаплахи в реално време в България. Идентифициране на индикатори за компрометация (IOCs) и техники на атакуващите (MITRE ATT&CK).",
+  keywords: "Threat Intelligence, разузнаване заплахи, IOCs, MITRE ATT&CK, киберразузнаване, киберразузнаване България, заплахи киберсигурност",
+  alternates: {
+    canonical: "https://defcoms.eu/products/threat-intelligence",
+  },
+  openGraph: {
+    title: "Threat Intelligence - Разузнаване за Киберзаплахи | DefComs",
+    description: "Разузнаване и анализ на глобални киберзаплахи в реално време в България. Идентифициране на индикатори за компрометация (IOCs) и техники на атакуващите (MITRE ATT&CK).",
+    url: "https://defcoms.eu/products/threat-intelligence",
+    siteName: "DefComs",
+    locale: "bg_BG",
+    type: "website",
+    images: [
+      {
+        url: "https://defcoms.eu/SocNoc/Threats.webp",
+        width: 1200,
+        height: 630,
+        alt: "Threat Intelligence Detection & Analysis",
+      }
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Threat Intelligence - Разузнаване за Киберзаплахи | DefComs",
+    description: "Разузнаване и анализ на глобални киберзаплахи в реално време в България. Идентифициране на индикатори за компрометация (IOCs) и техники на атакуващите (MITRE ATT&CK).",
+  },
 };
 
 export default function ThreatIntelligencePage() {
@@ -40,8 +64,77 @@ export default function ThreatIntelligencePage() {
     { title: "Threat Hunting Console", description: "Управление и проактивно преследване на заплахи", src: "/LANProject/03_threat-hunting.webp" }
   ];
 
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "Threat Intelligence",
+    "image": "https://defcoms.eu/SocNoc/Threats.webp",
+    "description": "Разузнаване и анализ на глобални киберзаплахи в реално време. Идентифициране на индикатори за компрометация (IOCs).",
+    "brand": {
+      "@type": "Brand",
+      "name": "DefComs"
+    },
+    "offers": {
+      "@type": "AggregateOffer",
+      "priceCurrency": "EUR",
+      "lowPrice": "399",
+      "highPrice": "3999",
+      "offerCount": "3"
+    }
+  };
+
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map(faq => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer
+      }
+    }))
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Начало",
+        "item": "https://defcoms.eu"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Продукти",
+        "item": "https://defcoms.eu/products"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Threat Intelligence",
+        "item": "https://defcoms.eu/products/threat-intelligence"
+      }
+    ]
+  };
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-24 px-4 pb-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <div className="max-w-7xl mx-auto">
         {/* Breadcrumb */}
         <div className="mb-8">
@@ -86,7 +179,7 @@ export default function ThreatIntelligencePage() {
                 <div className="aspect-video relative">
                   <Image
                     src={image.src}
-                    alt={image.title}
+                    alt={`${image.title} - DefComs Разузнаване за Заплахи`}
                     fill
                     className="object-cover"
                   />

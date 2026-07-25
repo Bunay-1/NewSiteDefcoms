@@ -6,8 +6,32 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "SIEM Solution - Управление на Логове и Корелация на Събития | DefComs",
-  description: "Система за управление на информация и събития за сигурността (SIEM) с интелигентна корелация на логове и събития в реално време за разпознаване на аномалии.",
-  keywords: "SIEM решения, управление на логове, корелация на събития за сигурност, засичане на аномалии",
+  description: "Система за управление на информация и събития за сигурността (SIEM) в България с интелигентна корелация на логове и събития в реално време за разпознаване на аномалии.",
+  keywords: "SIEM решения, управление на логове, корелация на събития за сигурност, засичане на аномалии, SIEM България, управление на логове сигурност",
+  alternates: {
+    canonical: "https://defcoms.eu/products/siem",
+  },
+  openGraph: {
+    title: "SIEM Solution - Управление на Логове и Корелация на Събития | DefComs",
+    description: "Система за управление на информация и събития за сигурността (SIEM) в България с интелигентна корелация на логове и събития в реално време за разпознаване на аномалии.",
+    url: "https://defcoms.eu/products/siem",
+    siteName: "DefComs",
+    locale: "bg_BG",
+    type: "website",
+    images: [
+      {
+        url: "https://defcoms.eu/SocNoc/SIEM.webp",
+        width: 1200,
+        height: 630,
+        alt: "DefComs SIEM Solution",
+      }
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "SIEM Solution - Управление на Логове и Корелация на Събития | DefComs",
+    description: "Система за управление на информация и събития за сигурността (SIEM) в България с интелигентна корелация на логове и събития в реално време за разпознаване на аномалии.",
+  },
 };
 
 export default function SIEMPage() {
@@ -154,7 +178,7 @@ export default function SIEMPage() {
                 <div className="aspect-video relative">
                   <Image
                     src={image.src}
-                    alt={image.title}
+                    alt={`${image.title} - DefComs SIEM Система за Логове`}
                     fill
                     className="object-cover"
                   />

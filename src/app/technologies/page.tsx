@@ -6,8 +6,24 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Използвани Технологии за Киберсигурност | DefComs",
-  description: "Запознайте се с нашия технологичен стек от последно поколение: облачни платформи AWS/Azure, AI и ML библиотеки, DevOps технологии, бази данни и системи за сигурност.",
-  keywords: "технологичен стек, AWS, Azure, Next.js, Python, Kubernetes, Docker, изкуствен интелект в сигурността",
+  description: "Запознайте се с нашия технологичен стек от последно поколение в България: облачни платформи AWS/Azure, AI и ML библиотеки, DevOps технологии, бази данни и системи за сигурност.",
+  keywords: "технологичен стек, AWS, Azure, Next.js, Python, Kubernetes, Docker, изкуствен интелект в сигурността, киберсигурност България",
+  alternates: {
+    canonical: "https://defcoms.eu/technologies",
+  },
+  openGraph: {
+    title: "Използвани Технологии за Киберсигурност | DefComs",
+    description: "Запознайте се с нашия технологичен стек от последно поколение в България: облачни платформи AWS/Azure, AI и ML библиотеки, DevOps технологии, бази данни и системи за сигурност.",
+    url: "https://defcoms.eu/technologies",
+    siteName: "DefComs",
+    locale: "bg_BG",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Използвани Технологии за Киберсигурност | DefComs",
+    description: "Запознайте се с нашия технологичен стек от последно поколение в България: облачни платформи AWS/Azure, AI и ML библиотеки, DevOps технологии, бази данни и системи за сигурност.",
+  },
 };
 
 export default function TechnologiesPage() {
@@ -145,8 +161,43 @@ export default function TechnologiesPage() {
   // Flat list of technologies for the infinite logo carousel
   const carouselTechs = categories.flatMap(cat => cat.technologies);
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Начало",
+        "item": "https://defcoms.eu"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Технологии",
+        "item": "https://defcoms.eu/technologies"
+      }
+    ]
+  };
+
+  const technologiesPageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Технологичен Стек за Киберсигурност | DefComs",
+    "description": "Обзор на модерните технологии, облачни платформи, контейнери и езици за програмиране, с които DefComs изгражда своите софтуерни решения.",
+    "url": "https://defcoms.eu/technologies"
+  };
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-24 pb-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(technologiesPageJsonLd) }}
+      />
       <div className="max-w-7xl mx-auto">
         <h1 className="text-5xl font-bold text-white text-center mb-6">
           Технологии
