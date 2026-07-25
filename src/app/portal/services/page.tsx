@@ -14,7 +14,11 @@ import {
   MessageSquare,
   Activity,
   Award,
-  ExternalLink
+  ExternalLink,
+  Plus,
+  FileText,
+  X,
+  Sparkles
 } from "lucide-react";
 import Link from "next/link";
 
@@ -122,12 +126,56 @@ export default function ClientServicesPage() {
 
   const activeServicesCount = services.filter(s => s.status === "active").length;
 
+  // Модално състояние за поръчка на услуги
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalForm, setModalForm] = useState({
+    serviceName: "24/7 SOC Мониторинг & Лог Мениджмънт",
+    requestType: "add", // add, modify
+    details: ""
+  });
+  const [modalLoading, setModalLoading] = useState(false);
+  const [modalError, setModalError] = useState("");
+
+  const handleServiceRequest = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setModalLoading(true);
+    setModalError("");
+
+    try {
+      const response = await fetch("/api/portal/services/request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(modalForm)
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setIsModalOpen(false);
+        setModalForm({
+          serviceName: "24/7 SOC Мониторинг & Лог Мениджмънт",
+          requestType: "add",
+          details: ""
+        });
+
+        // Пренасочваме директно към автоматично създадения тикет за по-голямо удобство
+        router.push(`/portal/tickets/${data.ticketId}`);
+      } else {
+        setModalError(data.error || "Грешка при изпращане на заявката");
+      }
+    } catch (err) {
+      setModalError("Възникна вътрешна грешка при изпращане");
+    } finally {
+      setModalLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       {/* Header */}
       <div className="bg-slate-800/50 border-b border-slate-700">
         <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <Link
                 href="/portal/dashboard"
@@ -145,13 +193,24 @@ export default function ClientServicesPage() {
                 </p>
               </div>
             </div>
-            <button
-              onClick={() => signOut({ callbackUrl: "/" })}
-              className="flex items-center gap-2 text-gray-400 hover:text-white transition"
-            >
-              <LogOut className="w-5 h-5" />
-              Изход
-            </button>
+
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="bg-[#0098b2] hover:bg-[#007a91] text-white px-5 py-2.5 rounded-xl font-bold transition flex items-center gap-1.5 text-sm shadow-lg shadow-[#0098b2]/10"
+              >
+                <Plus className="w-4 h-4" />
+                Нова услуга / План
+              </button>
+
+              <button
+                onClick={() => signOut({ callbackUrl: "/" })}
+                className="flex items-center gap-2 text-gray-400 hover:text-white transition text-sm font-semibold ml-2"
+              >
+                <LogOut className="w-5 h-5" />
+                Изход
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -283,13 +342,146 @@ export default function ClientServicesPage() {
             <div>
               <h4 className="text-white font-bold mb-1">Нуждаете се от промяна в абонаментния план?</h4>
               <p className="text-gray-400 text-sm leading-relaxed">
-                За активиране на нови услуги, промяна на съществуващи планове или въпроси относно съответствието с европейските регламенти NIS2, GDPR, CRA и DORA, моля, отворете съответен тикет за поддръжка или се свържете директно с Вашия акаунт мениджър.
+                Вече можете бързо да заявите активиране на нови софтуерни планове или промяна на досегашните Ви абонаменти директно от бутона <strong>„Нова услуга / План“</strong> горе вдясно. Нашата система автоматично ще стартира одит и ще подготви оферта за съответствие.
               </p>
             </div>
           </div>
         </div>
 
       </div>
+
+      {/* Modern Glassmorphic Service Request Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+          <div className="relative w-full max-w-lg bg-slate-900 border border-slate-700/80 rounded-2xl p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            {/* Close button */}
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="absolute top-4 right-4 p-2 text-gray-500 hover:text-white rounded-lg hover:bg-slate-800 transition"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Header */}
+            <div className="flex items-center gap-2 mb-4">
+              <Sparkles className="w-5 h-5 text-[#0098b2] animate-pulse" />
+              <h3 className="text-xl font-bold text-white">Нова услуга / Смяна на план</h3>
+            </div>
+
+            <p className="text-xs text-gray-400 mb-6">
+              Изберете сигурностна услуга или регламент. При потвърждение ще се създаде нов приоритетен тикет в портала, през който ще уточним детайлите и активацията с нашите специалисти.
+            </p>
+
+            {modalError && (
+              <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-3 rounded-xl mb-4 flex items-center gap-2 text-sm font-semibold">
+                <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                <span>{modalError}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleServiceRequest} className="space-y-4">
+
+              {/* Select Service */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-300 mb-2">Изберете Услуга / Пакет</label>
+                <select
+                  value={modalForm.serviceName}
+                  onChange={(e) => setModalForm({ ...modalForm, serviceName: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-[#0098b2]"
+                  required
+                >
+                  <option value="24/7 SOC Мониторинг & Лог Мениджмънт">24/7 SOC Мониторинг & Лог Мениджмънт (NIS2 / ISO 27001)</option>
+                  <option value="Пентестинг & Оценка на уязвимостите">Пентестинг & Оценка на уязвимостите (CRA / DORA)</option>
+                  <option value="Автоматизиран Одит за GDPR съответствие">Автоматизиран Одит за GDPR съответствие (GDPR / ePrivacy)</option>
+                  <option value="Обучение по киберсигурност & Фишинг Симулации">Обучение по киберсигурност & Фишинг Симулатор (Awareness Training)</option>
+                  <option value="DORA & NIS2 Рамкова Подготовка">DORA & NIS2 Рамкова Консултация (Финансов / Държавен сектор)</option>
+                </select>
+              </div>
+
+              {/* Request Type */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-300 mb-2">Тип на заявката</label>
+                <div className="grid grid-cols-2 gap-4">
+                  <label className={`p-4 rounded-xl border-2 flex flex-col justify-between h-20 cursor-pointer transition ${
+                    modalForm.requestType === "add"
+                      ? "bg-[#0098b2]/10 border-[#0098b2] text-white"
+                      : "bg-slate-950 border-slate-700 text-gray-400 hover:border-slate-600"
+                  }`}>
+                    <input
+                      type="radio"
+                      name="requestType"
+                      value="add"
+                      checked={modalForm.requestType === "add"}
+                      onChange={() => setModalForm({ ...modalForm, requestType: "add" })}
+                      className="sr-only"
+                    />
+                    <Plus className="w-5 h-5 text-[#0098b2]" />
+                    <span className="text-xs font-bold">Нова Услуга</span>
+                  </label>
+
+                  <label className={`p-4 rounded-xl border-2 flex flex-col justify-between h-20 cursor-pointer transition ${
+                    modalForm.requestType === "modify"
+                      ? "bg-[#0098b2]/10 border-[#0098b2] text-white"
+                      : "bg-slate-950 border-slate-700 text-gray-400 hover:border-slate-600"
+                  }`}>
+                    <input
+                      type="radio"
+                      name="requestType"
+                      value="modify"
+                      checked={modalForm.requestType === "modify"}
+                      onChange={() => setModalForm({ ...modalForm, requestType: "modify" })}
+                      className="sr-only"
+                    />
+                    <FileText className="w-5 h-5 text-yellow-400" />
+                    <span className="text-xs font-bold">Промяна на План</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Details Textarea */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-300 mb-2">Специфични изисквания / Въпроси</label>
+                <textarea
+                  value={modalForm.details}
+                  onChange={(e) => setModalForm({ ...modalForm, details: e.target.value })}
+                  placeholder="напр. Имаме нужда от допълнителни детайли относно NIS2 съответствието и броя лицензи за крайни потребители..."
+                  rows={4}
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl py-3 px-4 text-white placeholder-gray-600 focus:outline-none focus:border-[#0098b2] resize-none"
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-3 pt-4 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="flex-1 bg-slate-800 hover:bg-slate-750 text-gray-300 py-3 rounded-xl font-semibold transition"
+                >
+                  Отказ
+                </button>
+                <button
+                  type="submit"
+                  disabled={modalLoading}
+                  className="flex-1 bg-[#0098b2] hover:bg-[#007a91] text-white py-3 rounded-xl font-bold transition flex items-center justify-center gap-2"
+                >
+                  {modalLoading ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Изпращане...
+                    </>
+                  ) : (
+                    <>
+                      Изпрати заявка
+                    </>
+                  )}
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
