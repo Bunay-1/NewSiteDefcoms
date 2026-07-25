@@ -19,7 +19,8 @@ import {
   FileText,
   Lock,
   ChevronRight,
-  UserCog
+  UserCog,
+  CreditCard
 } from "lucide-react";
 import Link from "next/link";
 
@@ -284,7 +285,7 @@ export default function DashboardPage() {
         {/* Navigation / Actions Hub */}
         <div className="mb-8 bg-slate-800/30 border border-slate-700/60 rounded-2xl p-6">
           <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Навигация в портала</h3>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
 
             <Link href="/portal/tickets/new" className="bg-[#0098b2] hover:bg-[#007a91] text-white p-4 rounded-xl font-bold transition flex flex-col justify-between h-28 shadow-lg shadow-[#0098b2]/10">
               <Plus className="w-6 h-6" />
@@ -306,10 +307,22 @@ export default function DashboardPage() {
               <span className="text-sm">Threat Feed</span>
             </Link>
 
-            <Link href="/portal/documents" className="bg-slate-800 hover:bg-slate-700 text-white p-4 border border-slate-700 hover:border-slate-600 rounded-xl font-bold transition flex flex-col justify-between h-28 shadow-md col-span-2 md:col-span-1">
+            <Link href="/portal/documents" className="bg-slate-800 hover:bg-slate-700 text-white p-4 border border-slate-700 hover:border-slate-600 rounded-xl font-bold transition flex flex-col justify-between h-28 shadow-md">
               <FileText className="w-6 h-6 text-[#0098b2]" />
               <span className="text-sm">Документи</span>
             </Link>
+
+            <Link href="/portal/invoices" className="bg-slate-800 hover:bg-slate-700 text-white p-4 border border-slate-700 hover:border-slate-600 rounded-xl font-bold transition flex flex-col justify-between h-28 shadow-md">
+              <CreditCard className="w-6 h-6 text-yellow-400" />
+              <span className="text-sm">Фактури</span>
+            </Link>
+
+            {(session?.user as any)?.role === "admin" && (
+              <Link href="/portal/admin" className="bg-red-500/20 hover:bg-red-500/30 text-white p-4 border border-red-500/40 hover:border-red-500/50 rounded-xl font-bold transition flex flex-col justify-between h-28 shadow-md col-span-2 sm:col-span-1">
+                <ShieldAlert className="w-6 h-6 text-red-400 animate-pulse" />
+                <span className="text-sm">Админ Панел</span>
+              </Link>
+            )}
 
           </div>
         </div>

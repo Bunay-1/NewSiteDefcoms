@@ -159,7 +159,25 @@ async function runCheck() {
     throw new Error("❌ Грешка при създаване на тестов документ.");
   }
 
-  console.log("\n9. Проверка на сигурната промяна на профил и парола...");
+  console.log("\n9. Проверка на генерирането и управлението на Фактури (Invoices)...");
+  const invoice = await prisma.invoice.create({
+    data: {
+      invoiceNumber: "INV-TEST-999",
+      amount: 1450.00,
+      status: "unpaid",
+      description: "Тестов SOC Абонамент",
+      dueDate: new Date(),
+      userId: user.id,
+    }
+  });
+
+  if (invoice && invoice.id) {
+    console.log(`✅ Фактурата бе издадена успешно с ID: ${invoice.id} и сума: ${invoice.amount} лв.`);
+  } else {
+    throw new Error("❌ Грешка при издаване на тестова фактура.");
+  }
+
+  console.log("\n10. Проверка на сигурната промяна на профил и парола...");
   const updatedUser = await prisma.user.update({
     where: { id: user.id },
     data: {
@@ -176,7 +194,7 @@ async function runCheck() {
     throw new Error("❌ Неуспешно обновяване на паролата или личните данни в профила.");
   }
 
-  console.log("\n10. Почистване на тестовите данни от базата данни (Clean up)...");
+  console.log("\n11. Почистване на тестовите данни от базата данни (Clean up)...");
   await prisma.user.delete({
     where: { id: user.id }
   });
@@ -186,8 +204,9 @@ async function runCheck() {
   const checkServiceExists = await prisma.userService.findFirst({ where: { userId: user.id } });
   const checkRecExists = await prisma.recommendation.findFirst({ where: { userId: user.id } });
   const checkDocExists = await prisma.document.findFirst({ where: { userId: user.id } });
+  const checkInvExists = await prisma.invoice.findFirst({ where: { userId: user.id } });
 
-  if (!checkUserExists && !checkTicketExists && !checkServiceExists && !checkRecExists && !checkDocExists) {
+  if (!checkUserExists && !checkTicketExists && !checkServiceExists && !checkRecExists && !checkDocExists && !checkInvExists) {
     console.log("✅ Всички тестови данни бяха успешно и сигурно почистени от базата през Cascade Delete.");
   } else {
     throw new Error("❌ Грешка при почистване на тестовите данни!");
