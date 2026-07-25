@@ -6,8 +6,32 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "SOC Платформа - 24/7 Мониторинг на Киберзаплахи | DefComs",
-  description: "Централизирана SOC платформа за проактивно засичане, мониторинг и управление на инциденти в реално време с AI-базиран анализ и 24/7 защита на вашата инфраструктура.",
-  keywords: "SOC Платформа, център за сигурност, 24/7 кибер мониторинг, автоматизиран отговор на инциденти",
+  description: "Централизирана SOC платформа за проактивно засичане, мониторинг и управление на инциденти в реално време в България. AI-базиран анализ и 24/7 защита на вашата инфраструктура.",
+  keywords: "SOC Платформа, център за сигурност, 24/7 кибер мониторинг, автоматизиран отговор на инциденти, киберсигурност България, SOC център София",
+  alternates: {
+    canonical: "https://defcoms.eu/products/soc-platform",
+  },
+  openGraph: {
+    title: "SOC Платформа - 24/7 Мониторинг на Киберзаплахи | DefComs",
+    description: "Централизирана SOC платформа за проактивно засичане, мониторинг и управление на инциденти в реално време в България. AI-базиран анализ и 24/7 защита на вашата инфраструктура.",
+    url: "https://defcoms.eu/products/soc-platform",
+    siteName: "DefComs",
+    locale: "bg_BG",
+    type: "website",
+    images: [
+      {
+        url: "https://defcoms.eu/SocNoc/Dashboard.webp",
+        width: 1200,
+        height: 630,
+        alt: "DefComs SOC Platform Dashboard",
+      }
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "SOC Платформа - 24/7 Мониторинг на Киберзаплахи | DefComs",
+    description: "Централизирана SOC платформа за проактивно засичане, мониторинг и управление на инциденти в реално време в България. AI-базиран анализ и 24/7 защита на вашата инфраструктура.",
+  },
 };
 
 export default function SOCPlatformPage() {
@@ -161,7 +185,7 @@ export default function SOCPlatformPage() {
                 <div className="aspect-video relative">
                   <Image
                     src={image.src}
-                    alt={image.title}
+                    alt={`${image.title} - DefComs SOC Платформа Киберсигурност`}
                     fill
                     className="object-cover"
                   />

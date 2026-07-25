@@ -4,8 +4,24 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Продукти за Киберсигурност | SOC, SIEM, Endpoint & Network Security | DefComs",
-  description: "Разгледайте гамата от специализирани продукти на DefComs за защита на бизнеса: SOC Платформа, SIEM решения, Защита на крайни точки (Endpoint Protection), Мрежова сигурност и Скенер на уязвимости.",
-  keywords: "продукти киберсигурност, SOC Платформа, SIEM решения, Endpoint Protection, Мрежова сигурност, скенер уязвимости, Threat Intelligence",
+  description: "Разгледайте гамата от специализирани продукти на DefComs за защита на бизнеса в България: SOC Платформа, SIEM решения, Защита на крайни точки, Мрежова сигурност и Скенер на уязвимости.",
+  keywords: "продукти киберсигурност, SOC Платформа, SIEM решения, Endpoint Protection, Мрежова сигурност, скенер уязвимости, Threat Intelligence, киберсигурност България",
+  alternates: {
+    canonical: "https://defcoms.eu/products",
+  },
+  openGraph: {
+    title: "Продукти за Киберсигурност | SOC, SIEM, Endpoint & Network Security | DefComs",
+    description: "Разгледайте гамата от специализирани продукти на DefComs за защита на бизнеса в България: SOC Платформа, SIEM решения, Защита на крайни точки, Мрежова сигурност и Скенер на уязвимости.",
+    url: "https://defcoms.eu/products",
+    siteName: "DefComs",
+    locale: "bg_BG",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Продукти за Киберсигурност | SOC, SIEM, Endpoint & Network Security | DefComs",
+    description: "Разгледайте гамата от специализирани продукти на DefComs за защита на бизнеса в България: SOC Платформа, SIEM решения, Защита на крайни точки, Мрежова сигурност и Скенер на уязвимости.",
+  },
 };
 
 export default function ProductsPage() {
@@ -60,8 +76,51 @@ export default function ProductsPage() {
     }
   ];
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Начало",
+        "item": "https://defcoms.eu"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Продукти",
+        "item": "https://defcoms.eu/products"
+      }
+    ]
+  };
+
+  const itemListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Продукти за киберсигурност DefComs",
+    "description": "Списък от специализирани продукти за киберзащита и мониторинг.",
+    "url": "https://defcoms.eu/products",
+    "numberOfItems": products.length,
+    "itemListElement": products.map((product, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "url": `https://defcoms.eu/products/${product.id}`,
+      "name": product.name,
+      "description": product.description
+    }))
+  };
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-24 px-4">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+      />
       <div className="max-w-7xl mx-auto">
         <h1 className="text-5xl font-bold text-white text-center mb-6">
           Нашите продукти

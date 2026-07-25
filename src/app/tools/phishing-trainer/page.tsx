@@ -5,13 +5,77 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Фишинг Тренажор - Интерактивна Игра за Разпознаване на Измами | DefComs",
-  description: "Изпробвайте своята бдителност с нашия безплатен интерактивен фишинг тренажор. Научете се да разпознавате опасни имейли, проектирани за кражба на данни.",
-  keywords: "фишинг тренажор, разпознаване на фишинг, фишинг игра, обучение за сигурност, фишинг симулация",
+  description: "Изпробвайте своята бдителност в България с нашия безплатен интерактивен фишинг тренажор. Научете се да разпознавате опасни имейли, проектирани за кражба на данни.",
+  keywords: "фишинг тренажор, разпознаване на фишинг, фишинг игра, обучение за сигурност, фишинг симулация, обучение служители България, фишинг симулации София",
+  alternates: {
+    canonical: "https://defcoms.eu/tools/phishing-trainer",
+  },
+  openGraph: {
+    title: "Фишинг Тренажор - Интерактивна Игра за Разпознаване на Измами | DefComs",
+    description: "Изпробвайте своята бдителност в България с нашия безплатен интерактивен фишинг тренажор. Научете се да разпознавате опасни имейли, проектирани за кражба на данни.",
+    url: "https://defcoms.eu/tools/phishing-trainer",
+    siteName: "DefComs",
+    locale: "bg_BG",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Фишинг Тренажор - Интерактивна Игра за Разпознаване на Измами | DefComs",
+    description: "Изпробвайте своята бдителност в България с нашия безплатен интерактивен фишинг тренажор. Научете се да разпознавате опасни имейли, проектирани за кражба на данни.",
+  },
 };
 
 export default function PhishingPage() {
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Начало",
+        "item": "https://defcoms.eu"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Инструменти",
+        "item": "https://defcoms.eu/products"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Фишинг тренажор",
+        "item": "https://defcoms.eu/tools/phishing-trainer"
+      }
+    ]
+  };
+
+  const appJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Фишинг Тренажор - Интерактивна Игра за Разпознаване на Измами | DefComs",
+    "description": "Изпробвайте своята бдителност с нашия безплатен интерактивен фишинг тренажор.",
+    "url": "https://defcoms.eu/tools/phishing-trainer",
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires JavaScript and HTML5",
+    "creator": {
+      "@type": "Organization",
+      "name": "DefComs"
+    }
+  };
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 pt-28 px-4 pb-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(appJsonLd) }}
+      />
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-bold uppercase tracking-wider mb-4">

@@ -6,8 +6,32 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Endpoint Protection - Защита на Крайни Точки и Работни Станции | DefComs",
-  description: "Комплексно решение за защита на крайни точки (EDR) срещу Ransomware, малуер и сложни фишинг атаки за работни станции, сървъри и мобилни устройства.",
-  keywords: "Endpoint Protection, EDR защита, анти-вирус, защита срещу ransomware, сигурност на крайни точки",
+  description: "Комплексно решение за защита на крайни точки (EDR) в България срещу Ransomware, малуер и сложни фишинг атаки за работни станции, сървъри и мобилни устройства.",
+  keywords: "Endpoint Protection, EDR защита, анти-вирус, защита срещу ransomware, сигурност на крайни точки, EDR България, защита на компютри",
+  alternates: {
+    canonical: "https://defcoms.eu/products/endpoint-protection",
+  },
+  openGraph: {
+    title: "Endpoint Protection - Защита на Крайни Точки и Работни Станции | DefComs",
+    description: "Комплексно решение за защита на крайни точки (EDR) в България срещу Ransomware, малуер и сложни фишинг атаки за работни станции, сървъри и мобилни устройства.",
+    url: "https://defcoms.eu/products/endpoint-protection",
+    siteName: "DefComs",
+    locale: "bg_BG",
+    type: "website",
+    images: [
+      {
+        url: "https://defcoms.eu/Persevs/perservs.webp",
+        width: 1200,
+        height: 630,
+        alt: "Persevs Security System Endpoint Protection",
+      }
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Endpoint Protection - Защита на Крайни Точки и Работни Станции | DefComs",
+    description: "Комплексно решение за защита на крайни точки (EDR) в България срещу Ransomware, малуер и сложни фишинг атаки за работни станции, сървъри и мобилни устройства.",
+  },
 };
 
 export default function EndpointProtectionPage() {
@@ -40,8 +64,77 @@ export default function EndpointProtectionPage() {
     { title: "Security Reports Dashboard", description: "Подробни анализи на състоянието и защитата в реално време", src: "/Persevs/04_Reports_Page_Persevs.webp" }
   ];
 
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "Endpoint Protection",
+    "image": "https://defcoms.eu/Persevs/perservs.webp",
+    "description": "Комплексно решение за защита на крайни точки (EDR) срещу Ransomware, малуер и сложни фишинг атаки.",
+    "brand": {
+      "@type": "Brand",
+      "name": "DefComs"
+    },
+    "offers": {
+      "@type": "AggregateOffer",
+      "priceCurrency": "EUR",
+      "lowPrice": "299",
+      "highPrice": "2999",
+      "offerCount": "3"
+    }
+  };
+
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map(faq => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer
+      }
+    }))
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Начало",
+        "item": "https://defcoms.eu"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Продукти",
+        "item": "https://defcoms.eu/products"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Endpoint Protection",
+        "item": "https://defcoms.eu/products/endpoint-protection"
+      }
+    ]
+  };
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-24 px-4 pb-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <Link href="/products" className="text-[#0098b2] hover:underline">
@@ -82,7 +175,7 @@ export default function EndpointProtectionPage() {
                 <div className="aspect-video relative bg-slate-900">
                   <Image
                     src={image.src}
-                    alt={image.title}
+                    alt={`${image.title} - DefComs EDR Защита на Крайни Точки`}
                     fill
                     className="object-cover"
                   />

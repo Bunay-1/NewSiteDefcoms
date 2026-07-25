@@ -5,13 +5,64 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Център за Уязвимости и Киберзаплахи - CVE Анализ | DefComs",
-  description: "Бъдете информирани за най-новите критични софтуерни уязвимости (CVE) и заплахи за сигурността. Анализи и препоръки от екипа на DefComs Security Intelligence.",
-  keywords: "център за заплахи, уязвимости CVE, анализ на уязвимости, сигурност препоръки, най-новите CVE",
+  description: "Бъдете информирани за най-новите критични софтуерни уязвимости (CVE) и заплахи за сигурността в България. Анализи и препоръки от екипа на DefComs Security Intelligence.",
+  keywords: "център за заплахи, уязвимости CVE, анализ на уязвимости, сигурност препоръки, най-новите CVE, уязвимости България, кибер заплахи България",
+  alternates: {
+    canonical: "https://defcoms.eu/threat-advisories",
+  },
+  openGraph: {
+    title: "Център за Уязвимости и Киберзаплахи - CVE Анализ | DefComs",
+    description: "Бъдете информирани за най-новите критични софтуерни уязвимости (CVE) и заплахи за сигурността в България. Анализи и препоръки от екипа на DefComs Security Intelligence.",
+    url: "https://defcoms.eu/threat-advisories",
+    siteName: "DefComs",
+    locale: "bg_BG",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Център за Уязвимости и Киберзаплахи - CVE Анализ | DefComs",
+    description: "Бъдете информирани за най-новите критични софтуерни уязвимости (CVE) и заплахи за сигурността в България. Анализи и препоръки от екипа на DefComs Security Intelligence.",
+  },
 };
 
 export default function ThreatPage() {
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Начало",
+        "item": "https://defcoms.eu"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Център за заплахи",
+        "item": "https://defcoms.eu/threat-advisories"
+      }
+    ]
+  };
+
+  const webPageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Център за Уязвимости и Киберзаплахи - CVE Анализ | DefComs",
+    "description": "Бъдете информирани за най-новите критични софтуерни уязвимости (CVE) и заплахи за сигурността.",
+    "url": "https://defcoms.eu/threat-advisories"
+  };
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 pt-28 px-4 pb-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd) }}
+      />
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-bold uppercase tracking-wider mb-4">

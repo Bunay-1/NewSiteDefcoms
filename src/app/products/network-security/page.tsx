@@ -5,8 +5,32 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Network Security - Сигурност на Мрежовата Инфраструктура | DefComs",
-  description: "Цялостна защита на корпоративни мрежи с IDS/IPS системи, управление на защитни стени (firewall), сегментиране на мрежата и SOAR интеграция за автоматична реакция.",
-  keywords: "Network Security, IDS/IPS, мрежова сигурност, мрежова сегментация, защита от мрежови атаки",
+  description: "Цялостна защита на корпоративни мрежи в България с IDS/IPS системи, управление на защитни стени (firewall), сегментиране на мрежата и SOAR интеграция за автоматична реакция.",
+  keywords: "Network Security, IDS/IPS, мрежова сигурност, мрежова сегментация, защита от мрежови атаки, мрежова сигурност България, защитна стена София",
+  alternates: {
+    canonical: "https://defcoms.eu/products/network-security",
+  },
+  openGraph: {
+    title: "Network Security - Сигурност на Мрежовата Инфраструктура | DefComs",
+    description: "Цялостна защита на корпоративни мрежи в България с IDS/IPS системи, управление на защитни стени (firewall), сегментиране на мрежата and SOAR интеграция за автоматична реакция.",
+    url: "https://defcoms.eu/products/network-security",
+    siteName: "DefComs",
+    locale: "bg_BG",
+    type: "website",
+    images: [
+      {
+        url: "https://defcoms.eu/LANProject/network_topology.webp",
+        width: 1200,
+        height: 630,
+        alt: "Network Security Topology Diagram",
+      }
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Network Security - Сигурност на Мрежовата Инфраструктура | DefComs",
+    description: "Цялостна защита на корпоративни мрежи в България с IDS/IPS системи, управление на защитни стени (firewall), сегментиране на мрежата и SOAR интеграция за автоматична реакция.",
+  },
 };
 
 export default function NetworkSecurityPage() {
@@ -47,8 +71,77 @@ export default function NetworkSecurityPage() {
     { title: "Network Security", description: "Мрежова сигурност", src: "/LANProject/network_security.webp" }
   ];
 
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "Network Security",
+    "image": "https://defcoms.eu/LANProject/network_topology.webp",
+    "description": "Цялостно решение за защита на мрежовата инфраструктура с видимост на трафика и автоматизиран отговор.",
+    "brand": {
+      "@type": "Brand",
+      "name": "DefComs"
+    },
+    "offers": {
+      "@type": "AggregateOffer",
+      "priceCurrency": "EUR",
+      "lowPrice": "299",
+      "highPrice": "2999",
+      "offerCount": "3"
+    }
+  };
+
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map(faq => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer
+      }
+    }))
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Начало",
+        "item": "https://defcoms.eu"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Продукти",
+        "item": "https://defcoms.eu/products"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Network Security",
+        "item": "https://defcoms.eu/products/network-security"
+      }
+    ]
+  };
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 pt-24 px-4">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <div className="max-w-7xl mx-auto">
         {/* Breadcrumb */}
         <div className="mb-8">
@@ -93,7 +186,7 @@ export default function NetworkSecurityPage() {
                 <div className="aspect-video relative">
                   <Image
                     src={image.src}
-                    alt={image.title}
+                    alt={`${image.title} - DefComs Мрежова Сигурност`}
                     fill
                     className="object-cover"
                   />
