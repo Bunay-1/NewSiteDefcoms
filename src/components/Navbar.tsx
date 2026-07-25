@@ -17,6 +17,7 @@ export default function Navbar() {
     { name: "Екип", href: "/team" },
     { name: "Съответствие", href: "/compliance" },
     { name: "Демо", href: "/demo" },
+    { name: "Клиентски портал", href: "/portal/login" },
   ];
 
   const toolItems = [

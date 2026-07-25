@@ -43,7 +43,7 @@ export default function NewsletterSubscription() {
             <Mail className="w-6 h-6" />
           </div>
           <h2 className="text-3xl font-bold text-white mb-3">
-            Абонирайте се за Бюлетин & Маркетингови Съобщения
+            Абонирайте се за Бюлетин
           </h2>
           <p className="text-gray-300 text-sm mb-8 leading-relaxed">
             Получавайте най-новите анализи на уязвимости (CVE), новини по киберсигурност, регулации на ЕС (NIS2, DORA) и изключителни оферти директно в пощата си.
