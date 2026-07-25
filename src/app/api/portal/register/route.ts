@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { sendDefComsNotification } from "@/lib/email";
 
 export async function POST(req: NextRequest) {
   try {
@@ -48,6 +49,23 @@ export async function POST(req: NextRequest) {
         createdAt: true,
       },
     });
+
+    // Изпращане на имейл известие до официалния имейл на DefComs
+    try {
+      await sendDefComsNotification(
+        "Нова регистрация на клиент",
+        `Клиентът се регистрира успешно в платформата на DefComs.\nПрофилът е готов за одит.`,
+        {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          company: user.company,
+          phone: phone || null,
+        }
+      );
+    } catch (emailErr) {
+      console.error("Грешка при изпращане на имейл известие за регистрация:", emailErr);
+    }
 
     return NextResponse.json(
       { message: "Потребителят е създаден успешно", user },

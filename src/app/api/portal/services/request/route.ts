@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { sendDefComsNotification } from "@/lib/email";
 
 export const dynamic = "force-dynamic";
 
@@ -54,6 +55,34 @@ export async function POST(req: NextRequest) {
         isAdmin: true, // Симулираме отговор от администратор за по-голяма бързина
       },
     });
+
+    // Извличане на пълна информация за клиента за известието
+    const user = await prisma.user.findUnique({
+      where: { id: userId }
+    });
+
+    if (user) {
+      // Изпращане на имейл известие до официалния имейл на DefComs
+      try {
+        await sendDefComsNotification(
+          `Заявка за нова услуга/план: ${serviceName}`,
+          `Клиентът изпрати нова заявка в платформата на DefComs.\n\n` +
+            `• Тип заявка: ${requestTypeLabel}\n` +
+            `• Име на услугата: ${serviceName}\n` +
+            `• Номер на автоматичния поддържащ тикет: ${ticket.id}\n\n` +
+            `Детайли по заявката:\n"${details || "Не са въведени допълнителни бележки."}"`,
+          {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            company: user.company,
+            phone: user.phone,
+          }
+        );
+      } catch (emailErr) {
+        console.error("Грешка при изпращане на имейл известие за услуга:", emailErr);
+      }
+    }
 
     return NextResponse.json({
       message: "Заявката бе изпратена успешно",

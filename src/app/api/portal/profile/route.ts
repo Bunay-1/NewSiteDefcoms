@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { sendDefComsNotification } from "@/lib/email";
 
 export const dynamic = "force-dynamic";
 
@@ -67,6 +68,29 @@ export async function PATCH(req: NextRequest) {
         role: true,
       },
     });
+
+    // Изпращане на имейл известие до официалния имейл на DefComs
+    try {
+      const changesList: string[] = [];
+      if (name !== undefined) changesList.push(`• Промяна на име: "${name}"`);
+      if (phone !== undefined) changesList.push(`• Промяна на телефон: "${phone}"`);
+      if (company !== undefined) changesList.push(`• Промяна на фирма: "${company}"`);
+      if (currentPassword && newPassword) changesList.push(`• Успешна смяна на сигурностната парола`);
+
+      await sendDefComsNotification(
+        "Обновяване на клиентски профил",
+        `Клиентът успешно обнови данните за своя профил в платформата.\n\nНаправени промени:\n${changesList.join("\n") || "• Обновяване без видима промяна на основни текстови полета."}`,
+        {
+          id: updatedUser.id,
+          name: updatedUser.name,
+          email: updatedUser.email,
+          company: updatedUser.company,
+          phone: updatedUser.phone,
+        }
+      );
+    } catch (emailErr) {
+      console.error("Грешка при изпращане на имейл известие за профил:", emailErr);
+    }
 
     return NextResponse.json({
       message: "Профилът бе обновен успешно",
