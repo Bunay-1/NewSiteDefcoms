@@ -12,7 +12,8 @@ import {
   Plus,
   LogOut,
   User,
-  Building2
+  Building2,
+  Shield
 } from "lucide-react";
 import Link from "next/link";
 
@@ -195,12 +196,19 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Create Ticket Button */}
-        <div className="mb-6">
+        {/* Actions Section */}
+        <div className="flex flex-wrap items-center gap-4 mb-6">
           <Link href="/portal/tickets/new">
-            <button className="bg-[#0098b2] hover:bg-[#007a91] text-white px-6 py-3 rounded-xl font-semibold transition flex items-center gap-2">
+            <button className="bg-[#0098b2] hover:bg-[#007a91] text-white px-6 py-3 rounded-xl font-semibold transition flex items-center gap-2 shadow-lg shadow-[#0098b2]/10">
               <Plus className="w-5 h-5" />
               Нов тикет
+            </button>
+          </Link>
+
+          <Link href="/portal/services">
+            <button className="bg-slate-800 hover:bg-slate-750 text-white border border-slate-700 hover:border-slate-600 px-6 py-3 rounded-xl font-semibold transition flex items-center gap-2 shadow-lg">
+              <Shield className="w-5 h-5 text-[#0098b2]" />
+              Моите активни услуги
             </button>
           </Link>
         </div>

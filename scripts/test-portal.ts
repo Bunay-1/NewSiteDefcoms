@@ -104,8 +104,28 @@ async function runCheck() {
     throw new Error("❌ Грешка при изпращане на съобщение.");
   }
 
-  console.log("\n6. Почистване на тестовите данни от базата данни (Clean up)...");
-  // Понеже имаме Cascade Delete, изтриването на потребителя автоматично изтрива тикетите и съобщенията му
+  console.log("\n6. Проверка на функционалността за активни услуги (UserService)...");
+  const service = await prisma.userService.create({
+    data: {
+      name: "Тестова Услуга по Киберсигурност",
+      description: "Тестово описание за съответствие и проверка на сигурността.",
+      status: "active",
+      compliance: "NIS2, GDPR",
+      userId: user.id
+    }
+  });
+
+  if (service && service.id) {
+    console.log(`✅ Услугата бе успешно записана в профила на клиента с ID: ${service.id}`);
+    console.log(`   - Име: ${service.name}`);
+    console.log(`   - Покритие: ${service.compliance}`);
+    console.log(`   - Статус: ${service.status}`);
+  } else {
+    throw new Error("❌ Грешка при създаване на тестова услуга.");
+  }
+
+  console.log("\n7. Почистване на тестовите данни от базата данни (Clean up)...");
+  // Понеже имаме Cascade Delete, изтриването на потребителя автоматично изтрива тикетите, съобщенията и услугите му
   await prisma.user.delete({
     where: { id: user.id }
   });
@@ -113,8 +133,9 @@ async function runCheck() {
   // Проверяваме дали всичко е изтрито
   const checkUserExists = await prisma.user.findUnique({ where: { email: testEmail } });
   const checkTicketExists = await prisma.ticket.findFirst({ where: { userId: user.id } });
+  const checkServiceExists = await prisma.userService.findFirst({ where: { userId: user.id } });
 
-  if (!checkUserExists && !checkTicketExists) {
+  if (!checkUserExists && !checkTicketExists && !checkServiceExists) {
     console.log("✅ Всички тестови данни бяха успешно и сигурно почистени.");
   } else {
     throw new Error("❌ Грешка при почистване на тестовите данни!");

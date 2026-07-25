@@ -25,6 +25,21 @@ model User {
   updatedAt DateTime @updatedAt
   tickets   Ticket[]
   messages  Message[]
+  services  UserService[]
+}
+
+model UserService {
+  id          String    @id @default(cuid())
+  name        String    // Име на услугата (напр. "24/7 SOC Мониторинг")
+  description String?   // Кратко описание на покритието
+  status      String    @default("active") // active, suspended, expired
+  startDate   DateTime  @default(now())
+  endDate     DateTime?
+  compliance  String?   // Свързан бадж за съответствие (напр. "NIS2", "GDPR", "DORA")
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model Ticket {
