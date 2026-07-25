@@ -16,6 +16,11 @@ model User {
   role            String           @default("client")
   company         String?
   phone           String?
+  address         String?
+  iban            String?
+  eik             String?
+  vat             String?
+  mol             String?
   mfaEnabled      Boolean          @default(false)
   mfaSecret       String?
   notifyThreats   Boolean          @default(true)
