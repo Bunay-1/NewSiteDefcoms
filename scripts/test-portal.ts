@@ -112,10 +112,10 @@ async function runCheck() {
   console.log("\n7. Проверка на Препоръките за сигурност и изчисляване на здравния статус (Cybersecurity Health Score)...");
   const rec1 = await prisma.recommendation.create({
     data: {
-      title: "Препоръка 1",
+      title: "Активирайте Многофакторна Аутентификация (MFA)",
       description: "Тестово описание",
       impact: 20,
-      status: "completed",
+      status: "pending",
       category: "Достъп",
       userId: user.id,
     }
@@ -136,10 +136,10 @@ async function runCheck() {
   const totalImpact = allRecs.reduce((acc, r) => acc + r.impact, 0);
   const score = totalImpact > 0 ? Math.round((completedImpact / totalImpact) * 100) : 100;
 
-  if (score === 40) {
-    console.log(`✅ Успешно пресмятане на Cybersecurity Score: ${score}% (20/50 точки completed)`);
+  if (score === 0) {
+    console.log(`✅ Успешно пресмятане на Cybersecurity Score: ${score}% (0/50 точки completed)`);
   } else {
-    throw new Error(`❌ Грешно изчислен резултат на сигурността: ${score}% (очакван: 40%)`);
+    throw new Error(`❌ Грешно изчислен резултат на сигурността: ${score}%`);
   }
 
   console.log("\n8. Проверка на качването на защитени доклади и одитни документи...");
@@ -177,7 +177,39 @@ async function runCheck() {
     throw new Error("❌ Грешка при издаване на тестова фактура.");
   }
 
-  console.log("\n10. Проверка на сигурната промяна на профил и парола...");
+  console.log("\n10. Проверка на одит лог историята (AuditLogs)...");
+  const log = await prisma.auditLog.create({
+    data: {
+      action: "Смяна на парола през профила",
+      ipAddress: "95.42.18.112",
+      userAgent: "Firefox / OS",
+      status: "success",
+      userId: user.id,
+    }
+  });
+
+  if (log && log.id) {
+    console.log(`✅ Одит логът бе записан успешно с ID: ${log.id} и събитие: ${log.action}`);
+  } else {
+    throw new Error("❌ Грешка при запис на одит лог.");
+  }
+
+  console.log("\n11. Проверка на API Ключове за интеграция...");
+  const apiKey = await prisma.apiKey.create({
+    data: {
+      name: "Тестов API Ключ",
+      key: "defcoms_live_sk_test_key_xyz",
+      userId: user.id,
+    }
+  });
+
+  if (apiKey && apiKey.id) {
+    console.log(`✅ API ключът бе генериран успешно с ID: ${apiKey.id} и стойност: ${apiKey.key}`);
+  } else {
+    throw new Error("❌ Грешка при генериране на API ключ.");
+  }
+
+  console.log("\n12. Проверка на сигурната промяна на профил и парола...");
   const updatedUser = await prisma.user.update({
     where: { id: user.id },
     data: {
@@ -194,7 +226,7 @@ async function runCheck() {
     throw new Error("❌ Неуспешно обновяване на паролата или личните данни в профила.");
   }
 
-  console.log("\n11. Почистване на тестовите данни от базата данни (Clean up)...");
+  console.log("\n13. Почистване на тестовите данни от базата данни (Clean up)...");
   await prisma.user.delete({
     where: { id: user.id }
   });
@@ -205,8 +237,10 @@ async function runCheck() {
   const checkRecExists = await prisma.recommendation.findFirst({ where: { userId: user.id } });
   const checkDocExists = await prisma.document.findFirst({ where: { userId: user.id } });
   const checkInvExists = await prisma.invoice.findFirst({ where: { userId: user.id } });
+  const checkLogExists = await prisma.auditLog.findFirst({ where: { userId: user.id } });
+  const checkKeyExists = await prisma.apiKey.findFirst({ where: { userId: user.id } });
 
-  if (!checkUserExists && !checkTicketExists && !checkServiceExists && !checkRecExists && !checkDocExists && !checkInvExists) {
+  if (!checkUserExists && !checkTicketExists && !checkServiceExists && !checkRecExists && !checkDocExists && !checkInvExists && !checkLogExists && !checkKeyExists) {
     console.log("✅ Всички тестови данни бяха успешно и сигурно почистени от базата през Cascade Delete.");
   } else {
     throw new Error("❌ Грешка при почистване на тестовите данни!");

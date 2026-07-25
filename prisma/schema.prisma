@@ -21,6 +21,11 @@ model User {
   role            String           @default("client") // client, admin
   company         String?
   phone           String?
+  mfaEnabled      Boolean          @default(false)
+  mfaSecret       String?
+  notifyThreats   Boolean          @default(true)
+  notifyTickets   Boolean          @default(true)
+  notifyInvoices  Boolean          @default(true)
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   tickets         Ticket[]
@@ -29,6 +34,28 @@ model User {
   recommendations Recommendation[]
   documents       Document[]
   invoices        Invoice[]
+  auditLogs       AuditLog[]
+  apiKeys         ApiKey[]
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String   // напр. "Успешен вход", "Смяна на парола"
+  ipAddress String   // напр. "95.42.18.112"
+  userAgent String   // напр. "Chrome / Windows 11"
+  status    String   // success, failed
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model ApiKey {
+  id        String   @id @default(cuid())
+  name      String   // напр. "Интеграция с SIEM"
+  key       String   @unique // детайлно генериран криптиран токен
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 }
 
 model Invoice {
