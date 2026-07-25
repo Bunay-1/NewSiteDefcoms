@@ -9,7 +9,7 @@ export default function NewsletterSubscription() {
   const [status, setStatus] = useState<"idle" | "success" | "error" | "loading">("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!email || !email.includes("@")) {
@@ -26,12 +26,25 @@ export default function NewsletterSubscription() {
 
     setStatus("loading");
 
-    // Simulate API request
-    setTimeout(() => {
-      setStatus("success");
-      setEmail("");
-      setConsent(false);
-    }, 800);
+    try {
+      const res = await fetch("/api/public/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      });
+      if (res.ok) {
+        setStatus("success");
+        setEmail("");
+        setConsent(false);
+      } else {
+        const data = await res.json();
+        setStatus("error");
+        setErrorMessage(data.error || "Грешка при абониране за бюлетин.");
+      }
+    } catch (err) {
+      setStatus("error");
+      setErrorMessage("Възникна мрежова грешка.");
+    }
   };
 
   return (
