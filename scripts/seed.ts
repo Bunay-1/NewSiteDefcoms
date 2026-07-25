@@ -203,6 +203,71 @@ async function main() {
   });
 
   console.log("Recommendations, documents, and threat alerts successfully seeded!");
+
+  // Създаване / ъпсерт на Администраторски профил
+  const adminPassword = await bcrypt.hash("admin123", 10);
+  const adminUser = await prisma.user.upsert({
+    where: { email: "admin@defcoms.eu" },
+    update: {},
+    create: {
+      email: "admin@defcoms.eu",
+      name: "Администратор DefComs",
+      password: adminPassword,
+      role: "admin",
+      company: "DefComs Security Ltd",
+      phone: "+359888999999",
+    }
+  });
+
+  console.log("Admin user created/updated:", adminUser);
+
+  // Изчистване на стари фактури за клиента
+  await prisma.invoice.deleteMany({ where: { userId: user.id } });
+
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+  const tenDaysAgo = new Date();
+  tenDaysAgo.setDate(tenDaysAgo.getDate() - 10);
+
+  const inTenDays = new Date();
+  inTenDays.setDate(inTenDays.getDate() + 10);
+
+  // Генериране на фактури за клиента
+  const inv1 = await prisma.invoice.create({
+    data: {
+      invoiceNumber: "INV-2024-089",
+      amount: 1450.00,
+      status: "paid",
+      description: "Месечен абонамент за SOC Платформа & Мониторинг - Юни 2024",
+      dueDate: tenDaysAgo,
+      userId: user.id,
+    }
+  });
+
+  const inv2 = await prisma.invoice.create({
+    data: {
+      invoiceNumber: "INV-2024-098",
+      amount: 1450.00,
+      status: "unpaid",
+      description: "Месечен абонамент за SOC Платформа & Мониторинг - Юли 2024",
+      dueDate: inTenDays,
+      userId: user.id,
+    }
+  });
+
+  const inv3 = await prisma.invoice.create({
+    data: {
+      invoiceNumber: "INV-2024-071",
+      amount: 2400.00,
+      status: "overdue",
+      description: "Извънреден Външен Пентестинг одит на ИТ инфраструктурата",
+      dueDate: thirtyDaysAgo,
+      userId: user.id,
+    }
+  });
+
+  console.log("Invoices successfully seeded for test client:", [inv1, inv2, inv3]);
 }
 
 main()
