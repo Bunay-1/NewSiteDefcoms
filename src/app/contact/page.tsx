@@ -50,22 +50,34 @@ export default function ContactPage() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
       setIsSubmitting(true);
-      // Simulate API call
-      setTimeout(() => {
-        setIsSubmitting(false);
-        setIsSubmitted(true);
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          subject: "",
-          message: ""
+      try {
+        const res = await fetch("/api/public/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData)
         });
-      }, 1200);
+        if (res.ok) {
+          setIsSubmitted(true);
+          setFormData({
+            name: "",
+            email: "",
+            phone: "",
+            subject: "",
+            message: ""
+          });
+        } else {
+          const data = await res.json();
+          setErrors(prev => ({ ...prev, submit: data.error || "Грешка при изпращане." }));
+        }
+      } catch (err) {
+        setErrors(prev => ({ ...prev, submit: "Възникна мрежова грешка." }));
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -232,6 +244,12 @@ export default function ContactPage() {
                     />
                     {errors.message && <p className="text-red-500 text-sm mt-1">{errors.message}</p>}
                   </div>
+
+                  {errors.submit && (
+                    <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-3 rounded-lg text-sm font-semibold">
+                      {errors.submit}
+                    </div>
+                  )}
 
                   <button
                     type="submit"
