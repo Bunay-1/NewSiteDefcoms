@@ -268,6 +268,55 @@ async function main() {
   });
 
   console.log("Invoices successfully seeded for test client:", [inv1, inv2, inv3]);
+
+  // Изчистване на стари логове и API ключове
+  await prisma.auditLog.deleteMany({ where: { userId: user.id } });
+  await prisma.apiKey.deleteMany({ where: { userId: user.id } });
+
+  // Генериране на история на влизанията (Security Audit Logs)
+  const log1 = await prisma.auditLog.create({
+    data: {
+      action: "Успешен вход в клиентския портал",
+      ipAddress: "95.42.18.112",
+      userAgent: "Chrome 126 / Windows 11 (София, България)",
+      status: "success",
+      userId: user.id,
+      createdAt: new Date(),
+    }
+  });
+
+  const log2 = await prisma.auditLog.create({
+    data: {
+      action: "Смяна на лични настройки на профила",
+      ipAddress: "95.42.18.112",
+      userAgent: "Chrome 126 / Windows 11 (София, България)",
+      status: "success",
+      userId: user.id,
+      createdAt: new Date(Date.now() - 3600000 * 24), // вчера
+    }
+  });
+
+  const log3 = await prisma.auditLog.create({
+    data: {
+      action: "Блокиран неуспешен опит за вход (Грешна парола)",
+      ipAddress: "185.220.101.42",
+      userAgent: "Firefox 125 / Tor Browser (Анонимен източник)",
+      status: "failed",
+      userId: user.id,
+      createdAt: new Date(Date.now() - 3600000 * 24 * 3), // преди 3 дни
+    }
+  });
+
+  // Генериране на API ключове
+  const apiKey1 = await prisma.apiKey.create({
+    data: {
+      name: "SIEM Интеграционен Ключ (Splunk Enterprise)",
+      key: "defcoms_live_sk_8f7b2a9e1d5c4b3a97e68d1a",
+      userId: user.id,
+    }
+  });
+
+  console.log("Audit logs and API keys successfully seeded for client:", [log1, log2, log3, apiKey1]);
 }
 
 main()
