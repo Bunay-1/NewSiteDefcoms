@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Mail, Shield, AlertTriangle, CheckCircle, XCircle, ArrowRight, RotateCcw, AlertCircle, HelpCircle, Trophy } from "lucide-react";
 import Link from "next/link";
 
@@ -16,12 +16,24 @@ interface PhishingScenario {
   explanation: string;
 }
 
-export default function PhishingTrainer() {
+export default function PhishingTrainer({ onFinish }: { onFinish?: (score: number, total: number, badge: string) => void }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, boolean>>({}); // scenarioId -> isPhishing selected
   const [showExplanation, setShowExplanation] = useState(false);
   const [score, setScore] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
+
+  useEffect(() => {
+    if (isFinished && onFinish) {
+      let feedbackTitle = "Новобранец в сигурността";
+      if (score === 3) {
+        feedbackTitle = "Бдителен служител";
+      } else if (score === 4) {
+        feedbackTitle = "Кибер Шампион";
+      }
+      onFinish(score, scenarios.length, feedbackTitle);
+    }
+  }, [isFinished, score, onFinish]);
 
   const scenarios: PhishingScenario[] = [
     {

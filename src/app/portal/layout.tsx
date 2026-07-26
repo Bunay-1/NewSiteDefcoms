@@ -15,7 +15,10 @@ import {
   LogOut,
   Lock,
   Menu,
-  X
+  X,
+  Server,
+  Cpu,
+  GraduationCap
 } from "lucide-react";
 
 function PortalNavbar({ session, pathname }: { session: any; pathname: string }) {
@@ -24,6 +27,9 @@ function PortalNavbar({ session, pathname }: { session: any; pathname: string })
   const navItems = [
     { name: "Табло", href: "/portal/dashboard", icon: LayoutDashboard },
     { name: "Услуги", href: "/portal/services", icon: Shield },
+    { name: "Активи", href: "/portal/assets", icon: Server },
+    { name: "SIEM", href: "/portal/siem", icon: Cpu },
+    { name: "Обучения", href: "/portal/training", icon: GraduationCap },
     { name: "Здравен статус", href: "/portal/health", icon: Activity },
     { name: "Заплахи", href: "/portal/threats", icon: ShieldAlert },
     { name: "Документи", href: "/portal/documents", icon: FileText },

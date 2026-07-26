@@ -28,7 +28,10 @@ import {
   X,
   FileCode,
   Ticket,
-  MessageSquare
+  MessageSquare,
+  Activity,
+  HeartPulse,
+  Server
 } from "lucide-react";
 import Link from "next/link";
 
@@ -66,7 +69,7 @@ export default function AdminPortalPage() {
   const [clients, setClients] = useState<ClientUser[]>([]);
   const [tickets, setTickets] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"clients" | "services" | "tickets" | "docs_billing">("clients");
+  const [activeTab, setActiveTab] = useState<"clients" | "services" | "tickets" | "docs_billing" | "threats_recs">("clients");
 
   // Модални състояния за Клиенти
   const [isClientModalOpen, setIsClientModalOpen] = useState(false);
@@ -121,10 +124,31 @@ export default function AdminPortalPage() {
     targetUserId: "",
   });
 
+  // Нова форма 3: Публикуване на глобална заплаха
+  const [threatForm, setThreatForm] = useState({
+    title: "",
+    description: "",
+    severity: "high",
+    mitigation: ""
+  });
+
+  // Нова форма 4: Създаване на препоръка за клиент
+  const [recForm, setRecForm] = useState({
+    title: "",
+    description: "",
+    impact: "10",
+    category: "Мрежа",
+    targetUserId: ""
+  });
+
   const [docSuccess, setDocSuccess] = useState("");
   const [docError, setDocError] = useState("");
   const [invSuccess, setInvSuccess] = useState("");
   const [invError, setInvError] = useState("");
+  const [threatSuccess, setThreatSuccess] = useState("");
+  const [threatError, setThreatError] = useState("");
+  const [recSuccess, setRecSuccess] = useState("");
+  const [recError, setRecError] = useState("");
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -218,7 +242,7 @@ export default function AdminPortalPage() {
     setClientForm({
       id: client.id,
       email: client.email,
-      password: "", // Паролата остава празна, освен ако не искаме да я сменим
+      password: "",
       name: client.name || "",
       phone: client.phone || "",
       company: client.company || "",
@@ -437,6 +461,81 @@ export default function AdminPortalPage() {
     }
   };
 
+  // Публикуване на заплаха
+  const handlePublishThreat = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setThreatSuccess("");
+    setThreatError("");
+
+    try {
+      const response = await fetch("/api/portal/threats", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(threatForm)
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setThreatSuccess(`✅ Заплахата "${data.title}" бе успешно публикувана в глобалната емисия!`);
+        setThreatForm({
+          title: "",
+          description: "",
+          severity: "high",
+          mitigation: ""
+        });
+      } else {
+        setThreatError(data.error || "Грешка при публикуване на заплаха");
+      }
+    } catch (err) {
+      setThreatError("Възникна мрежова грешка");
+    }
+  };
+
+  // Издаване на препоръка
+  const handleCreateRecommendation = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setRecSuccess("");
+    setRecError("");
+
+    if (!recForm.targetUserId) {
+      setRecError("Моля, изберете клиент за препоръката");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/portal/recommendations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: recForm.title,
+          description: recForm.description,
+          impact: parseInt(recForm.impact),
+          category: recForm.category,
+          userId: recForm.targetUserId
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setRecSuccess(`✅ Препоръката "${data.title}" е успешно прикачена. Здравният статус на клиента е променен!`);
+        setRecForm({
+          title: "",
+          description: "",
+          impact: "10",
+          category: "Мрежа",
+          targetUserId: ""
+        });
+        fetchClients(); // Опресняваме списъка
+      } else {
+        setRecError(data.error || "Грешка при създаване на препоръка");
+      }
+    } catch (err) {
+      setRecError("Възникна мрежова грешка");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-gray-300">
       {/* Header */}
@@ -473,7 +572,7 @@ export default function AdminPortalPage() {
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Navigation Tabs */}
-        <div className="flex items-center gap-2 border-b border-slate-700/60 pb-4 mb-8">
+        <div className="flex flex-wrap items-center gap-2 border-b border-slate-700/60 pb-4 mb-8">
           <button
             onClick={() => setActiveTab("clients")}
             className={`px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition ${
@@ -483,7 +582,7 @@ export default function AdminPortalPage() {
             }`}
           >
             <Users className="w-4 h-4" />
-            Управление на клиенти ({clients.length})
+            Клиенти ({clients.length})
           </button>
           <button
             onClick={() => setActiveTab("services")}
@@ -494,7 +593,7 @@ export default function AdminPortalPage() {
             }`}
           >
             <Shield className="w-4 h-4" />
-            Услуги & Абонаменти
+            Абонаменти
           </button>
           <button
             onClick={() => setActiveTab("tickets")}
@@ -505,7 +604,7 @@ export default function AdminPortalPage() {
             }`}
           >
             <Ticket className="w-4 h-4" />
-            Поддържащи тикети ({tickets.length})
+            Тикети ({tickets.length})
           </button>
           <button
             onClick={() => setActiveTab("docs_billing")}
@@ -516,7 +615,18 @@ export default function AdminPortalPage() {
             }`}
           >
             <FileText className="w-4 h-4" />
-            Качване на Документи & Фактури
+            Документи & Фактури
+          </button>
+          <button
+            onClick={() => setActiveTab("threats_recs")}
+            className={`px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition ${
+              activeTab === "threats_recs"
+                ? "bg-[#0098b2] text-white"
+                : "bg-slate-800 text-gray-400 hover:text-white"
+            }`}
+          >
+            <HeartPulse className="w-4 h-4" />
+            Заплахи & Препоръки
           </button>
         </div>
 
@@ -975,6 +1085,217 @@ export default function AdminPortalPage() {
             </div>
           </div>
         )}
+
+        {/* Tab 4: Global Threats & Recommendations */}
+        {activeTab === "threats_recs" && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+            {/* Threat publication form */}
+            <div className="bg-slate-800/40 border border-slate-700 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
+              <div>
+                <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2 border-b border-slate-700/60 pb-3">
+                  <ShieldAlert className="w-5 h-5 text-[#f22020] animate-pulse" />
+                  Публикуване на глобално предупреждение (Threat Feed)
+                </h3>
+                <p className="text-xs text-gray-400 mb-6">
+                  Тази заплаха ще се отрази веднага на стената за заплахи на всички клиенти в реално време.
+                </p>
+
+                {threatSuccess && (
+                  <div className="bg-green-500/10 border border-green-500/30 text-green-400 p-4 rounded-xl mb-6 flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm font-semibold">{threatSuccess}</span>
+                  </div>
+                )}
+
+                {threatError && (
+                  <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-4 rounded-xl mb-6 flex items-start gap-3">
+                    <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm font-semibold">{threatError}</span>
+                  </div>
+                )}
+
+                <form onSubmit={handlePublishThreat} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-300 mb-2">Заглавие на заплахата / CVE код</label>
+                    <input
+                      type="text"
+                      value={threatForm.title}
+                      onChange={(e) => setThreatForm({ ...threatForm, title: e.target.value })}
+                      placeholder="напр. CVE-2024-3094: XZ Utils Backdoor"
+                      className="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-[#f22020]"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-300 mb-2">Ниво на опасност (Severity)</label>
+                    <select
+                      value={threatForm.severity}
+                      onChange={(e) => setThreatForm({ ...threatForm, severity: e.target.value })}
+                      className="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-[#f22020]"
+                      required
+                    >
+                      <option value="critical">Критична (Critical)</option>
+                      <option value="high">Висока (High)</option>
+                      <option value="medium">Средна (Medium)</option>
+                      <option value="low">Ниска (Low)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-300 mb-2">Описание на уязвимостта</label>
+                    <textarea
+                      value={threatForm.description}
+                      onChange={(e) => setThreatForm({ ...threatForm, description: e.target.value })}
+                      rows={3}
+                      className="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-[#f22020] resize-none"
+                      placeholder="напр. Открита е злонамерена задна вратичка в компресионния инструмент xz-utils..."
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-300 mb-2">Мерки за неутрализиране (Mitigation)</label>
+                    <textarea
+                      value={threatForm.mitigation}
+                      onChange={(e) => setThreatForm({ ...threatForm, mitigation: e.target.value })}
+                      rows={3}
+                      className="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-[#f22020] resize-none"
+                      placeholder="напр. Свалете версията до xz v5.4.6 или актуализирайте незабавно..."
+                      required
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full bg-[#f22020] hover:bg-red-700 text-white font-bold py-3 rounded-xl transition flex items-center justify-center gap-2 mt-4"
+                  >
+                    <ShieldAlert className="w-5 h-5 animate-pulse" />
+                    Публикувай заплаха
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            {/* Recommendation creation form */}
+            <div className="bg-slate-800/40 border border-slate-700 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
+              <div>
+                <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2 border-b border-slate-700/60 pb-3">
+                  <Activity className="w-5 h-5 text-green-400" />
+                  Добавяне на препоръка / Оценка на защитата (Health Check)
+                </h3>
+                <p className="text-xs text-gray-400 mb-6">
+                  Задайте конкретна сигурностна мярка към избрания клиент. Тя ще се отрази директно в неговия спидометър (Health Score).
+                </p>
+
+                {recSuccess && (
+                  <div className="bg-green-500/10 border border-green-500/30 text-green-400 p-4 rounded-xl mb-6 flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm font-semibold">{recSuccess}</span>
+                  </div>
+                )}
+
+                {recError && (
+                  <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-4 rounded-xl mb-6 flex items-start gap-3">
+                    <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                    <span className="text-sm font-semibold">{recError}</span>
+                  </div>
+                )}
+
+                <form onSubmit={handleCreateRecommendation} className="space-y-4">
+                  {/* Select Client */}
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-300 mb-2">Изберете Клиент</label>
+                    <select
+                      value={recForm.targetUserId}
+                      onChange={(e) => setRecForm({ ...recForm, targetUserId: e.target.value })}
+                      className="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-green-500"
+                      required
+                    >
+                      <option value="">-- Изберете клиент от списъка --</option>
+                      {clients.map(c => (
+                        <option key={c.id} value={c.id}>
+                          {c.name || "Без име"} ({c.company || "Няма фирма"}) | {c.email}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-300 mb-2">Име на задачата / изискването</label>
+                    <input
+                      type="text"
+                      value={recForm.title}
+                      onChange={(e) => setRecForm({ ...recForm, title: e.target.value })}
+                      placeholder="напр. Конфигуриране на WAF филтрация"
+                      className="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-green-500"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-300 mb-2">Категория</label>
+                    <select
+                      value={recForm.category}
+                      onChange={(e) => setRecForm({ ...recForm, category: e.target.value })}
+                      className="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-green-500"
+                      required
+                    >
+                      <option value="Достъп">Контрол на достъпа (Access)</option>
+                      <option value="Мрежа">Мрежова сигурност (Network)</option>
+                      <option value="Съответствие">Регулаторно съответствие (Compliance)</option>
+                      <option value="Обучение">Обучение на персонала (Training)</option>
+                    </select>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-300 mb-2">Тежест на мярката (Impact точки)</label>
+                      <select
+                        value={recForm.impact}
+                        onChange={(e) => setRecForm({ ...recForm, impact: e.target.value })}
+                        className="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-green-500"
+                        required
+                      >
+                        <option value="10">10 точки (Ниско влияние)</option>
+                        <option value="15">15 точки (Средно влияние)</option>
+                        <option value="20">20 точки (Високо влияние)</option>
+                        <option value="25">25 точки (Критично влияние)</option>
+                      </select>
+                    </div>
+                    <div className="flex flex-col justify-end">
+                      <p className="text-[10px] text-gray-500 leading-relaxed p-1">
+                        * Колкото по-висок е impact-ът на препоръката, толкова по-голям дял от общия здравен статус на клиента заема тя.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-300 mb-2">Описание и указания за изпълнение</label>
+                    <textarea
+                      value={recForm.description}
+                      onChange={(e) => setRecForm({ ...recForm, description: e.target.value })}
+                      rows={3}
+                      className="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-green-500 resize-none"
+                      placeholder="Опишете стъпките за изпълнение на мярката от ИТ отдела на клиента..."
+                      required
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl transition flex items-center justify-center gap-2 mt-4"
+                  >
+                    <CheckCircle className="w-5 h-5" />
+                    Добави препоръка
+                  </button>
+                </form>
+              </div>
+            </div>
+
+          </div>
+        )}
       </div>
 
       {/* Modern Dialog Modal: Client Create/Edit */}
@@ -1189,7 +1510,7 @@ export default function AdminPortalPage() {
                 <select
                   value={serviceForm.name}
                   onChange={(e) => setServiceForm({ ...serviceForm, name: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 px-3.5 text-white text-sm focus:outline-none focus:border-[#0098b2]"
+                  className="w-full bg-slate-905 border border-slate-800 rounded-xl py-2.5 px-3.5 text-white text-sm focus:outline-none focus:border-[#0098b2]"
                   required
                 >
                   <option value="24/7 SOC Мониторинг & Лог Мениджмънт">24/7 SOC Мониторинг & Лог Мениджмънт (NIS2 / ISO 27001)</option>
