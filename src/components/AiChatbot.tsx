@@ -128,15 +128,39 @@ export default function AiChatbot() {
       const normalizedInput = textToSend.toLowerCase();
       let foundAnswer = "";
 
-      for (const item of keywordAnswers) {
-        if (item.keywords.some(keyword => normalizedInput.includes(keyword))) {
-          foundAnswer = item.answer;
-          break;
+      // Check for CVE pattern
+      const cveMatch = normalizedInput.match(/cve-\d{4}-\d{4,7}/);
+      if (cveMatch) {
+        const cveId = cveMatch[0].toUpperCase();
+        if (cveId === "CVE-2024-3094") {
+          foundAnswer = `🚨 **Анализ на CVE-2024-3094 (XZ Utils Backdoor):**\n\n• **Критичност:** 10.0 (Критична)\n• **Описание:** Изключително опасна скрита задна вратичка в компилационната система на XZ Utils (версии 5.6.0 и 5.6.1), позволяваща отдалечено изпълнение на произволен код (RCE) през SSH без оторизация.\n• **Защитни мерки:** Незабавно връщане на пакета до стабилна версия 5.4.x.\n\n🛡️ **Как ни защитава DefComs:**\n1. Нашият **Vulnerability Scanner** автоматично открива уязвимата XZ версия във Вашата инфраструктура.\n2. **SOC Платформата** следи за аномалии в SSH сесиите и необичайни дъщерни процеси на sshd.`;
+        } else if (cveId === "CVE-2021-44228") {
+          foundAnswer = `🚨 **Анализ на CVE-2021-44228 (Log4Shell):**\n\n• **Критичност:** 10.0 (Критична)\n• **Описание:** RCE уязвимост в популярната Java библиотека Log4j, позволяваща на неоторизирани атакуващи да изпълняват код през специално оформени JNDI низове.\n• **Защитни мерки:** Спешен ъпгрейд на Log4j до 2.17.1+.\n\n🛡️ **Как ни защитава DefComs:**\n1. Нашият **SIEM Solution** незабавно корелира мрежови логове за необичайни изходящи LDAP/RMI заявки.\n2. **Network Security** (IDS/IPS) филтрира злонамерени JNDI заявки в реално време на входа на мрежата.`;
+        } else if (cveId === "CVE-2017-0144") {
+          foundAnswer = `🚨 **Анализ на CVE-2017-0144 (EternalBlue):**\n\n• **Критичност:** 8.1 (Висока/Критична)\n• **Описание:** Слабост в имплементацията на остарелия SMBv1 протокол в Windows, използвана за разпространение на WannCry и NotPetya ransomware.\n• **Защитни мерки:** Деактивиране на SMBv1 поддръжката и инсталиране на Microsoft MS17-010.\n\n🛡️ **Как ни защитава DefComs:**\n1. **Endpoint Protection** автоматично блокира WannaCry и сродни ransomware заплахи на работните станции.\n2. Нашата **Network Security** засича опити за сканиране на порт 445 и блокира SMB експлойт опитите.`;
+        } else if (cveId === "CVE-2023-34362") {
+          foundAnswer = `🚨 **Анализ на CVE-2023-34362 (MOVEit Transfer RCE):**\n\n• **Критичност:** 9.8 (Критична)\n• **Описание:** SQL инжекция в MOVEit Transfer уеб приложението, позволяваща отдалечен неоторизиран достъп и кражба на файлове.\n• **Защитни мерки:** Инсталиране на най-новите пачове от Progress Software.\n\n🛡️ **Как ни защитава DefComs:**\n1. **Threat Intelligence** емисията ни веднага известява за нови IP-та, извършващи активно сканиране за MOVEit.\n2. Нашата **SOC Platform** извършва проактивен Threat Hunting за признаци на уеб шелове по Вашите уеб сървъри.`;
+        } else {
+          foundAnswer = `🔍 **Анализ на ${cveId}:**\n\nТази уязвимост се следи активно в реално време от глобалната база за заплахи на **DefComs Threat Intelligence**.\n\n🛡️ **Препоръка:** Препоръчваме да стартирате сканиране на активите чрез нашия **Vulnerability Scanner** или да се свържете с нашите SOC анализатори през клиентския портал (раздел Поддръжка - Тикети) за подробен анализ.`;
         }
       }
 
       if (!foundAnswer) {
-        foundAnswer = "Благодаря за въпроса! Като интелигентен асистент на DefComs, силно Ви препоръчвам да се свържете с нашите реални експерти за безплатна професионална консултация на страницата ни '/contact' или да разгледате интерактивния ни ROI Калкулатор на адрес: /tools/roi, за да оцените финансовите си рискове.";
+        for (const item of keywordAnswers) {
+          if (item.keywords.some(keyword => normalizedInput.includes(keyword))) {
+            foundAnswer = item.answer;
+            break;
+          }
+        }
+      }
+
+      if (!foundAnswer) {
+        // Fallback for general CVE inquiry
+        if (normalizedInput.includes("cve") || normalizedInput.includes("уязвимост")) {
+          foundAnswer = "🔍 **Интерактивно търсене на CVE уязвимости:**\n\nМоля, напишете конкретен CVE идентификатор (напр. **CVE-2024-3094**, **CVE-2021-44228** или **CVE-2017-0144**), за да получите мигновено детайлен технически анализ, мерки за отстраняване и информация как DefComs защитава вашите системи в реално време!";
+        } else {
+          foundAnswer = "Благодаря за въпроса! Като интелигентен асистент на DefComs, силно Ви препоръчвам да се свържете с нашите реални експерти за безплатна професионална консултация на страницата ни '/contact' или да разгледате интерактивния ни ROI Калкулатор на адрес: /tools/roi, за да оцените финансовите си рискове.";
+        }
       }
 
       const botMsg: Message = {
