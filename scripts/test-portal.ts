@@ -209,6 +209,39 @@ async function runCheck() {
     throw new Error("❌ Грешка при генериране на API ключ.");
   }
 
+  console.log("\n11b. Проверка на създаването и сканирането на ИТ активи...");
+  const asset = await prisma.asset.create({
+    data: {
+      name: "Тестов Сървър",
+      ipAddress: "192.168.10.20",
+      type: "Сървър",
+      status: "scanned",
+      userId: user.id
+    }
+  });
+
+  if (asset && asset.id) {
+    console.log(`✅ ИТ активът бе успешно създаден с ID: ${asset.id} и статус: ${asset.status}`);
+  } else {
+    throw new Error("❌ Грешка при генериране на ИТ актив.");
+  }
+
+  console.log("\n11c. Проверка на записването на резултати от фишинг симулации...");
+  const training = await prisma.trainingResult.create({
+    data: {
+      score: 4,
+      total: 4,
+      badge: "Кибер Шампион",
+      userId: user.id
+    }
+  });
+
+  if (training && training.id) {
+    console.log(`✅ Резултатът от обучение бе успешно записан с ID: ${training.id} и бадж: ${training.badge}`);
+  } else {
+    throw new Error("❌ Грешка при записване на резултат от обучение.");
+  }
+
   console.log("\n12. Проверка на сигурната промяна на профил и парола...");
   const updatedUser = await prisma.user.update({
     where: { id: user.id },
@@ -239,9 +272,11 @@ async function runCheck() {
   const checkInvExists = await prisma.invoice.findFirst({ where: { userId: user.id } });
   const checkLogExists = await prisma.auditLog.findFirst({ where: { userId: user.id } });
   const checkKeyExists = await prisma.apiKey.findFirst({ where: { userId: user.id } });
+  const checkAssetExists = await prisma.asset.findFirst({ where: { userId: user.id } });
+  const checkTrainingExists = await prisma.trainingResult.findFirst({ where: { userId: user.id } });
 
-  if (!checkUserExists && !checkTicketExists && !checkServiceExists && !checkRecExists && !checkDocExists && !checkInvExists && !checkLogExists && !checkKeyExists) {
-    console.log("✅ Всички тестови данни бяха успешно и сигурно почистени от базата през Cascade Delete.");
+  if (!checkUserExists && !checkTicketExists && !checkServiceExists && !checkRecExists && !checkDocExists && !checkInvExists && !checkLogExists && !checkKeyExists && !checkAssetExists && !checkTrainingExists) {
+    console.log("✅ Всички тестови данни (включително активи и резултати от обучения) бяха успешно и сигурно почистени от базата през Cascade Delete.");
   } else {
     throw new Error("❌ Грешка при почистване на тестовите данни!");
   }

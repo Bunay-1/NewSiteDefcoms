@@ -1,0 +1,36 @@
+DefComs Cybersecurity Platform & Portal
+=========================================
+DefComs is a next-generation cybersecurity provider based in Bulgaria, specializing in 24/7/365 Security Operations Center (SOC) monitoring, SIEM log management, EDR endpoint protection, network security, and advanced automated vulnerability scanning.
+
+Core EU Directive & Standard Compliances:
+------------------------------------------
+- GDPR (Regulation EU 2016/679): Protection of personal data, IP pseudonymization, transit & rest encryption of system audit logs.
+- NIS2 (Directive EU 2022/2555): Network & information systems security risk management, mandatory early warning & incident reporting.
+- Cyber Resilience Act (CRA): Security-by-design, continuous vulnerability management, and lifetime security updates.
+- DORA (Regulation EU 2022/2554): Digital operational resilience for the financial sector and strict ICT third-party provider controls.
+- EU AI Act (Regulation EU 2024/1689): Safe deployment and risk governance of AI models used for automated security alert triaging.
+- ePrivacy Directive: Cookie-less session tracking, local analyzer isolation, and extreme compliance with user consent.
+- ISO/IEC 27001:2022: Certified framework for implementing, maintaining, and continually improving Information Security Management Systems (ISMS).
+- SOC 2 Type II: Regular independent audits on controls for security, availability, processing integrity, confidentiality, and privacy.
+
+Products Portfolio:
+-------------------
+1. SOC Platform: Centralized incident response dashboard with automated AI-driven alarm triaging and 24/7 network packet inspection.
+2. SIEM Solution: Advanced log correlation engine, event classification, anomaly detection, and automated compliance auditing.
+3. Endpoint Protection: High-entropy EDR (Endpoint Detection & Response) system defending servers, desktops, and mobiles against ransomware and malware.
+4. Network Security: Next-Gen Firewalls (NGFW), IDS/IPS, network segmentation, and zero-trust perimeter controls.
+5. Vulnerability Scanner: Scheduled and on-demand external & internal scans mapped against the global CVE database with DevSecOps CI/CD pipelines.
+6. Threat Intelligence Feed: Live bulletins on emergent exploits, Zero-Days, active IOC campaigns, and step-by-step mitigation advice.
+
+Interactive Tools:
+------------------
+- ROI Calculator: Calculates financial risk (Single Loss Expectancy SLE, Annualized Loss Exposure ALE) and cost savings of deploying DefComs SOC.
+- NIS2 & DORA Compliance Wizard: Interactive self-assessment tool telling organizations whether they are legally mandated to comply with EU directives.
+- Phishing Trainer: Security awareness gamified simulator training employees on identifying phishing traps and reporting red flags.
+- Bundle Configurator: Allows clients to build custom bundles of cybersecurity products matched perfectly to their active plans.
+
+Company Contact Info:
+---------------------
+- URL: https://defcoms.eu
+- Email: contact@defcoms.eu
+- Support Portal: https://defcoms.eu/portal

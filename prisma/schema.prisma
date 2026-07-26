@@ -36,6 +36,8 @@ model User {
   recommendations Recommendation[]
   tickets         Ticket[]
   services        UserService[]
+  assets          Asset[]
+  trainingResults TrainingResult[]
 }
 
 model AuditLog {
@@ -143,4 +145,26 @@ model Message {
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+}
+
+model Asset {
+  id        String   @id @default(cuid())
+  name      String
+  ipAddress String
+  type      String
+  status    String   @default("scanned") // e.g. "scanned", "vulnerable", "monitoring"
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model TrainingResult {
+  id        String   @id @default(cuid())
+  score     Int
+  total     Int
+  badge     String
+  userId    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
