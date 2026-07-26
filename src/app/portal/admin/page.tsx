@@ -26,7 +26,9 @@ import {
   DollarSign,
   Calendar,
   X,
-  FileCode
+  FileCode,
+  Ticket,
+  MessageSquare
 } from "lucide-react";
 import Link from "next/link";
 
@@ -62,8 +64,9 @@ export default function AdminPortalPage() {
   const router = useRouter();
 
   const [clients, setClients] = useState<ClientUser[]>([]);
+  const [tickets, setTickets] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"clients" | "services" | "docs_billing">("clients");
+  const [activeTab, setActiveTab] = useState<"clients" | "services" | "tickets" | "docs_billing">("clients");
 
   // Модални състояния за Клиенти
   const [isClientModalOpen, setIsClientModalOpen] = useState(false);
@@ -136,6 +139,7 @@ export default function AdminPortalPage() {
         router.push("/portal/dashboard");
       } else {
         fetchClients();
+        fetchTickets();
       }
     }
   }, [session, router]);
@@ -151,6 +155,41 @@ export default function AdminPortalPage() {
       console.error("Грешка при извличане на клиенти:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchTickets = async () => {
+    try {
+      const response = await fetch("/api/portal/tickets");
+      if (response.ok) {
+        const data = await response.json();
+        setTickets(data);
+      }
+    } catch (error) {
+      console.error("Грешка при извличане на тикети:", error);
+    }
+  };
+
+  const handleCloseTicket = async (ticketId: string) => {
+    if (!confirm("Наистина ли искате да затворите този поддържащ тикет?")) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/portal/tickets/${ticketId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "closed" })
+      });
+
+      if (res.ok) {
+        fetchTickets();
+        fetchClients();
+      } else {
+        alert("Грешка при затваряне на тикета");
+      }
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -458,6 +497,17 @@ export default function AdminPortalPage() {
             Услуги & Абонаменти
           </button>
           <button
+            onClick={() => setActiveTab("tickets")}
+            className={`px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition ${
+              activeTab === "tickets"
+                ? "bg-[#0098b2] text-white"
+                : "bg-slate-800 text-gray-400 hover:text-white"
+            }`}
+          >
+            <Ticket className="w-4 h-4" />
+            Поддържащи тикети ({tickets.length})
+          </button>
+          <button
             onClick={() => setActiveTab("docs_billing")}
             className={`px-5 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition ${
               activeTab === "docs_billing"
@@ -629,6 +679,76 @@ export default function AdminPortalPage() {
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Tab: Support Tickets Management */}
+        {activeTab === "tickets" && (
+          <div className="space-y-6 animate-fadeIn">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <Ticket className="w-5 h-5 text-[#0098b2]" />
+                Контрол и затваряне на активни запитвания за поддръжка
+              </h2>
+            </div>
+
+            {tickets.length === 0 ? (
+              <div className="bg-slate-800/40 border border-slate-700/60 rounded-2xl p-12 text-center">
+                <Ticket className="w-16 h-16 text-gray-600 mx-auto mb-4 opacity-50" />
+                <p className="text-gray-400">Няма регистрирани тикети в системата.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-4">
+                {tickets.map((t) => (
+                  <div key={t.id} className="bg-slate-800/40 border border-slate-700/60 rounded-2xl p-6 shadow-md hover:border-slate-600 transition flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div className="space-y-2 flex-1">
+                      <div className="flex flex-wrap items-center gap-2.5">
+                        <h3 className="text-lg font-bold text-white">{t.title}</h3>
+                        <span className={`px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
+                          t.status === "open" ? "bg-blue-500/20 text-blue-400 border border-blue-500/30" :
+                          t.status === "in_progress" ? "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30" :
+                          t.status === "resolved" ? "bg-green-500/20 text-green-400 border border-green-500/30" :
+                          "bg-gray-500/20 text-gray-400 border border-gray-500/30"
+                        }`}>
+                          {t.status === "open" ? "Отворен" : t.status === "in_progress" ? "В процес" : t.status === "resolved" ? "Решен" : "Затворен"}
+                        </span>
+                        <span className={`text-xs font-semibold ${
+                          t.priority === "urgent" ? "text-red-400" :
+                          t.priority === "high" ? "text-orange-400" :
+                          t.priority === "medium" ? "text-yellow-400" : "text-gray-400"
+                        }`}>
+                          Приоритет: {t.priority === "urgent" ? "Спешен" : t.priority === "high" ? "Висок" : t.priority === "medium" ? "Среден" : "Нисък"}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-400 line-clamp-2">{t.description}</p>
+                      <div className="flex flex-wrap gap-4 text-xs text-gray-500">
+                        <span><strong>Клиент:</strong> {t.user?.name || "Потребител"} ({t.user?.email})</span>
+                        {t.user?.company && <span><strong>Фирма:</strong> {t.user.company}</span>}
+                        <span><strong>Създаден на:</strong> {new Date(t.createdAt).toLocaleDateString("bg-BG")}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2.5 justify-end w-full md:w-auto">
+                      <Link href={`/portal/tickets/${t.id}`}>
+                        <button className="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+                          <MessageSquare className="w-3.5 h-3.5" />
+                          Чат & Преглед
+                        </button>
+                      </Link>
+                      {t.status !== "closed" && (
+                        <button
+                          onClick={() => handleCloseTicket(t.id)}
+                          className="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                          Затвори тикета
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

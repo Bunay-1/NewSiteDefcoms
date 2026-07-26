@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { 
   ArrowLeft, 
   Send, 
@@ -9,7 +10,8 @@ import {
   AlertTriangle,
   User,
   Shield,
-  MessageSquare
+  MessageSquare,
+  X
 } from "lucide-react";
 import Link from "next/link";
 
@@ -41,14 +43,39 @@ interface Ticket {
 
 export default function TicketDetailPage({ params }: { params: { id: string } }) {
   const router = useRouter();
+  const { data: session } = useSession();
   const [ticket, setTicket] = useState<Ticket | null>(null);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
 
+  const isAdmin = (session?.user as any)?.role === "admin";
+
   useEffect(() => {
     fetchTicket();
   }, [params.id]);
+
+  const handleCloseTicket = async () => {
+    if (!confirm("Наистина ли искате да затворите този поддържащ тикет?")) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/portal/tickets/${params.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: "closed" }),
+      });
+
+      if (response.ok) {
+        fetchTicket();
+      }
+    } catch (error) {
+      console.error("Грешка при затваряне на тикет:", error);
+    }
+  };
 
   const fetchTicket = async () => {
     try {
@@ -224,6 +251,15 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
               >
                 {getPriorityLabel(ticket.priority)}
               </span>
+              {ticket.status !== "closed" && (
+                <button
+                  onClick={handleCloseTicket}
+                  className="mt-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 px-3 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1"
+                >
+                  <X className="w-3 h-3" />
+                  Затвори тикет
+                </button>
+              )}
             </div>
           </div>
 

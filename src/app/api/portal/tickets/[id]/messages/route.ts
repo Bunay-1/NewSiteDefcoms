@@ -16,6 +16,7 @@ export async function POST(
       return NextResponse.json({ error: "Неавторизиран" }, { status: 401 });
     }
 
+    const userRole = (session.user as any).role;
     const userId = (session.user as any).id;
     const ticketId = params.id;
     const body = await req.json();
@@ -29,9 +30,12 @@ export async function POST(
       );
     }
 
-    // Проверка дали тикетът принадлежи на потребителя
+    // Проверка дали тикетът съществува и принадлежи на потребителя (ако не е админ)
     const ticket = await prisma.ticket.findFirst({
-      where: { id: ticketId, userId },
+      where: {
+        id: ticketId,
+        ...(userRole !== "admin" && { userId }),
+      },
     });
 
     if (!ticket) {
@@ -43,7 +47,7 @@ export async function POST(
         content,
         ticketId,
         userId,
-        isAdmin: false,
+        isAdmin: userRole === "admin",
       },
       include: {
         user: {

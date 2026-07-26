@@ -13,10 +13,13 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Неавторизиран" }, { status: 401 });
     }
 
+    const userRole = (session.user as any).role;
     const userId = (session.user as any).id;
 
     const tickets = await prisma.ticket.findMany({
-      where: { userId },
+      where: {
+        ...(userRole !== "admin" && { userId }),
+      },
       include: {
         messages: {
           orderBy: { createdAt: "desc" },
