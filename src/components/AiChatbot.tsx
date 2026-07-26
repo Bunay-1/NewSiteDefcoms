@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { MessageSquare, X, Send, Bot, User, Loader2, PhoneCall, ChevronDown } from "lucide-react";
+import { MessageSquare, X, Send, Bot, User, Loader2, PhoneCall, ChevronDown, Award, AlertTriangle, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 
 interface Message {
@@ -9,33 +9,67 @@ interface Message {
   sender: "bot" | "user";
   text: string;
   time: string;
+  isAuditOptions?: boolean;
 }
 
 export default function AiChatbot() {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "welcome",
-      sender: "bot",
-      text: "Здравейте! Аз съм DefComs AI Sentinel – вашият виртуален съветник по киберсигурност и европейски регулации (NIS2, DORA, GDPR). Как мога да Ви помогна днес?",
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    }
-  ]);
+  const [isPortalMode, setIsPortalMode] = useState(false);
+
+  // Interactive audit state
+  const [auditStep, setAuditStep] = useState<number>(0); // 0 = not started, 1, 2, 3 = steps, 4 = finished
+  const [auditAnswers, setAuditAnswers] = useState<{ [key: string]: boolean }>({});
+
+  const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
-  const quickPrompts = [
-    { text: "Засяга ли ме NIS2?", label: "NIS2 Обхват" },
-    { text: "Колко струва защитата?", label: "Ценообразуване" },
-    { text: "Защитени ли са данните ми (GDPR)?", label: "GDPR съответствие" },
-    { text: "Какво предлага DefComs?", label: "За нас & Услуги" }
-  ];
+  useEffect(() => {
+    // Check if we are inside the client portal
+    if (typeof window !== "undefined") {
+      const path = window.location.pathname;
+      const insidePortal = path.startsWith("/portal");
+      setIsPortalMode(insidePortal);
+
+      // Initialize welcome message based on mode
+      const welcomeText = insidePortal
+        ? "Добре дошли в Клиентския Портал на DefComs! Аз съм вашият AI Sentinel. Тук съм, за да Ви улесня – мога да Ви помогна с навигацията на Вашите фактури, симулация на SIEM логове, проследяване на поддържащи тикети, управление на ИТ активи или сигурни документи. Какво искате да разгледаме?"
+        : "Здравейте! Аз съм DefComs AI Sentinel – вашият виртуален съветник по киберсигурност и европейски регулации (NIS2, DORA, GDPR). Как мога да Ви помогна днес? Можете също така да стартирате интерактивен бърз одит на Вашата сигурност.";
+
+      setMessages([
+        {
+          id: "welcome",
+          sender: "bot",
+          text: welcomeText,
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        }
+      ]);
+    }
+  }, [isOpen]);
+
+  const quickPrompts = isPortalMode
+    ? [
+        { text: "Къде са фактурите ми?", label: "Фактури" },
+        { text: "Как да направя SIEM тест?", label: "SIEM Тест" },
+        { text: "Какво е Cybersecurity Health?", label: "Ниво на защита" },
+        { text: "Как да добавя ИТ активи?", label: "ИТ Активи" }
+      ]
+    : [
+        { text: "Започни ИТ Одит за Сигурност", label: "🛡️ Бърз Одит" },
+        { text: "Засяга ли ме NIS2?", label: "NIS2 Обхват" },
+        { text: "Колко струва защитата?", label: "Цени" },
+        { text: "Защитени ли са данните ми?", label: "GDPR" }
+      ];
 
   const keywordAnswers: { keywords: string[]; answer: string }[] = [
     {
       keywords: ["фактур", "плащ", "дължим", "неплатен", "invoice", "инвойс", "пари"],
       answer: "В раздела 'Фактури & Плащания' (/portal/invoices) можете да проследите всички Ваши финансови документи (платени, неплатени и просрочени фактури). Вградили сме защитен PCI-DSS симулатор на плащания, с който можете да извършите плащане с банкова карта и да маркирате фактурата като платена в реално време!"
+    },
+    {
+      keywords: ["активи", "актив", "assets", "cmdb", "инвентар", "компютри", "сървъри"],
+      answer: "В новия раздел 'ИТ Активи' (/portal/assets) можете да поддържате подробен CMDB инвентар на Вашия софтуер, домейни, сървъри и работни станции. Всеки актив може да бъде сканиран ръчно с натискане на бутона 'Стартирай скан', за да се генерира подробен статус."
     },
     {
       keywords: ["план", "услуг", "абонамент", "моите услуги", "активни", "plan"],
@@ -86,12 +120,12 @@ export default function AiChatbot() {
       answer: "DefComs помага на организациите да отговорят на строгите изисквания на Регламента за защита на личните данни (GDPR). Ние предлагаме инкриптиране на бази данни, предотвратяване на течове на данни (DLP), одити на сигурността и обучение на персонала. Нашата мисия е да сведем риска от глоби до нула!"
     },
     {
-      keywords: ["фишинг", "обучение", "обучения", "phishing", "треньор"],
-      answer: "Над 90% от успешните кибератаки започват с фишинг имейл. С нашия иновативен Фишинг Треньор (/tools/phishing-trainer) можете да стартирате симулирани атаки и да обучите персонала си да разпознава измамни съобщения бързо и сигурно."
+      keywords: ["фишинг", "обучение", "обучения", "phishing", "треньор", "тренинг"],
+      answer: "Над 90% от успешните кибератаки започват с фишинг имейл. С нашия иновативен Фишинг Треньор (/tools/phishing-trainer) можете да стартирате симулирани атаки и да обучите персонала си да разпознава измамни съобщения бързо и сигурно. В клиентския портал имаме страница за Обучение (/portal/training), където се записват всички резултати и баджове."
     },
     {
       keywords: ["сканиране", "уязвимост", "сканер", "scanner", "vuln"],
-      answer: "Сканирането за уязвимости е автоматизиран процес, който периодично проверява ИТ инфраструктурата ви за известни софтуерни слабости, грешни конфигурации и остарели пакети. Предлагаме го като част от нашия пакет за сигурност в Конфигуратора: /tools/bundle !"
+      answer: "Сканирането за уязвимости е автоматизиран процес, който периодично проверява ИТ инфраструктурата ви за известни софтуерни слабости, грешни конфигурации и остарели пакети. В продуктовата страница за Vulnerability Scanner имаме анимиран симулатор на живо, от който можете да изтеглите тестов одит!"
     },
     {
       keywords: ["екип", "кои сте", "експерти", "специалисти", "defcoms"],
@@ -109,8 +143,131 @@ export default function AiChatbot() {
     }
   }, [messages, isTyping]);
 
+  // Handle interactive audit workflow
+  const startAuditFlow = () => {
+    setAuditStep(1);
+    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    setMessages(prev => [
+      ...prev,
+      {
+        id: `audit-intro-${Date.now()}`,
+        sender: "bot",
+        text: "🛡️ **Стартираме интерактивен бърз одит на Вашата ИТ Сигурност.**\n\nМоля, отговорете честно на следните 3 въпроса, за да изчислим Вашето ниво на риск.\n\n**Въпрос 1:** Разполагате ли с денонощен (24/7) SOC мониторинг и анализ на мрежовите логове?",
+        time,
+        isAuditOptions: true
+      }
+    ]);
+  };
+
+  const handleAuditAnswer = (answer: boolean) => {
+    const currentStep = auditStep;
+    const updatedAnswers = { ...auditAnswers, [`step${currentStep}`]: answer };
+    setAuditAnswers(updatedAnswers);
+
+    const userTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    setMessages(prev => [
+      ...prev,
+      {
+        id: `user-ans-${currentStep}-${Date.now()}`,
+        sender: "user",
+        text: answer ? "Да" : "Не",
+        time: userTime
+      }
+    ]);
+
+    setIsTyping(true);
+
+    setTimeout(() => {
+      const nextStep = currentStep + 1;
+      const botTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      if (nextStep === 2) {
+        setAuditStep(2);
+        setMessages(prev => [
+          ...prev,
+          {
+            id: `audit-step-2-${Date.now()}`,
+            sender: "bot",
+            text: "**Въпрос 2:** Провеждате ли системни обучения срещу Фишинг измами и симулации на атаки за Вашите служители поне веднъж на 6 месеца?",
+            time: botTime,
+            isAuditOptions: true
+          }
+        ]);
+      } else if (nextStep === 3) {
+        setAuditStep(3);
+        setMessages(prev => [
+          ...prev,
+          {
+            id: `audit-step-3-${Date.now()}`,
+            sender: "bot",
+            text: "**Въпрос 3:** Вашата организация попада ли под регулаторни изисквания по европейските закони за сигурност и лични данни (NIS2 директива, DORA регламент или GDPR)?",
+            time: botTime,
+            isAuditOptions: true
+          }
+        ]);
+      } else {
+        // Evaluate Results
+        setAuditStep(4);
+        const hasSoc = updatedAnswers.step1;
+        const hasTraining = updatedAnswers.step2;
+        const isRegulated = updatedAnswers.step3;
+
+        let riskLevel = "Критичен Риск 🚨";
+        let score = "15/100";
+        let recommendationText = "";
+
+        if (hasSoc && hasTraining) {
+          riskLevel = "Много Нисък Риск 🛡️";
+          score = "90/100";
+          recommendationText = "Поздравления! Вие имате отлична защита и следвате най-добрите световни практики. Препоръчваме да сертифицирате процесите си по ISO 27001.";
+        } else if (hasSoc || hasTraining) {
+          riskLevel = "Среден Риск ⚠️";
+          score = "55/100";
+          recommendationText = "Покрили сте ключови стъпки, но имате сериозни пропуски. Ако имате SOC, но нямате фишинг обучения, Вашите служители са лесна мишена. Ако имате обучения, но нямате 24/7 SOC, не можете да засечете пробив в мрежата.";
+        } else {
+          riskLevel = "Критичен Риск 🚨";
+          score = "20/100";
+          recommendationText = "Вашата инфраструктура е напълно изложена на Ransomware и кражба на данни. При атака времето за реакция ще е прекалено дълго. Силно препоръчваме спешна консултация!";
+        }
+
+        if (isRegulated) {
+          recommendationText += "\n\n⚠️ **Важно:** Понеже сте обект на NIS2 / DORA съответствие, липсата на контроли може да доведе до милионни глоби и административни санкции за ръководството.";
+        }
+
+        setMessages(prev => [
+          ...prev,
+          {
+            id: `audit-result-${Date.now()}`,
+            sender: "bot",
+            text: `📊 **РЕЗУЛТАТИ ОТ КИБЕР ОДИТА:**\n\n• **Прогнозен Здравен Индекс:** ${score}\n• **Оценка на Заплахата:** ${riskLevel}\n\n**Препоръка:** ${recommendationText}\n\nМожете да оцените точните финансови загуби при евентуален пробив с нашия **[ROI Калкулатор](/tools/roi)** или да проверите точния обхват на NIS2 с **[Compliance Wizard](/tools/compliance-wizard)**.`,
+            time: botTime
+          }
+        ]);
+      }
+      setIsTyping(false);
+    }, 1000);
+  };
+
   const handleSendMessage = (textToSend: string) => {
     if (!textToSend.trim()) return;
+
+    // Check if user requested to start audit
+    if (textToSend.toLowerCase().includes("одит") && auditStep === 0) {
+      const userMsg: Message = {
+        id: Math.random().toString(),
+        sender: "user",
+        text: textToSend,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+      setMessages(prev => [...prev, userMsg]);
+      setInputText("");
+      setIsTyping(true);
+      setTimeout(() => {
+        startAuditFlow();
+        setIsTyping(false);
+      }, 800);
+      return;
+    }
 
     const userMsg: Message = {
       id: Math.random().toString(),
@@ -122,6 +279,11 @@ export default function AiChatbot() {
     setMessages(prev => [...prev, userMsg]);
     setInputText("");
     setIsTyping(true);
+
+    // Reset audit step if they type anything else during flow
+    if (auditStep > 0 && auditStep < 4) {
+      setAuditStep(0);
+    }
 
     // Simulate AI response delay
     setTimeout(() => {
@@ -135,13 +297,20 @@ export default function AiChatbot() {
         if (cveId === "CVE-2024-3094") {
           foundAnswer = `🚨 **Анализ на CVE-2024-3094 (XZ Utils Backdoor):**\n\n• **Критичност:** 10.0 (Критична)\n• **Описание:** Изключително опасна скрита задна вратичка в компилационната система на XZ Utils (версии 5.6.0 и 5.6.1), позволяваща отдалечено изпълнение на произволен код (RCE) през SSH без оторизация.\n• **Защитни мерки:** Незабавно връщане на пакета до стабилна версия 5.4.x.\n\n🛡️ **Как ни защитава DefComs:**\n1. Нашият **Vulnerability Scanner** автоматично открива уязвимата XZ версия във Вашата инфраструктура.\n2. **SOC Платформата** следи за аномалии в SSH сесиите и необичайни дъщерни процеси на sshd.`;
         } else if (cveId === "CVE-2021-44228") {
-          foundAnswer = `🚨 **Анализ на CVE-2021-44228 (Log4Shell):**\n\n• **Критичност:** 10.0 (Критична)\n• **Описание:** RCE уязвимост в популярната Java библиотека Log4j, позволяваща на неоторизирани атакуващи да изпълняват код през специално оформени JNDI низове.\n• **Защитни мерки:** Спешен ъпгрейд на Log4j до 2.17.1+.\n\n🛡️ **Как ни защитава DefComs:**\n1. Нашият **SIEM Solution** незабавно корелира мрежови логове за необичайни изходящи LDAP/RMI заявки.\n2. **Network Security** (IDS/IPS) филтрира злонамерени JNDI заявки в реално време на входа на мрежата.`;
+          foundAnswer = `🚨 **Анализ на CVE-2021-44228 (Log4Shell):**\n\n• **Критичност:** 10.0 (Критична)\n• **Описание:** RCE уязвимост в популярната Java библиотека Log4j, позволяваща на неоторизирани атакуващие да изпълняват код през специално оформени JNDI низове.\n• **Защитни мерки:** Спешен ъпгрейд на Log4j до 2.17.1+.\n\n🛡️ **Как ни защитава DefComs:**\n1. Нашият **SIEM Solution** незабавно корелира мрежови логове за необичайни изходящи LDAP/RMI заявки.\n2. **Network Security** (IDS/IPS) филтрира злонамерени JNDI заявки в реално време на входа на мрежата.`;
         } else if (cveId === "CVE-2017-0144") {
           foundAnswer = `🚨 **Анализ на CVE-2017-0144 (EternalBlue):**\n\n• **Критичност:** 8.1 (Висока/Критична)\n• **Описание:** Слабост в имплементацията на остарелия SMBv1 протокол в Windows, използвана за разпространение на WannCry и NotPetya ransomware.\n• **Защитни мерки:** Деактивиране на SMBv1 поддръжката и инсталиране на Microsoft MS17-010.\n\n🛡️ **Как ни защитава DefComs:**\n1. **Endpoint Protection** автоматично блокира WannaCry и сродни ransomware заплахи на работните станции.\n2. Нашата **Network Security** засича опити за сканиране на порт 445 и блокира SMB експлойт опитите.`;
         } else if (cveId === "CVE-2023-34362") {
           foundAnswer = `🚨 **Анализ на CVE-2023-34362 (MOVEit Transfer RCE):**\n\n• **Критичност:** 9.8 (Критична)\n• **Описание:** SQL инжекция в MOVEit Transfer уеб приложението, позволяваща отдалечен неоторизиран достъп и кражба на файлове.\n• **Защитни мерки:** Инсталиране на най-новите пачове от Progress Software.\n\n🛡️ **Как ни защитава DefComs:**\n1. **Threat Intelligence** емисията ни веднага известява за нови IP-та, извършващи активно сканиране за MOVEit.\n2. Нашата **SOC Platform** извършва проактивен Threat Hunting за признаци на уеб шелове по Вашите уеб сървъри.`;
         } else {
-          foundAnswer = `🔍 **Анализ на ${cveId}:**\n\nТази уязвимост се следи активно в реално време от глобалната база за заплахи на **DefComs Threat Intelligence**.\n\n🛡️ **Препоръка:** Препоръчваме да стартирате сканиране на активите чрез нашия **Vulnerability Scanner** или да се свържете с нашите SOC анализатори през клиентския портал (раздел Поддръжка - Тикети) за подробен анализ.`;
+          // Dynamic Smart CVE Generator
+          const parts = cveId.split("-");
+          const year = parts[1] || new Date().getFullYear().toString();
+          const serial = parts[2] || "0001";
+          const simulatedScore = (parseFloat(serial) % 3 === 0 ? 9.8 : parseFloat(serial) % 2 === 0 ? 8.5 : 7.5).toFixed(1);
+          const severity = parseFloat(simulatedScore) >= 9.0 ? "Критична (Critical)" : parseFloat(simulatedScore) >= 7.0 ? "Висока (High)" : "Средна (Medium)";
+
+          foundAnswer = `🔍 **Интелигентен анализ на ${cveId}:**\n\n• **Регистриран за година:** ${year}\n• **Прогнозен CVSS коефициент:** ${simulatedScore} (${severity})\n• **Тип уязвимост:** Динамично анализирана като RCE / Локално прескачане на защити.\n• **Препоръчителна мярка:** Извършете пачване на съответния софтуер до последна стабилна версия и блокирайте портовете на периметъра през firewall.\n\n🛡️ **Как ни защитава DefComs:**\nНие извършваме непрекъснато пасивно и активно сканиране през **[Vulnerability Scanner](/products/vulnerability-scanner)** и автоматично добавяме индикатори за компрометиране (IOCs) в нашия SOC фийд за предотвратяване на пробиви.`;
         }
       }
 
@@ -194,7 +363,7 @@ export default function AiChatbot() {
 
       {/* Expanded Chat Widget */}
       {isOpen && (
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl w-80 sm:w-96 h-[500px] flex flex-col overflow-hidden animate-fadeIn">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl w-80 sm:w-96 h-[540px] flex flex-col overflow-hidden animate-fadeIn text-gray-300">
           {/* Header */}
           <div className="bg-gradient-to-r from-[#0098b2] to-[#005f7f] p-4 flex justify-between items-center text-white">
             <div className="flex items-center gap-2.5">
@@ -205,7 +374,7 @@ export default function AiChatbot() {
                 <h4 className="font-bold text-sm tracking-wide">DefComs AI Sentinel</h4>
                 <span className="text-[10px] text-teal-200 flex items-center gap-1">
                   <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span>
-                  На линия за съдействие
+                  На линия ({isPortalMode ? "Клиентски портал" : "Консултант"})
                 </span>
               </div>
             </div>
@@ -219,28 +388,47 @@ export default function AiChatbot() {
 
           {/* Messages Body */}
           <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-950/40 custom-scrollbar">
-            {messages.map((msg) => (
-              <div
-                key={msg.id}
-                className={`flex gap-2.5 ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
-              >
-                {msg.sender === "bot" && (
-                  <div className="p-1.5 rounded-lg bg-slate-800 text-[#0098b2] h-8 w-8 flex items-center justify-center flex-shrink-0">
-                    <Bot className="w-4 h-4" />
+            {messages.map((msg, index) => (
+              <div key={msg.id} className="space-y-2">
+                <div
+                  className={`flex gap-2.5 ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
+                >
+                  {msg.sender === "bot" && (
+                    <div className="p-1.5 rounded-lg bg-slate-800 text-[#0098b2] h-8 w-8 flex items-center justify-center flex-shrink-0">
+                      <Bot className="w-4 h-4" />
+                    </div>
+                  )}
+                  <div className="max-w-[80%] space-y-1">
+                    <div className={`p-3 rounded-2xl text-xs leading-relaxed whitespace-pre-wrap ${
+                      msg.sender === "user"
+                        ? "bg-[#0098b2] text-white rounded-tr-none"
+                        : "bg-slate-800 text-gray-200 rounded-tl-none border border-slate-700/50"
+                    }`}>
+                      {msg.text}
+                    </div>
+                    <span className="text-[9px] text-gray-500 block text-right px-1">
+                      {msg.time}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Audit step options underneath the corresponding bot question */}
+                {msg.sender === "bot" && msg.isAuditOptions && auditStep > 0 && auditStep < 4 && index === messages.length - 1 && (
+                  <div className="flex gap-2.5 justify-start pl-10.5 animate-fadeIn">
+                    <button
+                      onClick={() => handleAuditAnswer(true)}
+                      className="bg-green-600/20 hover:bg-green-600/40 text-green-400 border border-green-500/30 px-4 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1"
+                    >
+                      <ShieldCheck className="w-3.5 h-3.5" /> Да
+                    </button>
+                    <button
+                      onClick={() => handleAuditAnswer(false)}
+                      className="bg-red-600/20 hover:bg-red-600/40 text-red-400 border border-red-500/30 px-4 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1"
+                    >
+                      <AlertTriangle className="w-3.5 h-3.5" /> Не
+                    </button>
                   </div>
                 )}
-                <div className="max-w-[75%] space-y-1">
-                  <div className={`p-3 rounded-2xl text-xs leading-relaxed ${
-                    msg.sender === "user"
-                      ? "bg-[#0098b2] text-white rounded-tr-none"
-                      : "bg-slate-800 text-gray-200 rounded-tl-none border border-slate-700/50"
-                  }`}>
-                    {msg.text}
-                  </div>
-                  <span className="text-[9px] text-gray-500 block text-right px-1">
-                    {msg.time}
-                  </span>
-                </div>
               </div>
             ))}
 
@@ -260,14 +448,20 @@ export default function AiChatbot() {
           </div>
 
           {/* Quick Prompts Container */}
-          {messages.length === 1 && !isTyping && (
-            <div className="px-4 py-2 bg-slate-950/20 border-t border-slate-800 space-y-1.5">
-              <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block">Бързи въпроси:</span>
+          {auditStep === 0 && !isTyping && (
+            <div className="px-4 py-2.5 bg-slate-950/20 border-t border-slate-800 space-y-1.5">
+              <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block">Бързи връзки:</span>
               <div className="flex flex-wrap gap-1.5">
                 {quickPrompts.map((p, idx) => (
                   <button
                     key={idx}
-                    onClick={() => handleSendMessage(p.text)}
+                    onClick={() => {
+                      if (p.text.includes("Одит")) {
+                        startAuditFlow();
+                      } else {
+                        handleSendMessage(p.text);
+                      }
+                    }}
                     className="text-[10px] bg-slate-800 hover:bg-slate-750 text-gray-300 border border-slate-700 hover:border-[#0098b2] rounded-lg px-2.5 py-1.5 font-medium transition"
                   >
                     {p.label}

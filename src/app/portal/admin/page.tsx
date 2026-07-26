@@ -1510,7 +1510,7 @@ export default function AdminPortalPage() {
                 <select
                   value={serviceForm.name}
                   onChange={(e) => setServiceForm({ ...serviceForm, name: e.target.value })}
-                  className="w-full bg-slate-905 border border-slate-800 rounded-xl py-2.5 px-3.5 text-white text-sm focus:outline-none focus:border-[#0098b2]"
+                  className="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 px-3.5 text-white text-sm focus:outline-none focus:border-[#0098b2]"
                   required
                 >
                   <option value="24/7 SOC Мониторинг & Лог Мениджмънт">24/7 SOC Мониторинг & Лог Мениджмънт (NIS2 / ISO 27001)</option>
