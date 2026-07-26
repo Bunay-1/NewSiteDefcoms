@@ -15,7 +15,8 @@ import {
   XCircle,
   Clock,
   Sparkles,
-  ShieldCheck
+  ShieldCheck,
+  Download
 } from "lucide-react";
 import Link from "next/link";
 
@@ -82,6 +83,47 @@ export default function ClientInvoicesPage() {
 
       alert(`💳 Сигурно плащане премина успешно!\n\nФактура №: ${invoice.invoiceNumber}\nСума: ${invoice.amount.toFixed(2)} лв.\n\nЗащитено плащане по PCI-DSS & NIS2 протокол.`);
     }, 1500);
+  };
+
+  const handleDownloadInvoice = (inv: Invoice) => {
+    // Генерация на структурирана фактура като файл
+    const invoiceContent = `
+ФАКТУРА № ${inv.invoiceNumber}
+==========================================
+Издател: DefComs Cybersecurity Ltd.
+ЕИК: 207452684
+ДДС №: BG207452684
+МОЛ: Димитър Петров
+Адрес: гр. София, бул. България №10
+------------------------------------------
+Получател: ${inv.user?.name || "Клиент на DefComs"}
+Фирма: ${inv.user?.company || "Физическо лице"}
+Имейл: ${inv.user?.email || "Няма информация"}
+------------------------------------------
+Дата на издаване: ${new Date(inv.createdAt).toLocaleDateString("bg-BG")}
+Падеж: ${new Date(inv.dueDate).toLocaleDateString("bg-BG")}
+Статус: ${inv.status === "paid" ? "ПЛАТЕНА" : "НЕПЛАТЕНА"}
+------------------------------------------
+Описание на услугата:
+${inv.description}
+
+Сума за плащане: ${inv.amount.toFixed(2)} лв.
+(Словом: ${inv.amount} лева)
+==========================================
+Благодарим Ви, че избрахте сигурността на DefComs!
+    `.trim();
+
+    const blob = new Blob([invoiceContent], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `Фактура_${inv.invoiceNumber}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    alert(`📄 Фактура № ${inv.invoiceNumber} беше изтеглена успешно на Вашето устройство!`);
   };
 
   // Пресмятане на финансови суми
@@ -269,7 +311,7 @@ export default function ClientInvoicesPage() {
                     <th className="p-4">Краен Срок</th>
                     <th className="p-4">Сума (лв.)</th>
                     <th className="p-4">Статус</th>
-                    {!isAdmin && <th className="p-4 text-right">Действие</th>}
+                    <th className="p-4 text-right">Действие</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-700/60 text-sm text-gray-300">
@@ -313,35 +355,45 @@ export default function ClientInvoicesPage() {
                         </span>
                       </td>
 
-                      {/* Pay Button (Visible only to clients) */}
-                      {!isAdmin && (
-                        <td className="p-4 text-right">
-                          {inv.status === "paid" ? (
-                            <span className="text-xs text-green-400 font-bold flex items-center justify-end gap-1">
-                              <CheckCircle2 className="w-4 h-4" />
-                              Изплатена
-                            </span>
-                          ) : (
-                            <button
-                              onClick={() => handlePayInvoice(inv)}
-                              disabled={payingId === inv.id}
-                              className="bg-[#0098b2] hover:bg-[#007a91] disabled:bg-slate-700 text-white font-bold py-1.5 px-4 rounded-xl text-xs transition inline-flex items-center gap-1 shadow-md"
-                            >
-                              {payingId === inv.id ? (
-                                <>
-                                  <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                  Плащане...
-                                </>
-                              ) : (
-                                <>
-                                  <CreditCard className="w-3.5 h-3.5" />
-                                  Плати
-                                </>
-                              )}
-                            </button>
+                      {/* Actions Column */}
+                      <td className="p-4 text-right">
+                        <div className="flex items-center justify-end gap-3">
+                          <button
+                            onClick={() => handleDownloadInvoice(inv)}
+                            className="bg-slate-700 hover:bg-slate-600 text-gray-200 hover:text-white p-2 rounded-xl text-xs transition inline-flex items-center gap-1"
+                            title="Свали фактура (PDF)"
+                          >
+                            <Download className="w-3.5 h-3.5" />
+                          </button>
+
+                          {!isAdmin && (
+                            inv.status === "paid" ? (
+                              <span className="text-xs text-green-400 font-bold flex items-center gap-1">
+                                <CheckCircle2 className="w-3.5 h-3.5" />
+                                Изплатена
+                              </span>
+                            ) : (
+                              <button
+                                onClick={() => handlePayInvoice(inv)}
+                                disabled={payingId === inv.id}
+                                className="bg-[#0098b2] hover:bg-[#007a91] disabled:bg-slate-700 text-white font-bold py-1.5 px-4 rounded-xl text-xs transition inline-flex items-center gap-1 shadow-md animate-pulse"
+                              >
+                                {payingId === inv.id ? (
+                                  <>
+                                    <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                    Плащане...
+                                  </>
+                                ) : (
+                                  <>
+                                    <CreditCard className="w-3.5 h-3.5" />
+                                    Плати
+                                  </>
+                                )}
+                              </button>
+                            )
                           )}
-                        </td>
-                      )}
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
