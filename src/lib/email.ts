@@ -1,9 +1,11 @@
+import nodemailer from "nodemailer";
+
 /**
  * DefComs Email Notification Service
  *
  * Изпраща автоматични имейл известия до официалния имейл на DefComs (info@defcoms.eu)
  * при промяна на клиентски профили, нови заявки за планове/услуги, тикети, или всякакви
- * други промени по данните в реално време.
+ * други промени по данните в реално време през SMTP сървър.
  */
 
 export interface ClientNotificationData {
@@ -48,9 +50,47 @@ ${body}
 ========================================================================
 `;
 
-  // В реална среда тук се интегрира Nodemailer или външно API (SendGrid, Mailgun)
-  // За целите на платформата, одит сигурността и симулация, отпечатваме пълен лог
+  // Отпечатваме пълен лог в конзолата за архивиране и бърз преглед
   console.log(`\x1b[36m${formattedBody}\x1b[0m`);
+
+  // Извличане на SMTP настройки от средата за реално изпращане
+  const smtpHost = process.env.SMTP_HOST || "localhost";
+  const smtpPort = parseInt(process.env.SMTP_PORT || "587");
+  const smtpUser = process.env.SMTP_USER || "";
+  const smtpPass = process.env.SMTP_PASS || process.env.SMTP_PASSWORD || "";
+
+  // Проверка за наличие на реални настройки.
+  if (smtpHost && smtpUser && smtpPass) {
+    try {
+      const transporter = nodemailer.createTransport({
+        host: smtpHost,
+        port: smtpPort,
+        secure: smtpPort === 465,
+        auth: {
+          user: smtpUser,
+          pass: smtpPass,
+        },
+        tls: {
+          // Игнориране на невалидни SSL сертификати за гъвкавост
+          rejectUnauthorized: false
+        }
+      });
+
+      await transporter.sendMail({
+        from: `"${client.name || 'DefComs Portal'}" <${smtpUser}>`,
+        to: officialDefComsEmail,
+        replyTo: client.email || undefined,
+        subject: emailSubject,
+        text: formattedBody,
+      });
+
+      console.log(`📬 Имейлът бе успешно изпратен до ${officialDefComsEmail} през SMTP (${smtpHost})!`);
+    } catch (smtpError) {
+      console.error("❌ Грешка при изпращане на имейл през реална SMTP услуга:", smtpError);
+    }
+  } else {
+    console.log("ℹ️ Симулационен режим: За реално изпращане до info@defcoms.eu, моля конфигурирайте SMTP_HOST, SMTP_PORT, SMTP_USER и SMTP_PASS в своя .env файл.");
+  }
 
   return {
     success: true,
