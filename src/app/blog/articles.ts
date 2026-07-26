@@ -16,7 +16,7 @@ export const articles: Article[] = [
     excerpt: "Новата европейска директива NIS2 налага строги изисквания за киберсигурност. Разберете дали вашата компания попада в обхвата и какви са санкциите при неспазване.",
     category: "Регулации",
     author: "Елена Георгиева",
-    date: "15 Юли 2024",
+    date: "15 Юли 2026",
     readTime: "6 мин.",
     image: "/SocNoc/alert_enrichment.webp"
   },
@@ -26,7 +26,7 @@ export const articles: Article[] = [
     excerpt: "Фишинг имейлите стават все по-усъвършенствани благодарение на AI. Представяме ви ключовите признаци, по които да разпознаете измамата и да предпазите данните си.",
     category: "Обучение",
     author: "Николай Николов",
-    date: "10 Юли 2024",
+    date: "10 Юли 2026",
     readTime: "5 мин.",
     image: "/Persevs/perservs.webp"
   },
@@ -36,7 +36,7 @@ export const articles: Article[] = [
     excerpt: "Защо стандартното работно време не е достатъчно за киберзащита? Научете как денонощният мониторинг и AI триажът на аларми предотвратяват щети за милиони.",
     category: "SOC Платформи",
     author: "Димитър Димитров",
-    date: "05 Юли 2024",
+    date: "05 Юли 2026",
     readTime: "7 мин.",
     image: "/SocNoc/Dashboard.webp"
   },
@@ -46,7 +46,7 @@ export const articles: Article[] = [
     excerpt: "Как новите изисквания на ЕС за цифрова устойчивост променят правилата за банки, застрахователи и техните ИТ доставчици. Подгответе се навреме за съответствие.",
     category: "Регулации",
     author: "Михаил Петров",
-    date: "28 Юни 2024",
+    date: "28 Юни 2026",
     readTime: "8 мин.",
     image: "/SocNoc/UNIFIED OPERATIONS CENTER.webp"
   },
@@ -56,7 +56,7 @@ export const articles: Article[] = [
     excerpt: "Научете как съхранението на логове, псевдонимизацията на IP адреси и криптирането гарантират пълно съответствие с Регламента при денонощен мониторинг.",
     category: "GDPR",
     author: "Елена Георгиева",
-    date: "20 Юни 2024",
+    date: "20 Юни 2026",
     readTime: "6 мин.",
     image: "/SocNoc/indicator.webp"
   },
@@ -66,7 +66,7 @@ export const articles: Article[] = [
     excerpt: "Защо редовното автоматизирано сканиране за уязвимости (CVE) и DevSecOps интеграцията са критични за оцеляването на всяка съвременна мрежа и уеб приложение.",
     category: "Технологии",
     author: "Николай Николов",
-    date: "12 Юни 2024",
+    date: "12 Юни 2026",
     readTime: "5 мин.",
     image: "/Pen_test_platform/Modular_Security_Testing_Platform_Architecture.webp"
   },
@@ -76,7 +76,7 @@ export const articles: Article[] = [
     excerpt: "Традиционните антивирусни програми вече не са достатъчни. Разберете как EDR и поведенческият анализ спират ransomware атаки преди критичното криптиране на данни.",
     category: "Продукти",
     author: "Димитър Димитров",
-    date: "01 Юни 2024",
+    date: "01 Юни 2026",
     readTime: "7 мин.",
     image: "/Persevs/04_Reports_Page_Persevs.webp"
   },
@@ -86,7 +86,7 @@ export const articles: Article[] = [
     excerpt: "Стъпка по стъпка: как да реагирате при засичане на криптиращ вирус, как да изолирате инфекцията и да възстановите системите си без да плащате откуп.",
     category: "Ръководства",
     author: "Михаил Петров",
-    date: "18 Юни 2024",
+    date: "18 Юни 2026",
     readTime: "9 мин.",
     image: "/SocNoc/incident.webp"
   },
@@ -96,7 +96,7 @@ export const articles: Article[] = [
     excerpt: "Най-добрите практики за конфигуриране на корпоративен Wi-Fi: от WPA3 Enterprise, през мрежова сегментация за гости, до 802.1X удостоверяване.",
     category: "Ръководства",
     author: "Николай Николов",
-    date: "14 Юни 2024",
+    date: "14 Юни 2026",
     readTime: "7 мин.",
     image: "/Sentinel/Infrastructure_network.webp"
   },
@@ -106,8 +106,28 @@ export const articles: Article[] = [
     excerpt: "Защо традиционната промяна на пароли на 90 дни е остаряла и как правилното внедряване на MFA и безпаролни (passwordless) методи спира 99% от атаките.",
     category: "Ръководства",
     author: "Елена Георгиева",
-    date: "08 Юни 2024",
+    date: "08 Юни 2026",
     readTime: "6 мин.",
     image: "/Persevs/02_Signup_Page_persevs.webp"
+  },
+  {
+    slug: "cyber-resilience-act-cra-software-security-2026",
+    title: "CRA (Cyber Resilience Act): Сигурност на софтуерните продукти в ЕС от 2026 г.",
+    excerpt: "Новият регламент CRA влиза в пълна сила през 2026 г. Научете какви са новите изисквания за разработчиците на хардуер и софтуер и как да избегнете спиране от пазара на ЕС.",
+    category: "Регулации",
+    author: "Елена Георгиева",
+    date: "01 Септември 2026",
+    readTime: "7 мин.",
+    image: "/Sentinel/Sentinel_Modules.webp"
+  },
+  {
+    slug: "generative-ai-in-cybersecurity-proactive-defense",
+    title: "AI в киберсигурността: Как генеративният изкуствен интелект променя проактивната защита",
+    excerpt: "Как изкуственият интелект помага на нашия SOC да анализира милиони логове за секунди и как генеративният AI помага за автоматичното съставяне на правила за сигурност.",
+    category: "Технологии",
+    author: "Димитър Димитров",
+    date: "15 Август 2026",
+    readTime: "6 мин.",
+    image: "/LANProject/automation_detection.webp"
   }
 ];
