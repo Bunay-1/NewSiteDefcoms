@@ -37,10 +37,12 @@ export default function Footer() {
             <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Инструменти</h4>
             <ul className="space-y-2 text-gray-400 text-sm">
               <li><Link href="/tools/roi" className="hover:text-white transition">ROI Калкулатор</Link></li>
+              <li><Link href="/tools/compliance-wizard" className="hover:text-white transition">Калкулатор NIS2/DORA</Link></li>
               <li><Link href="/tools/bundle" className="hover:text-white transition">Конфигуратор на услуги</Link></li>
               <li><Link href="/tools/phishing-trainer" className="hover:text-white transition">Фишинг Тренажор</Link></li>
               <li><Link href="/threat-advisories" className="hover:text-white transition">Център за заплахи</Link></li>
               <li><Link href="/compliance" className="hover:text-white transition">Тест за оценка на риска</Link></li>
+              <li><Link href="/technologies" className="hover:text-white transition">Използвани технологии</Link></li>
             </ul>
           </div>
 
@@ -50,7 +52,6 @@ export default function Footer() {
             <ul className="space-y-2 text-gray-400 text-sm">
               <li><Link href="/products" className="hover:text-white transition">Продукти за защита</Link></li>
               <li><Link href="/services" className="hover:text-white transition">Услуги по киберсигурност</Link></li>
-              <li><Link href="/technologies" className="hover:text-white transition">Използвани технологии</Link></li>
               <li><Link href="/standards" className="hover:text-white transition text-[#0098b2] font-semibold">Стандарти за сигурност</Link></li>
               <li><Link href="/blog" className="hover:text-white transition">Блог и Статии</Link></li>
               <li><Link href="/demo" className="hover:text-white transition">SOC Демо Симулатор</Link></li>
