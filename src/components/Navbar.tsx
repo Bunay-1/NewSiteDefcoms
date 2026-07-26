@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X, ChevronDown, Award, TrendingUp, Sparkles, Mail, ShieldAlert } from "lucide-react";
+import { Menu, X, ChevronDown, Award, TrendingUp, Sparkles, Mail, ShieldAlert, Shield } from "lucide-react";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,6 +21,7 @@ export default function Navbar() {
 
   const toolItems = [
     { name: "ROI Калкулатор", href: "/tools/roi", icon: TrendingUp, desc: "Възвръщаемост на инвестицията" },
+    { name: "Калкулатор NIS2/DORA", href: "/tools/compliance-wizard", icon: Shield, desc: "Оценка на съответствието на фирмата" },
     { name: "Конфигуратор", href: "/tools/bundle", icon: Sparkles, desc: "Сглобете своята кибер защита" },
     { name: "Фишинг Обучение", href: "/tools/phishing-trainer", icon: Mail, desc: "Проверете Вашата бдителност" },
     { name: "Център за Заплахи", href: "/threat-advisories", icon: ShieldAlert, desc: "Нови CVE бюлетини и уязвимости" },
