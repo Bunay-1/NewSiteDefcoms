@@ -16,13 +16,14 @@ export async function GET(
       return NextResponse.json({ error: "Неавторизиран" }, { status: 401 });
     }
 
+    const userRole = (session.user as any).role;
     const userId = (session.user as any).id;
     const ticketId = params.id;
 
     const ticket = await prisma.ticket.findFirst({
       where: {
         id: ticketId,
-        userId,
+        ...(userRole !== "admin" && { userId }),
       },
       include: {
         messages: {
@@ -74,15 +75,19 @@ export async function PATCH(
       return NextResponse.json({ error: "Неавторизиран" }, { status: 401 });
     }
 
+    const userRole = (session.user as any).role;
     const userId = (session.user as any).id;
     const ticketId = params.id;
     const body = await req.json();
 
     const { status, priority } = body;
 
-    // Проверка дали тикетът принадлежи на потребителя
+    // Проверка дали тикетът съществува и принадлежи на потребителя (ако не е админ)
     const existingTicket = await prisma.ticket.findFirst({
-      where: { id: ticketId, userId },
+      where: {
+        id: ticketId,
+        ...(userRole !== "admin" && { userId }),
+      },
     });
 
     if (!existingTicket) {
