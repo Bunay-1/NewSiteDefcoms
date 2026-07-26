@@ -81,7 +81,7 @@ export default function ClientInvoicesPage() {
         prev.map(inv => inv.id === invoice.id ? { ...inv, status: "paid" } : inv)
       );
 
-      alert(`💳 Сигурно плащане премина успешно!\n\nФактура №: ${invoice.invoiceNumber}\nСума: ${invoice.amount.toFixed(2)} лв.\n\nЗащитено плащане по PCI-DSS & NIS2 протокол.`);
+      alert(`💳 Сигурно плащане премина успешно!\n\nФактура №: ${invoice.invoiceNumber}\nСума: ${invoice.amount.toFixed(2)} €\n\nЗащитено плащане по PCI-DSS & NIS2 протокол.`);
     }, 1500);
   };
 
@@ -107,8 +107,8 @@ export default function ClientInvoicesPage() {
 Описание на услугата:
 ${inv.description}
 
-Сума за плащане: ${inv.amount.toFixed(2)} лв.
-(Словом: ${inv.amount} лева)
+Сума за плащане: ${inv.amount.toFixed(2)} €
+(Словом: ${inv.amount} евро)
 ==========================================
 Благодарим Ви, че избрахте сигурността на DefComs!
     `.trim();
@@ -243,7 +243,7 @@ ${inv.description}
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">Платени общо</p>
-                <p className="text-3xl font-black text-green-400">{paidSum.toLocaleString("bg-BG")} лв.</p>
+                <p className="text-3xl font-black text-green-400">{paidSum.toLocaleString("bg-BG")} €</p>
               </div>
               <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center text-green-400">
                 <CheckCircle2 className="w-6 h-6" />
@@ -255,7 +255,7 @@ ${inv.description}
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">Неплатени (Текущи)</p>
-                <p className="text-3xl font-black text-yellow-400">{unpaidSum.toLocaleString("bg-BG")} лв.</p>
+                <p className="text-3xl font-black text-yellow-400">{unpaidSum.toLocaleString("bg-BG")} €</p>
               </div>
               <div className="w-12 h-12 bg-yellow-500/10 rounded-xl flex items-center justify-center text-yellow-400">
                 <Clock className="w-6 h-6" />
@@ -267,7 +267,7 @@ ${inv.description}
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">Просрочени задължения</p>
-                <p className="text-3xl font-black text-red-400">{overdueSum.toLocaleString("bg-BG")} лв.</p>
+                <p className="text-3xl font-black text-red-400">{overdueSum.toLocaleString("bg-BG")} €</p>
               </div>
               <div className="w-12 h-12 bg-red-500/10 rounded-xl flex items-center justify-center text-red-400">
                 <XCircle className="w-6 h-6 animate-pulse" />
@@ -309,7 +309,7 @@ ${inv.description}
                     <th className="p-4">Фактура №</th>
                     <th className="p-4">Описание на услугата</th>
                     <th className="p-4">Краен Срок</th>
-                    <th className="p-4">Сума (лв.)</th>
+                    <th className="p-4">Сума (€)</th>
                     <th className="p-4">Статус</th>
                     <th className="p-4 text-right">Действие</th>
                   </tr>
@@ -345,7 +345,7 @@ ${inv.description}
 
                       {/* Amount */}
                       <td className="p-4 font-extrabold text-white">
-                        {inv.amount.toFixed(2)} лв.
+                        {inv.amount.toFixed(2)} €
                       </td>
 
                       {/* Status */}

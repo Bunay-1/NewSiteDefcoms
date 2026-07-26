@@ -444,7 +444,7 @@ export default function AdminPortalPage() {
       const data = await response.json();
 
       if (response.ok) {
-        setInvSuccess(`✅ Фактура ${data.invoiceNumber} на стойност ${data.amount} лв. бе успешно издадена!`);
+        setInvSuccess(`✅ Фактура ${data.invoiceNumber} на стойност ${data.amount} € бе успешно издадена!`);
         setInvForm({
           invoiceNumber: "",
           amount: "",
@@ -1020,7 +1020,7 @@ export default function AdminPortalPage() {
                     />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-300 mb-2">Сума (лв.)</label>
+                      <label className="block text-sm font-semibold text-gray-300 mb-2">Сума (€)</label>
                       <input
                         type="number"
                         step="0.01"

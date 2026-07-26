@@ -172,7 +172,7 @@ async function runCheck() {
   });
 
   if (invoice && invoice.id) {
-    console.log(`✅ Фактурата бе издадена успешно с ID: ${invoice.id} и сума: ${invoice.amount} лв.`);
+    console.log(`✅ Фактурата бе издадена успешно с ID: ${invoice.id} и сума: ${invoice.amount} €.`);
   } else {
     throw new Error("❌ Грешка при издаване на тестова фактура.");
   }
