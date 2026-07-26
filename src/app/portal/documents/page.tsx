@@ -64,6 +64,22 @@ export default function SecureDocumentsPage() {
     // Симулация на защитено криптирано сваляне на одитния файл
     setTimeout(() => {
       setDownloadingId(null);
+
+      // Генерираме реално съдържание за сваляне (клиентско изтегляне на защитен симулиран файл)
+      const content = `DefComs Secure Vault Document\n============================\n\nTitle: ${doc.title}\nSize: ${doc.fileSize}\nType: ${doc.fileType}\nUploaded: ${new Date(doc.createdAt).toLocaleString("bg-BG")}\n\nThis is a securely downloaded audit report file from DefComs CyberSecurity Vault.\nAll integrity checks passed successfully (AES-256 Verified).`;
+
+      const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = doc.title.endsWith(".pdf") || doc.title.endsWith(".xlsx") || doc.title.endsWith(".zip") || doc.title.endsWith(".docx")
+        ? doc.title
+        : `${doc.title}.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
       alert(`🔒 Защитено изтегляне стартирано успешно!\n\nФайл: "${doc.title}"\nРазмер: ${doc.fileSize}\n\nФайлът бе проверен от DefComs Antivirus & DLP защита за съответствие с GDPR.`);
     }, 1200);
   };
