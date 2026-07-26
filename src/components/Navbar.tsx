@@ -12,7 +12,6 @@ export default function Navbar() {
     { name: "Начало", href: "/" },
     { name: "Продукти", href: "/products" },
     { name: "Услуги", href: "/services" },
-    { name: "Технологии", href: "/technologies" },
     { name: "Блог", href: "/blog" },
     { name: "Екип", href: "/team" },
     { name: "Съответствие", href: "/compliance" },
