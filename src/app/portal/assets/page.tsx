@@ -223,6 +223,61 @@ export default function AssetsPage() {
   const vulnerableCount = assets.filter((a) => a.status === "vulnerable").length;
   const monitoringCount = assets.filter((a) => a.status === "monitoring").length;
 
+  // Ново състояние за Bulk Import
+  const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
+  const [bulkInputText, setBulkInputText] = useState("");
+  const [bulkError, setBulkError] = useState("");
+
+  const handleBulkImport = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBulkError("");
+
+    if (!bulkInputText.trim()) {
+      setBulkError("Моля, поставете валидно съдържание за импортиране.");
+      return;
+    }
+
+    try {
+      let parsedAssets = [];
+      const trimmedText = bulkInputText.trim();
+
+      if (trimmedText.startsWith("[")) {
+        // Парсваме като JSON
+        parsedAssets = JSON.parse(trimmedText);
+      } else {
+        // Парсваме като CSV (Име, IP/Домейн, Тип)
+        const lines = trimmedText.split("\n");
+        parsedAssets = lines.map(line => {
+          const parts = line.split(",");
+          return {
+            name: parts[0]?.trim(),
+            ipAddress: parts[1]?.trim(),
+            type: parts[2]?.trim() || "Сървър"
+          };
+        }).filter(a => a.name && a.ipAddress);
+      }
+
+      const res = await fetch("/api/portal/assets/bulk", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ assets: parsedAssets }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert(`📂 Импортирането приключи!\n\nУспешно добавени: ${data.importedCount}\nПропуснати/Съществуващи: ${data.skippedCount}`);
+        setIsBulkModalOpen(false);
+        setBulkInputText("");
+        fetchAssets();
+      } else {
+        setBulkError(data.error || "Грешка при импортиране на активите.");
+      }
+    } catch (err) {
+      setBulkError("Невалиден формат. Моля, проверете примерите за CSV или JSON.");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-10 px-4">
       <div className="max-w-7xl mx-auto">
@@ -238,13 +293,22 @@ export default function AssetsPage() {
               Управлявайте и сканирайте сървъри, уебсайтове и работни станции в реално време през DefComs SOC
             </p>
           </div>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="bg-[#0098b2] hover:bg-[#007f96] text-white px-5 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-[#0098b2]/10 transition"
-          >
-            <Plus className="w-5 h-5" />
-            Добави актив
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={() => setIsBulkModalOpen(true)}
+              className="bg-slate-800 hover:bg-slate-700 text-[#0098b2] border border-[#0098b2]/30 px-4 py-3 rounded-xl font-bold flex items-center gap-2 transition"
+            >
+              <RefreshCw className="w-5 h-5" />
+              Групов импорт
+            </button>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="bg-[#0098b2] hover:bg-[#007f96] text-white px-5 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-[#0098b2]/10 transition"
+            >
+              <Plus className="w-5 h-5" />
+              Добави актив
+            </button>
+          </div>
         </div>
 
         {/* Stats Grid */}
@@ -353,6 +417,77 @@ export default function AssetsPage() {
             </p>
           </div>
         </div>
+
+        {/* Bulk Import Modal Dialog */}
+        {isBulkModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+            <div className="bg-slate-900 border border-slate-800 w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden animate-fadeIn text-white">
+              <div className="flex justify-between items-center px-6 py-4 border-b border-slate-800 bg-slate-900/50">
+                <h3 className="text-lg font-bold flex items-center gap-2">
+                  <RefreshCw className="w-5 h-5 text-[#0098b2]" />
+                  Групов импорт на ИТ активи
+                </h3>
+                <button
+                  onClick={() => { setIsBulkModalOpen(false); setBulkError(""); }}
+                  className="text-gray-400 hover:text-white transition"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <form onSubmit={handleBulkImport} className="p-6 space-y-4">
+                {bulkError && (
+                  <div className="p-3 bg-red-500/10 border border-red-500/30 text-red-400 text-xs rounded-xl font-semibold">
+                    {bulkError}
+                  </div>
+                )}
+
+                <div className="text-xs text-gray-400 space-y-1 bg-slate-950 p-4 rounded-xl border border-slate-850">
+                  <p className="font-bold text-white mb-1">Примери за формат:</p>
+                  <p>• **CSV формат** (Име, IP/Домейн, Тип):</p>
+                  <code className="block bg-slate-900 px-2 py-1 rounded text-[10px] text-yellow-400 font-mono">
+                    Сървър София, 185.230.12.5, Сървър{"\n"}
+                    Моят сайт, mydomain.com, Домейн / Уебсайт
+                  </code>
+                  <p className="pt-2">• **JSON формат**:</p>
+                  <code className="block bg-slate-900 px-2 py-1 rounded text-[10px] text-yellow-400 font-mono whitespace-pre-wrap">
+                    {"[\n  { \"name\": \"Сървър 1\", \"ipAddress\": \"192.168.1.1\", \"type\": \"Сървър\" }\n]"}
+                  </code>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5">
+                    Въведете CSV или JSON данни за импорт *
+                  </label>
+                  <textarea
+                    required
+                    rows={6}
+                    placeholder="Поставете CSV линии или JSON масив тук..."
+                    value={bulkInputText}
+                    onChange={(e) => setBulkInputText(e.target.value)}
+                    className="w-full bg-slate-850 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#0098b2] transition font-mono"
+                  />
+                </div>
+
+                <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-800">
+                  <button
+                    type="button"
+                    onClick={() => { setIsBulkModalOpen(false); setBulkError(""); }}
+                    className="px-4 py-2 text-sm font-semibold text-gray-400 hover:text-white transition"
+                  >
+                    Отказ
+                  </button>
+                  <button
+                    type="submit"
+                    className="bg-[#0098b2] hover:bg-[#007f96] text-white font-bold px-5 py-2.5 rounded-xl transition text-sm"
+                  >
+                    Импортирай активите
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
 
         {/* Modal Dialog */}
         {isModalOpen && (

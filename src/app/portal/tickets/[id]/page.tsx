@@ -53,7 +53,26 @@ export default function TicketDetailPage({ params }: { params: { id: string } })
 
   useEffect(() => {
     fetchTicket();
+
+    // Създаване на периодичен Long-Polling интервал за симулиране на SSE / Чат на живо в реално време
+    const intervalId = setInterval(() => {
+      fetchTicketSilently();
+    }, 4000);
+
+    return () => clearInterval(intervalId);
   }, [params.id]);
+
+  const fetchTicketSilently = async () => {
+    try {
+      const response = await fetch(`/api/portal/tickets/${params.id}`);
+      if (response.ok) {
+        const data = await response.json();
+        setTicket(data);
+      }
+    } catch (error) {
+      console.error("Грешка при фоново опресняване:", error);
+    }
+  };
 
   const handleCloseTicket = async () => {
     if (!confirm("Наистина ли искате да затворите този поддържащ тикет?")) {
