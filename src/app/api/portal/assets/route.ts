@@ -122,7 +122,35 @@ export async function PATCH(req: NextRequest) {
     if (name !== undefined) updateData.name = name;
     if (ipAddress !== undefined) updateData.ipAddress = ipAddress;
     if (type !== undefined) updateData.type = type;
-    if (status !== undefined) updateData.status = status;
+
+    // Ако е пуснато сканиране и статусът се обновява, можем да проверим реално домейна
+    let finalStatus = status;
+    if (status === "scanned" && existingAsset.type.includes("Домейн")) {
+      try {
+        let domain = existingAsset.ipAddress.trim();
+        // Изчистване на http/https префиксите за по-лесна проверка
+        domain = domain.replace(/^(https?:\/\/)?(www\.)?/, "");
+
+        // Реално мрежово извикване за проверка на HTTPS достъпността и сигурността на домейна
+        const checkUrl = `https://${domain}`;
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 4000); // 4 сек таймаут
+
+        const response = await fetch(checkUrl, { signal: controller.signal });
+        clearTimeout(timeoutId);
+
+        if (response.ok) {
+          finalStatus = "scanned"; // Домейнът работи и има валиден SSL
+        } else {
+          finalStatus = "vulnerable"; // Има проблем с достъпността или конфигурацията
+        }
+      } catch (err) {
+        console.warn("Неуспешно реално мрежово сканиране на домейна, преминаване към уязвим статус:", err);
+        finalStatus = "vulnerable";
+      }
+    }
+
+    if (finalStatus !== undefined) updateData.status = finalStatus;
 
     const updatedAsset = await prisma.asset.update({
       where: { id },

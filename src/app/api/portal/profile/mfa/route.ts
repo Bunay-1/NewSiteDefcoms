@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { generateMfaSecret, verifyTOTP } from "@/lib/totp";
 
 export const dynamic = "force-dynamic";
 
-// POST - Генериране на симулиран 2FA секрет
+// POST - Генериране на реален 2FA секрет (Base32)
 export async function POST(req: NextRequest) {
   try {
     const session = await auth();
@@ -14,11 +15,11 @@ export async function POST(req: NextRequest) {
     }
 
     const userId = (session.user as any).id;
-    const simulatedSecret = "defcoms_mfa_secret_key_" + Math.random().toString(36).substring(2, 10).toUpperCase();
+    const realSecret = generateMfaSecret();
 
     const user = await prisma.user.update({
       where: { id: userId },
-      data: { mfaSecret: simulatedSecret },
+      data: { mfaSecret: realSecret },
       select: { mfaSecret: true },
     });
 
@@ -32,7 +33,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// PATCH - Промяна на състоянието на 2FA (Активиране/Деактивиране)
+// PATCH - Промяна на състоянието на 2FA (Активиране/Деактивиране с реална TOTP проверка)
 export async function PATCH(req: NextRequest) {
   try {
     const session = await auth();
@@ -43,7 +44,30 @@ export async function PATCH(req: NextRequest) {
 
     const userId = (session.user as any).id;
     const body = await req.json();
-    const { enabled } = body;
+    const { enabled, code } = body;
+
+    const existingUser = await prisma.user.findUnique({
+      where: { id: userId }
+    });
+
+    if (!existingUser) {
+      return NextResponse.json({ error: "Потребителят не е намерен" }, { status: 404 });
+    }
+
+    // Ако се активира, задължително изискваме и проверяваме въведения 2FA код
+    if (enabled) {
+      if (!code) {
+        return NextResponse.json({ error: "Моля, въведете 6-цифрен код от приложението за верификация" }, { status: 400 });
+      }
+      if (!existingUser.mfaSecret) {
+        return NextResponse.json({ error: "Първо генерирайте 2FA секрет" }, { status: 400 });
+      }
+
+      const isValid = verifyTOTP(code, existingUser.mfaSecret);
+      if (!isValid) {
+        return NextResponse.json({ error: "Въведеният код е невалиден или е изтекъл. Опитайте отново!" }, { status: 400 });
+      }
+    }
 
     const user = await prisma.user.update({
       where: { id: userId },

@@ -270,7 +270,7 @@ export default function ClientProfilePage() {
       const res = await fetch("/api/portal/profile/mfa", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ enabled: true }),
+        body: JSON.stringify({ enabled: true, code: mfaCode }),
       });
 
       if (res.ok) {
@@ -288,10 +288,11 @@ export default function ClientProfilePage() {
         });
         fetchAuditLogs();
       } else {
-        setGlobalError("Грешка при активиране на 2FA");
+        const data = await res.json();
+        setGlobalError(data.error || "Грешка при активиране на 2FA");
       }
     } catch (err) {
-      setGlobalError("Грешка");
+      setGlobalError("Грешка при комуникация със сървъра.");
     } finally {
       setLoading(false);
     }
