@@ -43,6 +43,7 @@ export default function Footer() {
             <ul className="space-y-2 text-gray-400 text-sm">
               <li><Link href="/tools/roi" className="hover:text-white transition">ROI Калкулатор</Link></li>
               <li><Link href="/tools/compliance-wizard" className="hover:text-white transition">Калкулатор NIS2/DORA</Link></li>
+              <li><Link href="/tools/ai-act-wizard" className="hover:text-white transition">EU AI Act Калкулатор</Link></li>
               <li><Link href="/tools/bundle" className="hover:text-white transition">Конфигуратор на услуги</Link></li>
               <li><Link href="/tools/phishing-trainer" className="hover:text-white transition">Фишинг Тренажор</Link></li>
               <li><Link href="/threat-advisories" className="hover:text-white transition">Център за заплахи</Link></li>

@@ -315,6 +315,54 @@ export default function ComplianceWizard() {
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
           <button
+            onClick={() => {
+              const { nis2Status, doraStatus } = calculateCompliance();
+              const reportText = `
+ОФИЦИАЛНА ОЦЕНКА ЗА NIS2 И DORA СЪОТВЕТСТВИЕ
+==================================================
+Издател: DefComs Cybersecurity Platform
+Дата на одит: ${new Date().toLocaleDateString("bg-BG")}
+--------------------------------------------------
+РЕЗУЛТАТИ:
+- Статус по Директива NIS2: ${
+                nis2Status === "essential"
+                  ? "ОСНОВЕН СУБЕКТ (Essential Entity) - Изключително строг режим!"
+                  : nis2Status === "important"
+                  ? "ВАЖЕН СУБЕКТ (Important Entity) - Задължителни контроли!"
+                  : nis2Status === "supply_chain"
+                  ? "РИСК ПО ВЕРИГАТА НА ДОСТАВКИ (Supply Chain Risk)!"
+                  : "Няма директни NIS2 задължения."
+              }
+- Статус по Регламент DORA: ${
+                doraStatus
+                  ? "ЗАДЪЛЖИТЕЛНО СЪОТВЕТСТВИЕ (Финансов сектор и ИТ партньори)!"
+                  : "Не се изисква DORA съответствие."
+              }
+--------------------------------------------------
+ПРЕПОРЪЧИТЕЛНИ МЕРКИ ЗА СИГУРНОСТ:
+- Внедрете 24/7 SOC мониторинг и SIEM корелация.
+- Провеждайте регулярни симулации на фишинг атаки за служителите.
+- Извършвайте автоматични сканирания за уязвимости (CVE) в инфраструктурата.
+==================================================
+Защитено изчисление съгласно европейските директиви.
+              `.trim();
+
+              const blob = new Blob([reportText], { type: "text/plain;charset=utf-8" });
+              const url = URL.createObjectURL(blob);
+              const link = document.createElement("a");
+              link.href = url;
+              link.download = `DefComs_Compliance_Report.txt`;
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              URL.revokeObjectURL(url);
+              alert("📄 Официалният доклад за NIS2 & DORA съответствие бе генериран успешно!");
+            }}
+            className="bg-slate-800 hover:bg-slate-700 text-yellow-400 border border-slate-700 font-bold px-6 py-3 rounded-lg text-sm transition flex items-center justify-center gap-1.5"
+          >
+            Свали одитния доклад
+          </button>
+          <button
             onClick={handleReset}
             className="border-2 border-slate-700 hover:bg-slate-800 text-white px-6 py-3 rounded-lg text-sm font-semibold transition flex items-center justify-center gap-2"
           >

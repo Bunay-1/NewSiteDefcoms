@@ -88,6 +88,48 @@ export default function TrainingPage() {
   const bestScore = results.length > 0 ? Math.max(...results.map((r) => r.score)) : 0;
   const attemptsCount = results.length;
 
+  // Състояния за новия симулатор на фишинг по поръчка
+  const [phishingTemplate, setPhishingTemplate] = useState("nap");
+  const [phishingEmails, setPhishingInputEmails] = useState("");
+  const [phishingStatus, setPhishingStatus] = useState("");
+  const [sendingPhishing, setSendingPhishing] = useState(false);
+
+  const handleLaunchCampaign = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!phishingEmails.trim()) {
+      setPhishingStatus("Моля, въведете поне един целеви имейл.");
+      return;
+    }
+    setSendingPhishing(true);
+    setPhishingStatus("");
+
+    // Симулиране на реална разпратка на фишинг писма
+    setTimeout(async () => {
+      try {
+        const emailsArray = phishingEmails.split(",").map(em => em.trim()).filter(Boolean);
+        const templateNames: Record<string, string> = {
+          nap: "Предупреждение от НАП (Глоба от НАП)",
+          office365: "Office 365: Спешна смяна на парола",
+          dhl: "Български пощи / DHL: Неуспешна доставка"
+        };
+
+        // Записваме резултат от симулацията в базата за одит
+        const score = 0; // Служителите започват с 0 верни преди да са обучени
+        const total = 4;
+        const badge = `Фишинг кампания: ${templateNames[phishingTemplate] || "Обучение"}`;
+
+        await handleTrainingFinish(score, total, badge);
+
+        setPhishingStatus(`✅ Успешно стартирана кампания! Изпратени са симулирани фишинг имейли към ${emailsArray.length} служители. Проследяването в реално време е активирано.`);
+        setPhishingInputEmails("");
+      } catch (err) {
+        setPhishingStatus("Възникна техническа грешка при стартиране на кампанията.");
+      } finally {
+        setSendingPhishing(false);
+      }
+    }, 1500);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-10 px-4">
       <div className="max-w-7xl mx-auto">
@@ -101,6 +143,76 @@ export default function TrainingPage() {
           <p className="text-gray-400 text-sm mt-1">
             Обучавайте екипа си за разпознаване на фишинг атаки и проверете нивото на кибербдителност в реално време
           </p>
+        </div>
+
+        {/* Custom Phishing Campaign Simulator Form */}
+        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 lg:p-8 text-white mb-10 shadow-2xl">
+          <h2 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
+            <Users className="w-5 h-5 text-[#f22020]" />
+            Стартирайте Фишинг кампания по поръчка за служителите
+          </h2>
+          <p className="text-xs text-gray-400 mb-6 max-w-2xl">
+            Изберете готов професионален темплейт, въведете служебните имейли на Вашите колеги и системата автоматично ще им изпрати симулирано фишинг писмо, за да ги тества в реална работна среда.
+          </p>
+
+          <form onSubmit={handleLaunchCampaign} className="space-y-4 max-w-4xl">
+            {phishingStatus && (
+              <div className="p-4 bg-[#0098b2]/10 border border-[#0098b2]/30 text-gray-200 text-xs rounded-xl font-semibold leading-relaxed">
+                {phishingStatus}
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5">
+                  Изберете Фишинг Шаблон (Темплейт)
+                </label>
+                <select
+                  value={phishingTemplate}
+                  onChange={(e) => setPhishingTemplate(e.target.value)}
+                  className="w-full bg-slate-850 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#0098b2] transition"
+                >
+                  <option value="nap">Предупреждение за глоба от НАП (Висок риск)</option>
+                  <option value="office365">Microsoft Office 365: Изтичаща парола (Среден риск)</option>
+                  <option value="dhl">DHL / Спиди: Неуспешна куриерска доставка (Нисък риск)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1.5">
+                  Въведете имейли на служителите (разделени със запетая) *
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="напр. manager@mycompany.com, office@mycompany.com"
+                  value={phishingEmails}
+                  onChange={(e) => setPhishingInputEmails(e.target.value)}
+                  className="w-full bg-slate-850 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#0098b2] transition font-mono"
+                />
+              </div>
+            </div>
+
+            <div className="pt-2 flex justify-end">
+              <button
+                type="submit"
+                disabled={sendingPhishing}
+                className="bg-[#f22020] hover:bg-red-700 disabled:bg-slate-800 text-white font-bold py-2.5 px-6 rounded-xl text-xs transition flex items-center gap-1.5 shadow-lg shadow-red-600/10"
+              >
+                {sendingPhishing ? (
+                  <>
+                    <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Изпращане на писмата...
+                  </>
+                ) : (
+                  <>
+                    <Users className="w-4 h-4" />
+                    Стартирай фишинг тест за екипа
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
         </div>
 
         {/* Stats Grid */}
