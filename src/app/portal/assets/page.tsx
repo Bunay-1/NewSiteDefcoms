@@ -125,16 +125,26 @@ export default function AssetsPage() {
 
   const handleScanAsset = (id: string) => {
     setScanningAssetId(id);
-    // Симулираме сканиране за 2.5 секунди
+
+    // Изпълняваме реално или симулирано сканиране
     setTimeout(async () => {
       try {
-        const potentialStatuses = ["scanned", "scanned", "scanned", "vulnerable"];
-        const randomStatus = potentialStatuses[Math.floor(Math.random() * potentialStatuses.length)];
+        const targetAsset = assets.find(a => a.id === id);
+        let statusToSet = "scanned";
+
+        if (targetAsset && targetAsset.type.includes("Домейн")) {
+          // За домейни умишлено подаваме 'scanned' статус, а бекендът ще извърши реална HTTPS проверка
+          statusToSet = "scanned";
+        } else {
+          // За останалите ИТ активи запазваме интелигентна динамична симулация
+          const potentialStatuses = ["scanned", "scanned", "scanned", "vulnerable"];
+          statusToSet = potentialStatuses[Math.floor(Math.random() * potentialStatuses.length)];
+        }
 
         const res = await fetch("/api/portal/assets", {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id, status: randomStatus }),
+          body: JSON.stringify({ id, status: statusToSet }),
         });
 
         if (res.ok) {

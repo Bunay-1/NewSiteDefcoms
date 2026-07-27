@@ -62,22 +62,81 @@ export default function AiChatbot() {
         { text: "Защитени ли са данните ми?", label: "GDPR" }
       ];
 
+  // Нови състояния за динамично заредени данни от базата за вписания потребител
+  const [realStats, setRealStats] = useState<{
+    assetsCount: number;
+    unpaidInvoicesCount: number;
+    openTicketsCount: number;
+    servicesCount: number;
+    healthScore: number;
+  } | null>(null);
+
+  useEffect(() => {
+    if (isOpen && isPortalMode) {
+      // Извличаме реални данни от базата данни за вписания потребител
+      Promise.all([
+        fetch("/api/portal/assets").then(res => res.ok ? res.json() : []),
+        fetch("/api/portal/invoices").then(res => res.ok ? res.json() : []),
+        fetch("/api/portal/tickets").then(res => res.ok ? res.json() : []),
+        fetch("/api/portal/services").then(res => res.ok ? res.json() : []),
+        fetch("/api/portal/recommendations").then(res => res.ok ? res.json() : []),
+      ]).then(([assets, invoices, tickets, services, recs]) => {
+        const assetsCount = assets.length;
+        const unpaidInvoicesCount = invoices.filter((inv: any) => inv.status === "unpaid").length;
+        const openTicketsCount = tickets.filter((t: any) => t.status === "open" || t.status === "in_progress").length;
+        const servicesCount = services.filter((s: any) => s.status === "active").length;
+
+        const completedImpact = recs.filter((r: any) => r.status === "completed").reduce((acc: number, r: any) => acc + r.impact, 0);
+        const totalImpact = recs.reduce((acc: number, r: any) => acc + r.impact, 0);
+        const healthScore = totalImpact > 0 ? Math.round((completedImpact / totalImpact) * 100) : 100;
+
+        setRealStats({
+          assetsCount,
+          unpaidInvoicesCount,
+          openTicketsCount,
+          servicesCount,
+          healthScore
+        });
+      }).catch(err => console.error("Грешка при зареждане на AI статистика:", err));
+    }
+  }, [isOpen, isPortalMode]);
+
   const keywordAnswers: { keywords: string[]; answer: string }[] = [
     {
       keywords: ["фактур", "плащ", "дължим", "неплатен", "invoice", "инвойс", "пари"],
-      answer: "В раздела 'Фактури & Плащания' (/portal/invoices) можете да проследите всички Ваши финансови документи (платени, неплатени и просрочени фактури). Вградили сме защитен PCI-DSS симулатор на плащания, с който можете да извършите плащане с банкова карта и да маркирате фактурата като платена в реално време!"
+      get answer() {
+        if (isPortalMode && realStats) {
+          return `📊 **Вашата финансова справка в реално време:**\n\nИмате **${realStats.unpaidInvoicesCount} неплатени фактури** в профила си.\n\nВ раздела **[Фактури & Плащания](/portal/invoices)** можете да ги проследите детайлно и да извършите незабавно сигурно плащане с банкова карта.`;
+        }
+        return "В раздела 'Фактури & Плащания' (/portal/invoices) можете да проследите всички Ваши финансови документи (платени, неплатени и просрочени фактури). Вградили сме защитен PCI-DSS симулатор на плащания, с който можете да извършите плащане с банкова карта и да маркирате фактурата как платена в реално време!";
+      }
     },
     {
       keywords: ["активи", "актив", "assets", "cmdb", "инвентар", "компютри", "сървъри"],
-      answer: "В новия раздел 'ИТ Активи' (/portal/assets) можете да поддържате подробен CMDB инвентар на Вашия софтуер, домейни, сървъри и работни станции. Всеки актив може да бъде сканиран ръчно с натискане на бутона 'Стартирай скан', за да се генерира подробен статус."
+      get answer() {
+        if (isPortalMode && realStats) {
+          return `🖥️ **Вашият ИТ Инвентар (CMDB):**\n\nВ базата ни данни имате заведени **${realStats.assetsCount} активни ИТ активи** (сървъри, домейни, работни станции).\n\nМожете да ги управлявате и да стартирате незабавни Vulnerability сканирания на адрес **[Моите ИТ Активи](/portal/assets)**!`;
+        }
+        return "В новия раздел 'ИТ Активи' (/portal/assets) можете да поддържате подробен CMDB инвентар на Вашия софтуер, домейни, сървъри и работни станции. Всеки актив може да бъде сканиран ръчно с натискане на бутона 'Стартирай скан', за да се генерира подробен статус.";
+      }
     },
     {
       keywords: ["план", "услуг", "абонамент", "моите услуги", "активни", "plan"],
-      answer: "В секцията 'Моите услуги' (/portal/services) имате пълен преглед на Вашите активни планове и абонаменти за сигурност (напр. 24/7 SOC, Пентест, GDPR). Чрез бутона 'Нова услуга / План' горе вдясно можете бързо да заявите нов софтуерен лиценз или промяна на план, което автоматично ще генерира приоритетен поддържащ тикет."
+      get answer() {
+        if (isPortalMode && realStats) {
+          return `🛡️ **Вашите Активни Услуги:**\n\nВ момента имате **${realStats.servicesCount} активни планове за сигурност**, осигуряващи защита за Вашата компания.\n\nПълният списък с баджове за съответствие (NIS2/DORA) и история на абонаментите можете да разгледате в **[Моите услуги](/portal/services)**.`;
+        }
+        return "В секцията 'Моите услуги' (/portal/services) имате пълен преглед на Вашите активни планове и абонаменти за сигурност (напр. 24/7 SOC, Пентест, GDPR). Чрез бутона 'Нова услуга / План' горе вдясно можете бързо да заявите нов софтуерен лиценз или промяна на план, което автоматично ще генерира приоритетен поддържащ тикет.";
+      }
     },
     {
       keywords: ["анализ", "оценк", "здравен статус", "здраве", "health", "score", "риск", "препорък"],
-      answer: "В раздела 'Ниво на защита' (/portal/health) ще намерите Вашия интелигентен Cybersecurity Health Score. Препоръките за сигурност са разпределени по категории (Достъп, Мрежа, Съответствие, Обучение). Можете директно да отбелязвате кои контроли са внедрени, за да преизчислите Вашата сигурност в реално време!"
+      get answer() {
+        if (isPortalMode && realStats) {
+          return `📈 **Здравен рейтинг за сигурност (Cybersecurity Health):**\n\nВашият текущ здравен резултат е **${realStats.healthScore}%**.\n\nЗа да увеличите сигурността си до 100%, разгледайте препоръките по категории (Достъп, Мрежа, Съответствие) на адрес **[Ниво на защита](/portal/health)**!`;
+        }
+        return "В раздела 'Ниво на защита' (/portal/health) ще намерите Вашия интелигентен Cybersecurity Health Score. Препоръките за сигурност са разпределени по категории (Достъп, Мрежа, Съответствие, Обучение). Можете директно да отбелязвате кои контроли са внедрени, за да преизчислите Вашата сигурност в реално време!";
+      }
     },
     {
       keywords: ["табло", "табла", "дашборд", "dashboard", "информац", "преглед"],
@@ -289,6 +348,19 @@ export default function AiChatbot() {
     setTimeout(() => {
       const normalizedInput = textToSend.toLowerCase();
       let foundAnswer = "";
+
+      // Добавяне на допълнителни реални AI отговори по ключови думи от базата данни
+      if (isPortalMode && realStats) {
+        if (normalizedInput.includes("колко") && (normalizedInput.includes("актив") || normalizedInput.includes("cmdb"))) {
+          foundAnswer = `🖥️ В момента имате заведени точно **${realStats.assetsCount} активни ИТ активи** под Вашата организация. Можете да добавяте нови или да стартирате сканиране от **[Моите ИТ Активи](/portal/assets)**.`;
+        } else if (normalizedInput.includes("плани") || normalizedInput.includes("абонамент") || normalizedInput.includes("услуг")) {
+          foundAnswer = `🛡️ Имате **${realStats.servicesCount} активни услуги** (като 24/7 SOC, GDPR или DORA защита). Пълният статус можете да проследите в **[Моите услуги](/portal/services)**.`;
+        } else if (normalizedInput.includes("тикет") || normalizedInput.includes("проблем") || normalizedInput.includes("поддръжк")) {
+          foundAnswer = `✉️ Имате **${realStats.openTicketsCount} отворени/активни поддържащи тикета** за комуникация с нашия SOC отдел. Можете да отворите нов тикет или да чатите с анализатор на страницата **[Поддържащи тикети](/portal/tickets)**.`;
+        } else if (normalizedInput.includes("здрав") || normalizedInput.includes("рейтинг") || normalizedInput.includes("score")) {
+          foundAnswer = `📈 Вашият текущ здравен рейтинг за киберсигурност е **${realStats.healthScore}%**. Препоръчваме да завършитеPending задачите за сигурност в раздела **[Ниво на защита](/portal/health)**.`;
+        }
+      }
 
       // Check for CVE pattern
       const cveMatch = normalizedInput.match(/cve-\d{4}-\d{4,7}/);
