@@ -85,12 +85,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const { fileUrl } = body;
+
     const invoice = await prisma.invoice.create({
       data: {
         invoiceNumber,
         amount: parseFloat(amount),
         status: status || "unpaid",
         description,
+        fileUrl: fileUrl || null,
         dueDate: new Date(dueDate),
         userId: targetUserId,
       },
