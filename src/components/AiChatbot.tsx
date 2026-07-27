@@ -414,7 +414,7 @@ export default function AiChatbot() {
 
                 {/* Audit step options underneath the corresponding bot question */}
                 {msg.sender === "bot" && msg.isAuditOptions && auditStep > 0 && auditStep < 4 && index === messages.length - 1 && (
-                  <div className="flex gap-2.5 justify-start pl-10.5 animate-fadeIn">
+                  <div className="flex gap-2.5 justify-start pl-10 animate-fadeIn">
                     <button
                       onClick={() => handleAuditAnswer(true)}
                       className="bg-green-600/20 hover:bg-green-600/40 text-green-400 border border-green-500/30 px-4 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1"
