@@ -291,15 +291,54 @@ export default function RoiCalculator() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 pt-4 border-t border-slate-800">
+            <button
+              onClick={() => {
+                const docText = `
+ДЕТАЙЛЕН ДОКЛАД ЗА КИБЕР РИСК И ROI ОЦЕНКА
+===================================================
+Издател: DefComs Cybersecurity Platform
+Дата на генериране: ${new Date().toLocaleDateString("bg-BG")}
+Бизнес сектор: ${currentSector.name}
+Брой служители: ${employees}
+Годишен оборот на организацията: ${formatEUR(revenue)}
+---------------------------------------------------
+ФИНАНСОВИ ЗАПЛАХИ ПРИ ЕДИНИЧЕН ПРОБИВ (SLE):
+- Разходи за престой и възстановяване: ${formatEUR(downtimeCost)} (Престой: ${downtimeHours} ч.)
+- Излагане на регулаторни глоби (GDPR/NIS2): ${formatEUR(fineExposure)}
+- Репутационни щети и отлив на клиенти: ${formatEUR(reputationCost)}
+---------------------------------------------------
+ОБЩА СТОЙНОСТ НА КИБЕРАТАКА: ${formatEUR(totalBreachCost)}
+Годишна вероятност от инцидент: ${breachProbability}%
+Очакван средногодишен риск без DefComs (ALE): ${formatEUR(annualizedLossExposure)}
+---------------------------------------------------
+СПЕСТЯВАНИЯ С DEFCOMS:
+- Годишна инвестиция в защита: ${formatEUR(defcomsCost)}
+- Спестени годишни загуби: ${formatEUR(savedLoss)}
+- НЕТНИ ГОДИШНИ СПЕСТЯВАНИЯ: ${formatEUR(netSavings)}
+ВЪЗВРЪЩАЕМОСТ НА ИНВЕСТИЦИЯТА (ROI): +${roiPercentage}%
+===================================================
+Изчислено по официалната методология ALE/SLE.
+                `.trim();
+
+                const blob = new Blob([docText], { type: "text/plain;charset=utf-8" });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = `DefComs_CyberRisk_ROI_Report.txt`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                alert("📄 Официалният доклад за оценка на финансовия риск беше генериран и свален на Вашето устройство!");
+              }}
+              className="bg-slate-800 hover:bg-slate-700 text-yellow-400 border border-slate-700 font-bold px-6 rounded-xl transition flex items-center justify-center gap-1.5"
+            >
+              Свали доклада
+            </button>
             <Link href="/contact" className="flex-1">
               <button className="w-full bg-[#f22020] hover:bg-red-700 text-white font-extrabold text-base py-3.5 px-6 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-red-600/20 hover:-translate-y-0.5 transform duration-150">
                 Заявете подробен одит и оферта
                 <ArrowRight className="w-5 h-5" />
-              </button>
-            </Link>
-            <Link href="/services" className="sm:w-auto">
-              <button className="w-full border border-slate-700 hover:border-slate-500 text-gray-300 hover:text-white font-bold text-sm py-3.5 px-6 rounded-xl transition flex items-center justify-center gap-1.5 hover:bg-slate-800/40">
-                Разгледайте Услугите
               </button>
             </Link>
           </div>
