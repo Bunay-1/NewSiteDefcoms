@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
 
     const u = session.user as any;
 
-    if (u.role !== "admin") {
+    if (u.role !== "admin" && u.role !== "operator") {
       return NextResponse.json({ error: "Нямате администраторски права" }, { status: 403 });
     }
 

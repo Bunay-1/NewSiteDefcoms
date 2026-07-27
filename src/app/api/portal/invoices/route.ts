@@ -15,8 +15,8 @@ export async function GET(req: NextRequest) {
 
     const u = session.user as any;
 
-    if (u.role === "admin") {
-      // Администраторите виждат всички фактури в системата, заедно с детайли за потребителя
+    if (u.role === "admin" || u.role === "operator") {
+      // Администраторите и Операторите виждат всички фактури в системата, заедно с детайли за потребителя
       const invoices = await prisma.invoice.findMany({
         include: {
           user: {
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
 
     const u = session.user as any;
 
-    if (u.role !== "admin") {
+    if (u.role !== "admin" && u.role !== "operator") {
       return NextResponse.json({ error: "Нямате администраторски права" }, { status: 403 });
     }
 
