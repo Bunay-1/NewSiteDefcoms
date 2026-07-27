@@ -124,6 +124,8 @@ export default function AdminPortalPage() {
     targetUserId: "",
   });
 
+  const [selectedFileForInvoice, setSelectedFileForInvoice] = useState<string>("");
+
   // Нова форма 3: Публикуване на глобална заплаха
   const [threatForm, setThreatForm] = useState({
     title: "",
@@ -438,7 +440,10 @@ export default function AdminPortalPage() {
       const response = await fetch("/api/portal/invoices", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(invForm),
+        body: JSON.stringify({
+          ...invForm,
+          fileUrl: selectedFileForInvoice || null,
+        }),
       });
 
       const data = await response.json();
@@ -453,6 +458,7 @@ export default function AdminPortalPage() {
           dueDate: "",
           targetUserId: "",
         });
+        setSelectedFileForInvoice("");
       } else {
         setInvError(data.error || "Грешка при издаване на фактура");
       }
@@ -1073,12 +1079,30 @@ export default function AdminPortalPage() {
                     </div>
                   </div>
 
+                  {/* Прикачване на файл към фактурата */}
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-300 mb-2 flex items-center gap-1.5">
+                      <Upload className="w-4 h-4 text-[#0098b2]" />
+                      Прикачи файл на фактурата (Симулация на файл)
+                    </label>
+                    <input
+                      type="text"
+                      value={selectedFileForInvoice}
+                      onChange={(e) => setSelectedFileForInvoice(e.target.value)}
+                      placeholder="напр. invoice_inv-2024-102.pdf"
+                      className="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 px-4 text-white placeholder-gray-600 focus:outline-none focus:border-[#0098b2]"
+                    />
+                    <p className="text-[10px] text-gray-500 mt-1">
+                      * Позволява прикачване на реално име на PDF файла или URL на фактурата за лесно сваляне от страна на клиента.
+                    </p>
+                  </div>
+
                   <button
                     type="submit"
                     className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl transition flex items-center justify-center gap-2 mt-4"
                   >
                     <PlusCircle className="w-5 h-5" />
-                    Издай и изпрати фактура
+                    Издай и изпрати фактура с прикачен файл
                   </button>
                 </form>
               </div>
