@@ -50,7 +50,7 @@ export default function ClientProfilePage() {
   const router = useRouter();
 
   // Основно състояние за табовете
-  const [activeTab, setActiveTab] = useState("profile"); // profile, mfa, notifications, history, apikeys
+  const [activeTab, setActiveTab] = useState("profile"); // profile, mfa, notifications, history, apikeys, webhooks
 
   // 1. Форма за Лична информация и Парола
   const [profileForm, setProfileForm] = useState({
@@ -79,6 +79,11 @@ export default function ClientProfilePage() {
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
   const [newKeyName, setNewKeyName] = useState("");
+
+  // 5. Състояния за Webhooks
+  const [webhooks, setWebhooks] = useState<any[]>([]);
+  const [newWebhookUrl, setNewWebhookUrl] = useState("");
+  const [testingWebhookId, setTestingWebhookId] = useState<string | null>(null);
 
   const [loading, setLoading] = useState(false);
   const [globalSuccess, setGlobalSuccess] = useState("");
@@ -110,8 +115,20 @@ export default function ClientProfilePage() {
       // Зареждаме логовете и ключовете
       fetchAuditLogs();
       fetchApiKeys();
+      fetchWebhooks();
     }
   }, [session]);
+
+  const fetchWebhooks = async () => {
+    try {
+      const res = await fetch("/api/portal/profile/webhooks");
+      if (res.ok) {
+        setWebhooks(await res.json());
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const fetchAuditLogs = async () => {
     try {
@@ -201,6 +218,81 @@ export default function ClientProfilePage() {
       setGlobalError("Възникна вътрешна грешка");
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Метод 5: Управление на уебхукове
+  const handleCreateWebhook = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newWebhookUrl) return;
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/portal/profile/webhooks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: newWebhookUrl }),
+      });
+
+      if (res.ok) {
+        setNewWebhookUrl("");
+        setGlobalSuccess("Новият Webhook бе регистриран успешно!");
+        fetchWebhooks();
+        fetchAuditLogs();
+      } else {
+        const data = await res.json();
+        setGlobalError(data.error || "Грешка при създаване на уебхук");
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteWebhook = async (id: string) => {
+    if (!confirm("Наистина ли искате да премахнете този Webhook адрес?")) return;
+    setLoading(true);
+
+    try {
+      const res = await fetch(`/api/portal/profile/webhooks?id=${id}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        setGlobalSuccess("Webhook адресът бе премахнат успешно");
+        fetchWebhooks();
+        fetchAuditLogs();
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleTestWebhook = async (id: string) => {
+    setTestingWebhookId(id);
+    setGlobalSuccess("");
+    setGlobalError("");
+
+    try {
+      const res = await fetch("/api/portal/profile/webhooks/test", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ webhookId: id }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setGlobalSuccess(data.message || "Тестовото събитие бе изпратено успешно!");
+      } else {
+        setGlobalError(data.message || data.error || "Уебхукът върна грешка при тестване.");
+      }
+    } catch (err) {
+      setGlobalError("Мрежова грешка при тестване на уебхук.");
+    } finally {
+      setTestingWebhookId(null);
     }
   };
 
@@ -494,6 +586,16 @@ export default function ClientProfilePage() {
             <Key className="w-4 h-4" />
             API Ключове
           </button>
+
+          <button
+            onClick={() => { setActiveTab("webhooks"); setGlobalSuccess(""); setGlobalError(""); }}
+            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-1.5 ${
+              activeTab === "webhooks" ? "bg-[#0098b2] text-white" : "bg-slate-800 text-gray-400 hover:text-white"
+            }`}
+          >
+            <Plus className="w-4 h-4 text-green-400" />
+            Webhooks
+          </button>
         </div>
 
         {/* Tab 1: Profile & Password info */}
@@ -738,6 +840,91 @@ export default function ClientProfilePage() {
                   </form>
                 )}
 
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Tab 6: Webhooks */}
+        {activeTab === "webhooks" && (
+          <div className="bg-slate-800/40 border border-slate-700 rounded-2xl p-6 shadow-xl max-w-4xl space-y-6">
+            <h3 className="text-lg font-bold text-white border-b border-slate-700 pb-3 flex items-center gap-2">
+              <Plus className="w-5 h-5 text-green-400" />
+              Webhooks за разработчици (Реално време)
+            </h3>
+
+            <p className="text-sm text-gray-400 leading-relaxed">
+              Конфигурирайте Webhook събития, за да получавате автоматично JSON нотификации при критични заплахи или нови одитни доклади във вашите вътрешни системи.
+            </p>
+
+            {/* Create Form */}
+            <form onSubmit={handleCreateWebhook} className="flex flex-col sm:flex-row gap-3">
+              <input
+                type="url"
+                value={newWebhookUrl}
+                onChange={(e) => setNewWebhookUrl(e.target.value)}
+                placeholder="напр. https://mycompany.com/api/defcoms-webhook"
+                className="flex-1 bg-slate-950 border border-slate-700 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-[#0098b2]"
+                required
+              />
+              <button
+                type="submit"
+                className="bg-[#0098b2] hover:bg-[#007a91] text-white px-6 py-3 rounded-xl font-bold transition flex items-center justify-center gap-1.5 text-sm"
+              >
+                <Plus className="w-4 h-4" />
+                Добави Webhook
+              </button>
+            </form>
+
+            {/* Webhook List */}
+            {webhooks.length === 0 ? (
+              <p className="text-center p-6 text-gray-500 text-sm">Няма регистрирани активни Webhooks.</p>
+            ) : (
+              <div className="space-y-4">
+                <p className="text-xs text-gray-500 uppercase font-bold tracking-widest">Активни Webhooks</p>
+                <div className="space-y-3">
+                  {webhooks.map((wh) => (
+                    <div
+                      key={wh.id}
+                      className="p-4 bg-slate-950 rounded-xl border border-slate-800/80 flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-sm font-bold text-white mb-1 truncate">{wh.url}</h4>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Secret:</span>
+                          <code className="font-mono text-xs text-yellow-400 bg-slate-900 px-2 py-0.5 rounded select-all truncate">
+                            {wh.secret}
+                          </code>
+                        </div>
+                        <span className="text-[10px] text-gray-500">Добавен на: {new Date(wh.createdAt).toLocaleDateString("bg-BG")}</span>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          disabled={testingWebhookId !== null}
+                          onClick={() => handleTestWebhook(wh.id)}
+                          className="bg-slate-800 hover:bg-slate-700 text-[#0098b2] border border-[#0098b2]/20 font-bold py-1.5 px-3 rounded-xl text-xs transition flex items-center gap-1"
+                        >
+                          {testingWebhookId === wh.id ? (
+                            <>
+                              <div className="w-3 h-3 border-2 border-[#0098b2]/30 border-t-[#0098b2] rounded-full animate-spin" />
+                              Тестване...
+                            </>
+                          ) : (
+                            "Тествай"
+                          )}
+                        </button>
+                        <button
+                          onClick={() => handleDeleteWebhook(wh.id)}
+                          className="p-2.5 text-gray-500 hover:text-red-400 rounded-xl hover:bg-red-500/10 transition"
+                          title="Премахни"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
