@@ -65,7 +65,7 @@
 
 ### 9. Финансови фактури & Плащания
 - **Анализ на разходите в евро (€):** Сумарни показатели за изплатени, неплатени и просрочени задължения.
-- **Сигурно плащане:** Симулатор на картови плащания по PCI-DSS стандарт за неплатени и просрочени фактури. При успех фактурата моментално се маркира като платена в базата данни.
+- **Сигурно плащане:** Симулатор на картови плащания по PCI-DSS стандарт за неплатени и просрочени фактури. При успех фактурата моментално се маркира как платена в базата данни.
 
 ### 10. Терминал за профил & Сигурност
 - **Профил & 2FA:** Сигурно управление на лични данни, смяна на парола с проверка през `bcrypt` и интерактивен симулатор на Двуфакторна защита (MFA) с QR код и уникален секретен ключ.
@@ -77,7 +77,7 @@
 - Достъпен само за потребители с роля `admin` (напр. `admin@defcoms.eu`).
 - **Качване на доклади:** Прикачване на нови доклади, PDF одити или инвентаризации към избрани клиенти.
 - **Издаване на фактури:** Динамично създаване и изпращане на фактури в евро (€) към избрани клиенти през базата данни.
-- **Заплахи & Препоръки:** Създаване на глобални предупреждения за киберсигурност и персонализирани препоръки за сигурност към избрани клиенти с автоматично отражение върху здравния им рейтинг.
+- **Заплахи & Препоръки:** Създаване на глобални предупреждения за киберсигурност и препоръки към избрани клиенти с автоматично отражение върху здравния им рейтинг.
 - **Поддържащи тикети:** Преглед на всички отворени тикети на платформата с възможност за директно отговаряне и затваряне.
 
 ---
@@ -117,12 +117,8 @@ sudo dnf install -y nodejs
 sudo pacman -Syu --needed nodejs npm sqlite git base-devel
 ```
 
----
-
 ### 2. Клониране на проекта и инсталация на зависимостите
-
 ```bash
-# Клонирайте хранилището във вашата директория
 cd /var/www
 sudo git clone <REPOSITIORY_URL> defcoms
 sudo chown -R $USER:$USER /var/www/defcoms
@@ -132,37 +128,23 @@ cd defcoms
 npm install
 ```
 
----
-
 ### 3. Конфигуриране на променливите на средата (Environment Variables)
-
 Създайте конфигурационен файл `.env` в корена на проекта:
 ```bash
 touch .env
 ```
 Добавете следните системни настройки:
 ```env
-# База данни (SQLite локален файл)
 DATABASE_URL="file:./dev.db"
-
-# Секретен ключ за NextAuth сесии
 AUTH_SECRET="Вашият_Генериран_Супер_Сигурен_Секрет_Тук"
-
-# Конфигурация на реална SMTP поща за известия
 SMTP_HOST="smtp.example.com"
 SMTP_PORT=587
 SMTP_USER="notifications@defcoms.eu"
 SMTP_PASS="Вашата_Сигурна_Парола_За_SMTP"
 SMTP_FROM="DefComs <notifications@defcoms.eu>"
 ```
-*Забележка: Ако SMTP променливите не са попълнени, платформата автоматично ще работи в симулационен режим и ще записва изпратените имейли в конзолата.*
-
----
 
 ### 4. Инициализация на базата данни и Seeding
-
-Изпълнете следните команди за изграждане на схемата на базата данни и зареждане на системните данни:
-
 ```bash
 # 1. Създаване на SQLite база данни и генериране на Prisma Client
 npx prisma db push
@@ -171,29 +153,14 @@ npx prisma db push
 npx tsx scripts/seed.ts
 ```
 
-### 🔑 Тестови акаунти за достъп:
-
-*   **Клиентски акаунт:**
-    *   **Имейл:** `test@defcoms.eu`
-    *   **Парола:** `password123`
-*   **Администраторски акаунт:**
-    *   **Имейл:** `admin@defcoms.eu`
-    *   **Парола:** `admin123`
-
----
-
 ### 5. Управление на процеса в бекграунд под Linux
 
-За да работи уебсайтът непрекъснато, използвайте един от следните два метода:
-
 #### Метод А: Настройка на Systemd Сервиз (Препоръчително)
-
 Създайте нов systemd сервизен файл:
 ```bash
 sudo nano /etc/systemd/system/defcoms.service
 ```
-
-Поставете следната конфигурация (регулирайте пътищата спрямо вашата инсталация):
+Поставете следната конфигурация:
 ```ini
 [Unit]
 Description=DefComs Next.js Production Server
@@ -211,61 +178,28 @@ Environment=NODE_ENV=production PORT=3000
 [Install]
 WantedBy=multi-user.target
 ```
-
 Запишете файла, обновете системния демон и стартирайте услугата:
 ```bash
-# Презареждане на системния демон
 sudo systemctl daemon-reload
-
-# Активиране на автоматично стартиране при рестарт на Linux сървъра
 sudo systemctl enable defcoms.service
-
-# Стартиране на уеб сървъра
 sudo systemctl start defcoms.service
-
-# Проверка на текущия статус
 sudo systemctl status defcoms.service
 ```
 
-За преглед на логове в реално време:
-```bash
-sudo journalctl -u defcoms.service -f
-```
-
----
-
 #### Метод Б: Управление чрез PM2 (Алтернативно)
-
-Инсталирайте PM2 глобално и стартирайте приложението:
 ```bash
 sudo npm install -g pm2
-
-# Изграждане на Next.js проекта за производство
 npm run build
-
-# Стартиране на сървъра с PM2
 pm2 start npm --name "defcoms" -- start --port 3000
-
-# Настройка за стартиране на PM2 при рестартиране на сървъра
 pm2 startup
 pm2 save
 ```
 
----
-
 ### 6. Настройка на Nginx Reverse Proxy и SSL (HTTPS)
-
-Инсталирайте Nginx уеб сървър, който ще препраща трафика от стандартен порт 80/443 към порт 3000:
-
 ```bash
 sudo apt install -y nginx
-```
-
-Създайте нов конфигурационен файл за DefComs в Nginx:
-```bash
 sudo nano /etc/nginx/sites-available/defcoms
 ```
-
 Въведете следния блок:
 ```nginx
 server {
@@ -285,8 +219,7 @@ server {
     }
 }
 ```
-
-Активирайте конфигурацията и презаредете Nginx:
+Активирайте конфигурацията и рестартирайте Nginx:
 ```bash
 sudo ln -s /etc/nginx/sites-available/defcoms /etc/nginx/sites-enabled/
 sudo nginx -t
@@ -298,61 +231,240 @@ sudo systemctl restart nginx
 sudo apt install -y certbot python3-certbot-nginx
 sudo certbot --nginx -d portal.defcoms.eu -d www.portal.defcoms.eu
 ```
-Следвайте стъпките за автоматично генериране на безплатен SSL сертификат и автоматично пренасочване на HTTP към HTTPS.
-
----
 
 ### 7. Конфигуриране на Linux Защитна Стена (UFW)
-
-Защитете сървъра си, като ограничите външния достъп и затворите директния достъп до порт 3000:
-
 ```bash
-# Разрешаване на стандартен уеб трафик
 sudo ufw allow 'Nginx Full'
-
-# Разрешаване на SSH за отдалечено управление
 sudo ufw allow OpenSSH
-
-# Активиране на защитната стена
 sudo ufw enable
-
-# Преглед на активните правила
-sudo ufw status verbose
 ```
-
----
 
 ### 8. Автоматизирано архивиране на SQLite базата данни (Backup)
-
-Тъй като използваме SQLite база данни, архивирането е изключително бързо и лесно. Може да създадете обикновен cron job за ежедневно запазване на базата данни:
-
-```bash
-# Създаване на скрипт за архивиране
-mkdir -p ~/backups
-nano ~/backup_db.sh
-```
-
-Съдържание на скрипта:
+Добавете скрипт `~/backup_db.sh` в `crontab -e`:
 ```bash
 #!/bin/bash
 BACKUP_DIR="/home/$USER/backups"
 DB_PATH="/var/www/defcoms/prisma/dev.db"
 DATE=$(date +"%Y-%m-%d_%H%M%S")
-
 cp $DB_PATH "$BACKUP_DIR/defcoms_backup_$DATE.db"
-# Изтриване на архиви, по-стари от 30 дни
 find $BACKUP_DIR -type f -name "*.db" -mtime +30 -delete
 ```
 
-Направете скрипта изпълним:
-```bash
-chmod +x ~/backup_db.sh
+---
+
+## 🪟 Ръководство за инсталация и стартиране на Windows платформи
+
+Това ръководство описва детайлно инсталацията, пускането и поддръжката на DefComs върху **Windows Server** или **Windows 10/11** десктоп среда за разработка или хостинг.
+
+### 1. Подготовка на средата (Node.js, Git и SQLite)
+
+1. **Инсталиране на Node.js**:
+   - Свалете препоръчителния **Node.js LTS** инсталатор (.msi) от официалния уебсайт [https://nodejs.org](https://nodejs.org).
+   - Изпълнете го и се уверете, че е маркирана опцията *“Add to PATH”*.
+2. **Инсталиране на Git**:
+   - Свалете и инсталиране Git за Windows от [https://git-scm.com](https://git-scm.com).
+3. **SQLite**:
+   - За самата работа на платформата не е нужно да инсталирате отделен софтуер за SQLite – Prisma работи локално с него.
+   - *Препоръчително за преглед:* За визуален преглед на базата данни можете да свалите **DB Browser for SQLite** от [https://sqlitebrowser.org/](https://sqlitebrowser.org/).
+
+---
+
+### 2. Клониране и инсталация на зависимостите
+
+Отворете **PowerShell** (или Command Prompt) като администратор и изпълнете:
+```powershell
+# Преминаване в папка, където ще се хоства проектът (например C:\inetpub или C:\projects)
+mkdir C:\projects
+cd C:\projects
+
+# Клониране на хранилището
+git clone <REPOSITIORY_URL> defcoms
+cd defcoms
+
+# Инсталиране на npm пакетите
+npm install
 ```
 
-Добавете го в `crontab -e` за автоматично изпълнение всяка вечер в 02:00 часа:
-```text
-0 2 * * * /home/username/backup_db.sh >/dev/null 2>&1
+---
+
+### 3. Конфигуриране на променливите на средата (Environment Variables)
+
+Създайте `.env` файл в корена на папка `defcoms`:
+```powershell
+New-Item .env -ItemType File
 ```
+Отворете го с Notepad или VS Code и въведете настройките:
+```env
+DATABASE_URL="file:./dev.db"
+AUTH_SECRET="Генериран_Супер_Сигурен_Случаен_Стринг_Тук_64_Символа"
+SMTP_HOST="smtp.example.com"
+SMTP_PORT=587
+SMTP_USER="notifications@defcoms.eu"
+SMTP_PASS="Вашата_Сигурна_Парола_За_SMTP"
+SMTP_FROM="DefComs <notifications@defcoms.eu>"
+```
+
+---
+
+### 4. Инициализация на базата данни и Seeding под Windows
+
+В отворения PowerShell в папка `defcoms` стартирайте:
+```powershell
+# 1. Прилагане на релациите и генериране на Prisma Client
+npx prisma db push
+
+# 2. Попълване на базата с готови тестови клиенти и системни данни
+npx tsx scripts/seed.ts
+```
+
+---
+
+### 5. Управление на процеса в бекграунд под Windows (Windows Service)
+
+За денонощна и автономна работа на уеб портала без необходимост от постоянно отворен PowerShell прозорец, конфигурирайте фонова услуга (Windows Service).
+
+#### Метод А: Използване на NSSM (Non-Sucking Service Manager) – Препоръчително
+NSSM е лек и надежден инструмент за регистриране на Node.js приложения като стандартни системни услуги в Windows.
+
+1. Свалете най-новата версия на NSSM от [https://nssm.cc/download](https://nssm.cc/download).
+2. Разархивирайте `nssm.exe` (вземете 64-битовата версия от папка `win64`) в удобна за вас папка (например `C:\nssm\`).
+3. Отворете PowerShell като **Администратор** и изпълнете:
+   ```powershell
+   C:\nssm\nssm.exe install DefComs
+   ```
+4. В отворилия се графичен интерфейс на NSSM конфигурирайте следните полета:
+   - **Path:** `C:\Program Files\nodejs\node.exe` (или проверете къде е инсталиран вашият Node с команда `where.exe node`)
+   - **Startup directory:** `C:\projects\defcoms`
+   - **Arguments:** `C:\projects\defcoms\node_modules\next\dist\bin\next start --port 3000`
+   - **Environment tab:** Добавете на нов ред: `NODE_ENV=production`
+5. Кликнете върху **Install service**.
+6. Стартирайте новата служба:
+   ```powershell
+   Start-Service DefComs
+   ```
+   Услугата вече ще се стартира автоматично при всяко включване на Windows сървъра.
+
+---
+
+#### Метод Б: Управление чрез PM2 за Windows (Алтернативно)
+За управление на Node процеси можете да използвате PM2 съвместно с модул за стартиране като Windows Service.
+
+```powershell
+# 1. Изграждане на оптимизиран Next.js проект
+npm run build
+
+# 2. Инсталиране на PM2 глобално
+npm install -g pm2
+
+# 3. Инсталиране на пакета за интеграция с Windows Services
+npm install -g pm2-windows-service
+
+# 4. Стартиране на приложението
+pm2 start npm --name "defcoms" -- start --port 3000
+
+# 5. Запазване на конфигурацията
+pm2 save
+```
+
+---
+
+### 6. Настройка на IIS (Internet Information Services) като Reverse Proxy
+
+За да обслужвате трафика през стандартни портове **80 (HTTP)** и **443 (HTTPS)** с SSL сертификати, конфигурирайте Microsoft IIS уеб сървър.
+
+#### Стъпка 1: Инсталиране на IIS и необходимите модули
+1. Отворете *Server Manager* в Windows Server.
+2. Изберете *Add Roles and Features* и добавете **Web Server (IIS)**.
+3. Инсталирайте двата критични разширителни модула от Microsoft:
+   - **Application Request Routing (ARR 3.0)**
+   - **URL Rewrite 2.1**
+   *(Свалете ги през Microsoft Web Platform Installer или директно от официалния сайт на Microsoft).*
+
+#### Стъпка 2: Конфигуриране на ARR
+1. Отворете *IIS Manager*.
+2. Кликнете върху името на сървъра в лявото дърво и отворете функцията **Application Request Routing Cache**.
+3. В десния панел изберете **Server Settings**.
+4. Маркирайте опцията **Enable proxy** и кликнете **Apply** (Приложи).
+
+#### Стъпка 3: Създаване на уебсайт и конфигуриране на `web.config`
+1. В IIS Manager щракнете с десен бутон върху *Sites* -> *Add Website*.
+2. Въведете име `DefComs`, задайте физическия път до проекта (`C:\projects\defcoms`) и въведете вашия домейн (напр. `portal.defcoms.eu`).
+3. В корена на папката на проекта (`C:\projects\defcoms`) създайте или редактирайте файла `web.config`, за да пренасочва трафика към порт 3000:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <system.webServer>
+    <rewrite>
+      <rules>
+        <rule name="DefComs Reverse Proxy" stopProcessing="true">
+          <match url="(.*)" />
+          <conditions>
+            <add input="{CACHE_URL}" pattern="^(https?://)" />
+          </conditions>
+          <action type="Rewrite" url="http://127.0.0.1:3000/{R:1}" />
+        </rule>
+      </rules>
+    </rewrite>
+    <httpErrors errorMode="Detailed" />
+  </system.webServer>
+</configuration>
+```
+
+---
+
+### 7. Конфигуриране на Windows Defender Firewall (Защитна стена)
+
+За да позволите външен уеб достъп до портала, разрешете портовете в защитната стена на Windows през PowerShell:
+
+```powershell
+# Разрешаване на HTTP (порт 80)
+New-NetFirewallRule -DisplayName "Allow HTTP Port 80" -Direction Inbound -LocalPort 80 -Protocol TCP -Action Allow
+
+# Разрешаване на HTTPS (порт 443)
+New-NetFirewallRule -DisplayName "Allow HTTPS Port 443" -Direction Inbound -LocalPort 443 -Protocol TCP -Action Allow
+```
+
+---
+
+### 8. Автоматизирано архивиране на SQLite базата данни (Backup) под Windows
+
+Архивирането на SQLite базата данни под Windows се осъществява чрез елементарен PowerShell скрипт, автоматизиран през **Windows Task Scheduler**.
+
+1. Създайте папка за архивите, например `C:\db_backups\`.
+2. Създайте PowerShell скрипт с име `backup_sqlite.ps1` в папка `C:\projects\defcoms\scripts\`:
+```powershell
+$source = "C:\projects\defcoms\prisma\dev.db"
+$destinationFolder = "C:\db_backups\"
+$date = Get-Date -Format "yyyy-MM-dd_HHmmss"
+$backupPath = Join-Path $destinationFolder "defcoms_backup_$date.db"
+
+# Копиране на текущата база данни
+Copy-Item -Path $source -Destination $backupPath -Force
+
+# Автоматично изтриване на архиви, по-стари от 30 дни
+Get-ChildItem -Path $destinationFolder -Filter "*.db" | Where-Object { $_.LastWriteTime -lt (Get-Date).AddDays(-30) } | Remove-Item -Force
+```
+
+3. **Настройка на Task Scheduler (Планировчик на задачи)**:
+   - Отворете *Task Scheduler* под Windows.
+   - Изберете *Create Basic Task* (Създаване на основна задача) с име `DefComs DB Backup`.
+   - Задайте периодичност: *Daily* (Ежедневно) в 02:00 часа.
+   - Изберете действие: *Start a program* (Стартиране на програма).
+   - В полето **Program/script** въведете `powershell.exe`.
+   - В полето **Add arguments** въведете `-File "C:\projects\defcoms\scripts\backup_sqlite.ps1"`.
+   - Маркирайте опцията *“Run whether user is logged on or not”* с високи привилегии (Run with highest privileges) за сигурно денонощно архивиране.
+
+---
+
+## 🔑 Тестови акаунти за достъп (и за двете платформи):
+
+*   **Клиентски акаунт:**
+    *   **Имейл:** `test@defcoms.eu`
+    *   **Парола:** `password123`
+*   **Администраторски акаунт:**
+    *   **Имейл:** `admin@defcoms.eu`
+    *   **Парола:** `admin123`
 
 ---
 
@@ -364,15 +476,10 @@ chmod +x ~/backup_db.sh
 npx tsx scripts/test-portal.ts
 ```
 
-Тестът автоматично валидира:
-- Потребителска регистрация, криптиране на пароли и предотвратяване на дублирания.
-- Пълна сесийна автентикация, обработка на тикети за поддръжка, известия.
-- Калкулации на здравния рейтинг (Cybersecurity Health Score).
-- Наличности по фактури (в евро €) и платежни механизми.
-- Защитена работа с API ключове, GDPR настройки и пълно автоматично каскадно изчистване на симулираните данни.
+Тестът автоматично валидира потребителска регистрация, криптиране на пароли, Cybersecurity Health Score калкулации, фактуриране, плащания, сигурни API ключове, ИТ инвентаризация на активите, тренировъчни фишинг резултати и пълно автоматично каскадно изчистване на симулираните данни.
 
 ---
 
 ## 📄 Лиценз
 
-© 2026 DefComs. Всички права запазени. Разработено спрямо най-високите съвременни ИТ изисквания за европейска киберсигурност.
+© 2026 DefComs. Всички права запазени. Разработено спрямо най-високите съвременни ИТ изисквания за европейска киберсигурност за Windows и Linux среди.
