@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs";
 
 export const dynamic = "force-dynamic";
 
-// GET - Извличане на всички клиенти с пълни детайли (Само за Администратори)
+// GET - Извличане на всички клиенти с пълни детайли (Само за Администратори и Оператори)
 export async function GET(req: NextRequest) {
   try {
     const session = await auth();
@@ -16,12 +16,14 @@ export async function GET(req: NextRequest) {
 
     const u = session.user as any;
 
-    if (u.role !== "admin") {
+    if (u.role !== "admin" && u.role !== "operator") {
       return NextResponse.json({ error: "Нямате администраторски права" }, { status: 403 });
     }
 
     const clients = await prisma.user.findMany({
-      where: { role: "client" },
+      where: {
+        role: { in: ["client", "operator", "admin"] }
+      },
       include: {
         services: true,
         invoices: true,
@@ -40,7 +42,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// POST - Създаване на нов клиент от Администратор
+// POST - Създаване на нов клиент от Администратор/Оператор
 export async function POST(req: NextRequest) {
   try {
     const session = await auth();
@@ -51,12 +53,12 @@ export async function POST(req: NextRequest) {
 
     const u = session.user as any;
 
-    if (u.role !== "admin") {
+    if (u.role !== "admin" && u.role !== "operator") {
       return NextResponse.json({ error: "Нямате администраторски права" }, { status: 403 });
     }
 
     const body = await req.json();
-    const { email, password, name, phone, company, address, iban, eik, vat, mol } = body;
+    const { email, password, name, phone, company, address, iban, eik, vat, mol, role } = body;
 
     if (!email || !password) {
       return NextResponse.json(
@@ -79,6 +81,12 @@ export async function POST(req: NextRequest) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Само admin може да задава роля, различна от client
+    let targetRole = "client";
+    if (role && u.role === "admin") {
+      targetRole = role;
+    }
+
     const client = await prisma.user.create({
       data: {
         email,
@@ -91,7 +99,7 @@ export async function POST(req: NextRequest) {
         eik: eik || null,
         vat: vat || null,
         mol: mol || null,
-        role: "client"
+        role: targetRole
       }
     });
 
@@ -105,7 +113,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// PATCH - Обновяване на съществуващ клиент от Администратор
+// PATCH - Обновяване на съществуващ клиент от Администратор/Оператор
 export async function PATCH(req: NextRequest) {
   try {
     const session = await auth();
@@ -116,12 +124,12 @@ export async function PATCH(req: NextRequest) {
 
     const u = session.user as any;
 
-    if (u.role !== "admin") {
+    if (u.role !== "admin" && u.role !== "operator") {
       return NextResponse.json({ error: "Нямате администраторски права" }, { status: 403 });
     }
 
     const body = await req.json();
-    const { id, email, password, name, phone, company, address, iban, eik, vat, mol } = body;
+    const { id, email, password, name, phone, company, address, iban, eik, vat, mol, role } = body;
 
     if (!id) {
       return NextResponse.json({ error: "ID на потребителя е задължително" }, { status: 400 });
@@ -146,6 +154,16 @@ export async function PATCH(req: NextRequest) {
     if (vat !== undefined) updateData.vat = vat;
     if (mol !== undefined) updateData.mol = mol;
 
+    // Само истинският администратор (admin) може да променя роли на потребители
+    if (role !== undefined) {
+      if (u.role === "admin") {
+        updateData.role = role;
+      } else {
+        // Операторът няма право да сменя роли
+        return NextResponse.json({ error: "Само администратор може да променя потребителските роли" }, { status: 403 });
+      }
+    }
+
     if (password) {
       updateData.password = await bcrypt.hash(password, 10);
     }
@@ -165,7 +183,7 @@ export async function PATCH(req: NextRequest) {
   }
 }
 
-// DELETE - Изтриване на клиент от Администратор
+// DELETE - Изтриване на клиент от Администратор/Оператор
 export async function DELETE(req: NextRequest) {
   try {
     const session = await auth();
@@ -176,7 +194,7 @@ export async function DELETE(req: NextRequest) {
 
     const u = session.user as any;
 
-    if (u.role !== "admin") {
+    if (u.role !== "admin" && u.role !== "operator") {
       return NextResponse.json({ error: "Нямате администраторски права" }, { status: 403 });
     }
 

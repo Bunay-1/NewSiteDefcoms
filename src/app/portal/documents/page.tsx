@@ -15,6 +15,7 @@ import {
   ShieldCheck
 } from "lucide-react";
 import Link from "next/link";
+import { generatePdfBlob } from "@/lib/pdfHelper";
 
 interface UserDocument {
   id: string;
@@ -65,10 +66,23 @@ export default function SecureDocumentsPage() {
     setTimeout(() => {
       setDownloadingId(null);
 
-      // Генерираме реално съдържание за сваляне (клиентско изтегляне на защитен симулиран файл)
-      const content = `DefComs Secure Vault Document\n============================\n\nTitle: ${doc.title}\nSize: ${doc.fileSize}\nType: ${doc.fileType}\nUploaded: ${new Date(doc.createdAt).toLocaleString("bg-BG")}\n\nThis is a securely downloaded audit report file from DefComs CyberSecurity Vault.\nAll integrity checks passed successfully (AES-256 Verified).`;
+      let blob: Blob;
 
-      const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+      const isPdf = doc.fileType === "PDF" || doc.title.endsWith(".pdf");
+
+      if (isPdf) {
+        const details = [
+          { label: "File Size", value: doc.fileSize },
+          { label: "Format", value: doc.fileType },
+          { label: "Uploaded At", value: new Date(doc.createdAt).toLocaleString("bg-BG") }
+        ];
+        blob = generatePdfBlob(doc.title, details);
+      } else {
+        // За не-PDF документи запазваме базовия тестов текстов формат
+        const content = `DefComs Secure Vault Document\n============================\n\nTitle: ${doc.title}\nSize: ${doc.fileSize}\nType: ${doc.fileType}\nUploaded: ${new Date(doc.createdAt).toLocaleString("bg-BG")}\n\nThis is a securely downloaded audit report file from DefComs CyberSecurity Vault.\nAll integrity checks passed successfully (AES-256 Verified).`;
+        blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+      }
+
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;

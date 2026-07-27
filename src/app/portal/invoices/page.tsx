@@ -19,6 +19,7 @@ import {
   Download
 } from "lucide-react";
 import Link from "next/link";
+import { generatePdfBlob } from "@/lib/pdfHelper";
 
 interface Invoice {
   id: string;
@@ -120,44 +121,30 @@ export default function ClientInvoicesPage() {
   };
 
   const handleDownloadInvoice = (inv: Invoice) => {
-    // Генерация на структурирана фактура като файл
-    const invoiceContent = `
-ФАКТУРА № ${inv.invoiceNumber}
-==========================================
-Издател: DefComs Cybersecurity Ltd.
-ЕИК: 207452684
-ДДС №: BG207452684
-МОЛ: Димитър Петров
-Адрес: гр. София, бул. България №10
-------------------------------------------
-Получател: ${inv.user?.name || "Клиент на DefComs"}
-Фирма: ${inv.user?.company || "Физическо лице"}
-Имейл: ${inv.user?.email || "Няма информация"}
-------------------------------------------
-Дата на издаване: ${new Date(inv.createdAt).toLocaleDateString("bg-BG")}
-Падеж: ${new Date(inv.dueDate).toLocaleDateString("bg-BG")}
-Статус: ${inv.status === "paid" ? "ПЛАТЕНА" : "НЕПЛАТЕНА"}
-------------------------------------------
-Описание на услугата:
-${inv.description}
+    const details = [
+      { label: "Invoice Number", value: inv.invoiceNumber },
+      { label: "Issuer", value: "DefComs Cybersecurity Ltd" },
+      { label: "EIK/VAT", value: "BG207452684" },
+      { label: "Recipient", value: inv.user?.name || "Client" },
+      { label: "Company", value: inv.user?.company || "Individual" },
+      { label: "Issue Date", value: new Date(inv.createdAt).toLocaleDateString("bg-BG") },
+      { label: "Due Date", value: new Date(inv.dueDate).toLocaleDateString("bg-BG") },
+      { label: "Status", value: inv.status === "paid" ? "PAID" : "UNPAID" },
+      { label: "Description", value: inv.description },
+      { label: "Total Amount", value: `${inv.amount.toFixed(2)} EUR` }
+    ];
 
-Сума за плащане: ${inv.amount.toFixed(2)} €
-(Словом: ${inv.amount} евро)
-==========================================
-Благодарим Ви, че избрахте сигурността на DefComs!
-    `.trim();
-
-    const blob = new Blob([invoiceContent], { type: "text/plain;charset=utf-8" });
+    const blob = generatePdfBlob(`Invoice ${inv.invoiceNumber}`, details);
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `Фактура_${inv.invoiceNumber}.txt`;
+    link.download = `Invoice_${inv.invoiceNumber}.pdf`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
 
-    alert(`📄 Фактура № ${inv.invoiceNumber} беше изтеглена успешно на Вашето устройство!`);
+    alert(`📄 Фактура № ${inv.invoiceNumber} беше изтеглена успешно на Вашето устройство като PDF файл!`);
   };
 
   // Пресмятане на финансови суми

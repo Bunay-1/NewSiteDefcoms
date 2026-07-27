@@ -17,8 +17,8 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const targetUserId = searchParams.get("userId");
 
-    if (u.role === "admin") {
-      // Админ вижда или услугите за определен клиент, или абсолютно всички
+    if (u.role === "admin" || u.role === "operator") {
+      // Админ/Оператор вижда или услугите за определен клиент, или абсолютно всички
       const services = await prisma.userService.findMany({
         where: targetUserId ? { userId: targetUserId } : {},
         orderBy: { createdAt: "desc" },
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
 
     const u = session.user as any;
 
-    if (u.role !== "admin") {
+    if (u.role !== "admin" && u.role !== "operator") {
       return NextResponse.json({ error: "Нямате администраторски права" }, { status: 403 });
     }
 
@@ -100,7 +100,7 @@ export async function PATCH(req: NextRequest) {
 
     const u = session.user as any;
 
-    if (u.role !== "admin") {
+    if (u.role !== "admin" && u.role !== "operator") {
       return NextResponse.json({ error: "Нямате администраторски права" }, { status: 403 });
     }
 
@@ -153,7 +153,7 @@ export async function DELETE(req: NextRequest) {
 
     const u = session.user as any;
 
-    if (u.role !== "admin") {
+    if (u.role !== "admin" && u.role !== "operator") {
       return NextResponse.json({ error: "Нямате администраторски права" }, { status: 403 });
     }
 

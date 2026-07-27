@@ -57,6 +57,7 @@ interface ClientUser {
   eik: string | null;
   vat: string | null;
   mol: string | null;
+  role: string;
   services: UserService[];
   invoices: any[];
   tickets: any[];
@@ -85,7 +86,8 @@ export default function AdminPortalPage() {
     iban: "",
     eik: "",
     vat: "",
-    mol: ""
+    mol: "",
+    role: "client"
   });
   const [clientSuccess, setClientSuccess] = useState("");
   const [clientError, setClientError] = useState("");
@@ -161,7 +163,7 @@ export default function AdminPortalPage() {
   useEffect(() => {
     if (session?.user) {
       const u = session.user as any;
-      if (u.role !== "admin") {
+      if (u.role !== "admin" && u.role !== "operator") {
         router.push("/portal/dashboard");
       } else {
         fetchClients();
@@ -232,7 +234,8 @@ export default function AdminPortalPage() {
       iban: "",
       eik: "",
       vat: "",
-      mol: ""
+      mol: "",
+      role: "client"
     });
     setClientModalFormMode("create");
     setClientSuccess("");
@@ -252,7 +255,8 @@ export default function AdminPortalPage() {
       iban: client.iban || "",
       eik: client.eik || "",
       vat: client.vat || "",
-      mol: client.mol || ""
+      mol: client.mol || "",
+      role: client.role || "client"
     });
     setClientModalFormMode("edit");
     setClientSuccess("");
@@ -675,6 +679,7 @@ export default function AdminPortalPage() {
                       {/* Corporate Details */}
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-2.5 text-sm bg-slate-900/40 border border-slate-800 p-4 rounded-xl">
                         <p><strong className="text-[#0098b2]">Имейл:</strong> {client.email}</p>
+                        <p><strong className="text-[#0098b2]">Роля:</strong> <span className={`font-bold ${client.role === "admin" ? "text-red-400" : client.role === "operator" ? "text-yellow-400" : "text-gray-300"}`}>{client.role === "admin" ? "Администратор" : client.role === "operator" ? "Оператор" : "Клиент"}</span></p>
                         <p><strong className="text-[#0098b2]">Телефон:</strong> {client.phone || "Няма"}</p>
                         <p><strong className="text-[#0098b2]">МОЛ:</strong> {client.mol || "Няма"}</p>
                         <p><strong className="text-[#0098b2]">ЕИК:</strong> {client.eik || "Няма"}</p>
@@ -1364,6 +1369,24 @@ export default function AdminPortalPage() {
                     className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 px-3.5 text-white text-sm focus:outline-none focus:border-[#0098b2]"
                     required
                   />
+                </div>
+
+                {/* Role (Само за Администратори) */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-400 mb-1.5 uppercase">Потребителска Роля</label>
+                  <select
+                    value={clientForm.role}
+                    onChange={(e) => setClientForm({ ...clientForm, role: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl py-2.5 px-3.5 text-white text-sm focus:outline-none focus:border-[#0098b2] disabled:opacity-50"
+                    disabled={(session?.user as any)?.role !== "admin"}
+                  >
+                    <option value="client">Клиент (Client)</option>
+                    <option value="operator">Оператор (Operator)</option>
+                    <option value="admin">Администратор (Admin)</option>
+                  </select>
+                  {(session?.user as any)?.role !== "admin" && (
+                    <p className="text-[10px] text-yellow-400/80 mt-1">Само основният администратор може да променя нивата на достъп.</p>
+                  )}
                 </div>
 
                 {/* Password */}
