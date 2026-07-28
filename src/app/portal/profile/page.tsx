@@ -65,6 +65,7 @@ export default function ClientProfilePage() {
   // 2. Състояния за 2FA (MFA)
   const [mfaEnabled, setMfaEnabled] = useState(false);
   const [mfaSecret, setMfaSecret] = useState("");
+  const [mfaQrCode, setMfaQrCode] = useState("");
   const [mfaCode, setMfaCode] = useState("");
   const [mfaStep, setMfaStep] = useState(1); // 1: generate, 2: verify
 
@@ -338,6 +339,7 @@ export default function ClientProfilePage() {
       if (res.ok) {
         const data = await res.json();
         setMfaSecret(data.secret);
+        setMfaQrCode(data.qrCode);
         setMfaStep(2);
       }
     } catch (err) {
@@ -370,6 +372,7 @@ export default function ClientProfilePage() {
         setMfaStep(1);
         setMfaCode("");
         setMfaSecret("");
+        setMfaQrCode("");
         setGlobalSuccess("Двуфакторната защита (MFA) бе активирана успешно!");
         await updateSession({
           ...session,
@@ -771,26 +774,18 @@ export default function ClientProfilePage() {
                 ) : (
                   <form onSubmit={handleVerifyAndEnableMfa} className="space-y-6">
 
-                    {/* Simulated QR Code Area */}
+                    {/* Visual QR Simulator */}
                     <div className="flex flex-col sm:flex-row items-center gap-6 bg-slate-950 p-6 rounded-2xl border border-slate-800">
 
-                      {/* Visual QR Simulator */}
-                      <div className="w-36 h-36 bg-white rounded-xl p-3 flex flex-col items-center justify-center relative shadow-inner">
-                        <div className="w-full h-full border-4 border-slate-950 grid grid-cols-6 gap-0.5 opacity-85">
-                          {/* Simulated black and white squares for a real-looking QR mock */}
-                          {Array.from({ length: 36 }).map((_, idx) => (
-                            <div
-                              key={idx}
-                              className={`w-full h-full ${
-                                (idx % 2 === 0 && idx % 3 !== 0) || idx < 6 || idx > 29 ? "bg-slate-950" : "bg-white"
-                              }`}
-                            />
-                          ))}
+                      {mfaQrCode ? (
+                        <div className="w-36 h-36 bg-white rounded-xl p-2 flex flex-col items-center justify-center relative shadow-inner">
+                          <img src={mfaQrCode} alt="2FA QR Code" className="w-full h-full object-contain" />
                         </div>
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <ShieldCheck className="w-8 h-8 text-[#0098b2] bg-white p-0.5 rounded-lg border border-gray-200" />
+                      ) : (
+                        <div className="w-36 h-36 bg-white rounded-xl p-3 flex flex-col items-center justify-center relative shadow-inner animate-pulse">
+                          <div className="w-full h-full bg-gray-200 rounded" />
                         </div>
-                      </div>
+                      )}
 
                       {/* Instructions */}
                       <div className="flex-1 space-y-2 text-center sm:text-left">
@@ -903,7 +898,7 @@ export default function ClientProfilePage() {
                         <button
                           disabled={testingWebhookId !== null}
                           onClick={() => handleTestWebhook(wh.id)}
-                          className="bg-slate-800 hover:bg-slate-700 text-[#0098b2] border border-[#0098b2]/20 font-bold py-1.5 px-3 rounded-xl text-xs transition flex items-center gap-1"
+                          className="bg-slate-800 hover:bg-slate-750 text-[#0098b2] border border-[#0098b2]/20 font-bold py-1.5 px-3 rounded-xl text-xs transition flex items-center gap-1"
                         >
                           {testingWebhookId === wh.id ? (
                             <>
