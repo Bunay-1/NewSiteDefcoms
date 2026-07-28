@@ -2,10 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { generateMfaSecret, verifyTOTP } from "@/lib/totp";
+import QRCode from "qrcode";
 
 export const dynamic = "force-dynamic";
 
-// POST - Генериране на реален 2FA секрет (Base32)
+// POST - Генериране на реален 2FA секрет (Base32) и QR код URL адрес за Google Authenticator
 export async function POST(req: NextRequest) {
   try {
     const session = await auth();
@@ -20,10 +21,18 @@ export async function POST(req: NextRequest) {
     const user = await prisma.user.update({
       where: { id: userId },
       data: { mfaSecret: realSecret },
-      select: { mfaSecret: true },
+      select: { mfaSecret: true, email: true },
     });
 
-    return NextResponse.json({ secret: user.mfaSecret });
+    // Изграждаме otpauth URL за сканиране с Google Authenticator / Microsoft Authenticator
+    const issuer = "DefComs";
+    const label = encodeURIComponent(`${issuer}:${user.email}`);
+    const otpauthUrl = `otpauth://totp/${label}?secret=${user.mfaSecret}&issuer=${encodeURIComponent(issuer)}`;
+
+    // Генерираме QR кода в DataURL (Base64 PNG) формат
+    const qrDataUrl = await QRCode.toDataURL(otpauthUrl);
+
+    return NextResponse.json({ secret: user.mfaSecret, qrCode: qrDataUrl });
   } catch (error) {
     console.error("Грешка при генериране на 2FA:", error);
     return NextResponse.json(
