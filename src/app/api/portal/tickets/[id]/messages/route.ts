@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { sendEmailNotification } from "@/lib/email";
 
 export const dynamic = "force-dynamic";
 
@@ -36,6 +37,9 @@ export async function POST(
         id: ticketId,
         ...(userRole !== "admin" && { userId }),
       },
+      include: {
+        user: true,
+      },
     });
 
     if (!ticket) {
@@ -59,6 +63,25 @@ export async function POST(
         },
       },
     });
+
+    // Автоматично известие по имейл при нов отговор по тикета
+    const isAdminResponse = userRole === "admin";
+    const recipientEmail = isAdminResponse ? ticket.user.email : "info@defcoms.eu";
+    const subject = isAdminResponse
+      ? `Ново съобщение по Вашия тикет: "${ticket.title}"`
+      : `Ново клиентско съобщение по тикет: "${ticket.title}"`;
+
+    await sendEmailNotification(
+      recipientEmail,
+      subject,
+      `Получено е ново съобщение от ${session.user.name || session.user.email}:\n\n"${content}"\n\nМожете да го прегледате в портала.`,
+      {
+        id: ticket.user.id,
+        name: ticket.user.name,
+        email: ticket.user.email,
+        company: ticket.user.company,
+      }
+    );
 
     return NextResponse.json(message, { status: 201 });
   } catch (error) {
