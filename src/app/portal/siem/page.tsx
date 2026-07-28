@@ -133,7 +133,7 @@ export default function SiemPage() {
     }
   };
 
-  const handleSendLog = () => {
+  const handleSendLog = async () => {
     if (!selectedKey) return;
     setSending(true);
 
@@ -141,32 +141,61 @@ export default function SiemPage() {
     const startId = Date.now();
 
     // Добавяме стартови съобщения в конзолата стъпка по стъпка
-    const newLogs = [
-      { id: startId, time, text: `[API POST] Изпращане на SIEM сигнал към https://api.defcoms.eu/v1/soc/logs...`, type: "info" },
+    setTerminalLogs(prev => [
+      ...prev,
+      { id: startId, time, text: `[API POST] Изпращане на SIEM сигнал към /api/portal/siem...`, type: "info" },
       { id: startId + 1, time, text: `[SECURITY-CHECK] Проверка на аутентификационния ключ: ${selectedKey.substring(0, 20)}...`, type: "info" },
-    ];
-    setTerminalLogs(prev => [...prev, ...newLogs]);
+    ]);
 
-    setTimeout(() => {
-      setTerminalLogs(prev => [
-        ...prev,
-        { id: startId + 2, time, text: `[AUTH] Ключът бе валидиран успешно! Съответствие: GDPR, NIS2 сертифициран акаунт.`, type: "success" }
-      ]);
+    try {
+      // Изпращаме реална POST заявка към нашия API SIEM колектор
+      const res = await fetch("/api/portal/siem", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${selectedKey}`
+        },
+        body: payload
+      });
 
+      const data = await res.json();
+
+      if (res.ok) {
+        setTimeout(() => {
+          setTerminalLogs(prev => [
+            ...prev,
+            { id: startId + 2, time, text: `[AUTH] Ключът бе валидиран успешно! Съответствие: GDPR, NIS2 сертифициран акаунт.`, type: "success" }
+          ]);
+
+          setTimeout(() => {
+            setTerminalLogs(prev => [
+              ...prev,
+              { id: startId + 3, time, text: `[ML-PARSER] ${data.message}. Ниво на критичност: ${data.severity}`, type: "info" },
+              { id: startId + 4, time, text: `[SOC-ACTION] Събитието бе успешно записано в Security Audit Log в реално време.`, type: "success" },
+              { id: startId + 5, time, text: `[SIEM-AGENT] Операцията приключи успешно. Статус код: ${res.status}`, type: "success" }
+            ]);
+            setSending(false);
+          }, 800);
+        }, 800);
+      } else {
+        setTimeout(() => {
+          setTerminalLogs(prev => [
+            ...prev,
+            { id: startId + 2, time, text: `[AUTH-ERROR] Грешка при валидация: ${data.error}`, type: "error" },
+            { id: startId + 3, time, text: `[SIEM-AGENT] Операцията прекратена. Статус код: ${res.status}`, type: "error" }
+          ]);
+          setSending(false);
+        }, 1000);
+      }
+    } catch (err) {
       setTimeout(() => {
-        let threatLevel = "INFO";
-        if (eventType === "auth_fail" || eventType === "waf_alert") threatLevel = "HIGH";
-        if (eventType === "malware_detect" || eventType === "network_anomaly") threatLevel = "CRITICAL";
-
         setTerminalLogs(prev => [
           ...prev,
-          { id: startId + 3, time, text: `[ML-PARSER] Анализиране на JSON логовете... Ниво на критичност: ${threatLevel}`, type: "info" },
-          { id: startId + 4, time, text: `[SOC-ACTION] Корелация на събитие: Изпратено автоматично предупреждение към таблото на клиента.`, type: "success" },
-          { id: startId + 5, time, text: `[SIEM-AGENT] Операцията приключи успешно. Код за отговор: 201 Created.`, type: "success" }
+          { id: startId + 2, time, text: `[NET-ERROR] Мрежова грешка при комуникация със SOC приемника.`, type: "error" }
         ]);
         setSending(false);
       }, 1000);
-    }, 1200);
+    }
   };
 
   if (status === "loading" || loading) {
@@ -335,6 +364,8 @@ export default function SiemPage() {
                         <span className={`font-bold px-1.5 py-0.2 rounded uppercase ${
                           log.type === "success"
                             ? "bg-green-500/10 text-green-400 border border-green-500/20"
+                            : log.type === "error"
+                            ? "bg-red-500/10 text-red-400 border border-red-500/20"
                             : "bg-[#0098b2]/10 text-[#0098b2] border border-[#0098b2]/20"
                         }`}>
                           {log.type}
@@ -350,7 +381,7 @@ export default function SiemPage() {
               <div className="pt-3 border-t border-slate-850/60 flex items-center justify-between text-[11px] text-gray-500">
                 <div className="flex items-center gap-1.5">
                   <span className="w-2 h-2 bg-green-500 rounded-full animate-ping"></span>
-                  <span>SIEM Endpoint: https://api.defcoms.eu/v1/soc/logs</span>
+                  <span>SIEM Endpoint: /api/portal/siem</span>
                 </div>
                 <span>REST API V1.4.2</span>
               </div>
@@ -366,7 +397,7 @@ export default function SiemPage() {
                 За да изпратите системен лог от вашия вътрешен Linux/Unix скрипт или приложение, изпълнете следния Curl POST сигнал:
               </p>
               <pre className="bg-slate-900 border border-slate-800 rounded-xl p-4 font-mono text-[10px] text-[#0098b2] overflow-x-auto whitespace-pre">
-{`curl -X POST "https://api.defcoms.eu/v1/soc/logs" \\
+{`curl -X POST "https://portal.defcoms.eu/api/portal/siem" \\
   -H "Authorization: Bearer ${selectedKey || "YOUR_API_KEY"}" \\
   -H "Content-Type: application/json" \\
   -d '{
